@@ -1,0 +1,28 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Uploads and temp files
+uploads/
+temp/
+*.tmp
+
+# Logs
+logs/
+*.log
+
+# Coverage/test outputs (optional if using Jest or similar)
+coverage/
