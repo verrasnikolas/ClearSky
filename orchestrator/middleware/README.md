@@ -2,4 +2,4 @@
 
 Τα request φτάνουν πρώτα σε ένα middleware που είναι υπεύθυνο για την αυθεντικοποίηση.
 
-Ροή: αίτημα frontend -> route -> middleware -> orch controller -> orch service -> microservice
+Ροή: αίτημα frontend -> orch route -> orch middleware -> orch controller -> orch service -> microservice
