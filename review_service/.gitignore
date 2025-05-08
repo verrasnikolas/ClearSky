@@ -27,3 +27,9 @@ logs/
 # Coverage/test outputs (optional if using Jest or similar)
 coverage/
 
+
+DB_HOST=postgres
+DB_NAME=reviewdb
+DB_USER=postgres
+DB_PASS=1234
+DB_PORT=5432
