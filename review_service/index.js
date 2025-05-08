@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const sequelize = require('./config/db');
 const reviewRoutes = require('./routes/reviewRoute');
 const errorHandler = require('./middlewares/errorHandler');
