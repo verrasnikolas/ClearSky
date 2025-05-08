@@ -1,7 +1,5 @@
 
 // POST /api/grades/upload
-const XLSX = require('xlsx');
-const path = require('path');
 
 const uploadInitialGrades = (req, res) => {
     const courseMeta = req.courseMeta;
@@ -12,7 +10,10 @@ const uploadInitialGrades = (req, res) => {
 
     return res.status(200).json({
         message: 'Excel file validated successfully!',
-        extractedCourseInfo: courseMeta
+        extractedCourseInfo: courseMeta,
+        extractedGrades: req.gradeEntries,
+        extractedUsers: req.extractedUsers,
+        skippedRows: req.skippedRows
     });
 };
 

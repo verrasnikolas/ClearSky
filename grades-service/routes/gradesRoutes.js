@@ -3,13 +3,13 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
-const validateExcelFile = require('../middlewares/validateExcelFile');
+const parseExcelUpload = require('../middlewares/parseExcelUpload');
 const { uploadInitialGrades } = require('../controllers/gradesController');
 
 router.post(
     '/upload',
     upload.single('file'),
-    validateExcelFile,
+    parseExcelUpload,
     uploadInitialGrades
 );
 
