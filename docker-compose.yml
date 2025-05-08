@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  # PostgreSQL database for grades
+  grades-db:
+    container_name: grades-db
+    image: postgres:14
+    environment:
+      POSTGRES_DB: grades_db
+      POSTGRES_USER: grades_user
+      POSTGRES_PASSWORD: grades_pass
+    ports:
+      - "5433:5432"  # Host:5433 → Container:5432
+    volumes:
+      - grades_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # PostgreSQL database for statistics (optional)
+  statistics-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: statistics_db
+      POSTGRES_USER: statistics_user
+      POSTGRES_PASSWORD: statistics_pass
+    ports:
+      - "5434:5432"  # Host:5434 → Container:5432
+    volumes:
+      - statistics_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Your Node.js application
+  app:
+    container_name: grades-app
+    build: .  # Build from current directory (needs Dockerfile)
+    environment:
+      - DB_HOST=grades-db  # Use Docker service name (not localhost)
+      - DB_PORT=5432       # Use container port (5432, not 5433)
+      - DB_USER=grades_user
+      - DB_PASSWORD=grades_pass
+      - DB_NAME=grades_db
+    ports:
+      - "3001:3001"  # Expose your app's port
+    depends_on:
+      - grades-db    # Wait for grades-db to start first
+    networks:
+      - app-network
+    volumes:
+      - ./:/app      # Mount your code (if needed for development)
+      - /app/node_modules
+
+volumes:
+  grades_data:
+  statistics_data:
+
+networks:
+  app-network:
+    driver: bridge
