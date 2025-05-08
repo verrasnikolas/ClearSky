@@ -1,9 +1,9 @@
-// grades-service/index.js
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3001;
+
 const gradesRoutes = require('./routes/gradesRoutes');
-const pool = require('./config/db');
+const db = require('./models');
 
 app.use(express.json());
 app.use('/api/grades', gradesRoutes);
@@ -12,14 +12,13 @@ app.get('/', (req, res) => {
     res.send('Grades Service is running');
 });
 
-app.listen(port, () => {
-    console.log(`Grades Service running on port ${port}`);
-});
-
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('❌ Error connecting to PostgreSQL:', err);
-    } else {
-        console.log('✅ Connected to PostgreSQL at:', res.rows[0].now);
-    }
-});
+db.sequelize.authenticate()
+    .then(() => {
+        console.log('✅ Connected to the database');
+        app.listen(port, () => {
+            console.log(`Grades Service running on port ${port}`);
+        });
+    })
+    .catch(err => {
+        console.error('❌ Unable to connect to the database:', err);
+    });
