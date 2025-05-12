@@ -1,43 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { getAllReviews, replyToReview } from '../services/ReviewService';
+import ReviewReplyForm from './ReviewReplyForm'; // <-- make sure this exists
 import styles from './ReviewList.module.css';
 
 const ReviewList = () => {
     const [reviews, setReviews] = useState([]);
-    const [statusUpdates, setStatusUpdates] = useState({});
+    const [selectedReview, setSelectedReview] = useState(null);
 
     useEffect(() => {
         fetchReviews();
     }, []);
 
     const fetchReviews = async () => {
-        const result = await getAllReviews();
-        console.log("Fetched reviews:", result);
-        setReviews(result.data); // ✅ FIX: use the actual array inside .data
+        try {
+            const result = await getAllReviews();
+            console.log("Fetched reviews:", result);
+            setReviews(result.data);
+        } catch (err) {
+            console.error("Failed to fetch reviews:", err);
+        }
     };
 
-
-    const handleChange = (id, field, value) => {
-        setStatusUpdates((prev) => ({
-            ...prev,
-            [id]: {
-                ...prev[id],
-                [field]: value,
-            },
-        }));
-    };
-
-    const handleSubmit = async (id) => {
-        const update = statusUpdates[id];
-        if (!update?.status || !update?.response) return;
-
-        await replyToReview(id, update);
-        await fetchReviews(); // refresh list
+    const handleReplySubmit = async (update) => {
+        try {
+            await replyToReview(update.id, update);
+            setSelectedReview(null);
+            fetchReviews();
+        } catch (err) {
+            console.error("Failed to update review:", err);
+        }
     };
 
     return (
         <div className={styles.container}>
             <h3>Review Requests</h3>
+
             {reviews.length === 0 ? (
                 <p>No pending reviews.</p>
             ) : (
@@ -56,31 +53,24 @@ const ReviewList = () => {
                         <tr key={review.id}>
                             <td>{review.gradeEntryId}</td>
                             <td>{review.reason}</td>
+                            <td>{review.status}</td>
+                            <td>{review.response || '-'}</td>
                             <td>
-                                <select
-                                    value={statusUpdates[review.id]?.status || review.status}
-                                    onChange={(e) => handleChange(review.id, 'status', e.target.value)}
-                                >
-                                    <option value="PENDING">PENDING</option>
-                                    <option value="APPROVED">APPROVED</option>
-                                    <option value="REJECTED">REJECTED</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input
-                                    type="text"
-                                    placeholder="Reply..."
-                                    value={statusUpdates[review.id]?.response || ''}
-                                    onChange={(e) => handleChange(review.id, 'response', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <button onClick={() => handleSubmit(review.id)}>Update</button>
+                                <button onClick={() => setSelectedReview(review)}>
+                                    Reply
+                                </button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+            )}
+
+            {selectedReview && (
+                <ReviewReplyForm
+                    selectedReview={selectedReview}
+                    onSubmit={handleReplySubmit}
+                />
             )}
         </div>
     );

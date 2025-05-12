@@ -15,27 +15,28 @@ const ReviewForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className={styles.form}>
-            <input
-                type="text"
-                placeholder="Grade Entry ID"
-                value={gradeEntryId}
-                onChange={(e) => setGradeEntryId(e.target.value)}
-                className={styles.input}
-                required
-            />
-            <textarea
-                placeholder="Reason for review"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                className={styles.textarea}
-                required
-            />
-            <button type="submit" className={styles.button}>
-                Submit Review
-            </button>
-        </form>
+        <div className={styles.wrapper}>
+            <div className={styles.header}>
+                NEW REVIEW REQUEST <span className={styles.context}>physics – spring 2025</span>
+            </div>
+            <form onSubmit={handleSubmit} className={styles.form}>
+                <label className={styles.label}>Message to instructor</label>
+                <textarea
+                    placeholder="Enter your reason for review"
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    className={styles.textarea}
+                    required
+                />
+                <div className={styles.buttonContainer}>
+                    <button type="submit" className={styles.button}>
+                        Submit grade review request
+                    </button>
+                </div>
+            </form>
+        </div>
     );
+
 };
 
 export default ReviewForm;
