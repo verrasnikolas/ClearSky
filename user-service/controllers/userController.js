@@ -48,3 +48,24 @@ exports.updateUser = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+exports.registerInstitution = async (req, res) => {
+    try {
+        const { userId, institutionName } = req.body;
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        if (user.role !== 'institution_representative') {
+            return res.status(403).json({ error: 'Permission denied. Only institution representatives can register institutions.' });
+        }
+
+        // Dummy Logic (θα γίνει σε άλλο microservice later)
+        console.log(`Institution "${institutionName}" registered by ${user.name} (id: ${user.id})`);
+
+        return res.status(201).json({ message: `Institution "${institutionName}" registered successfully` });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};

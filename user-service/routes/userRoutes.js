@@ -15,4 +15,7 @@ router.get('/academic/:academicId', uc.getUserByAcademicId);
 // Update User
 router.put('/:id', [...updateUserValidationRules, validateUser], uc.updateUser);
 
+// Register Institution (restricted to institution_representative)
+router.post('/register-institution', uc.registerInstitution);
+
 module.exports = router;
