@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  grades-service:
+    build: .
+    ports:
+      - '3001:3001'
+    env_file: .env
+    depends_on:
+      - grades-postgres
+    restart: always
+    volumes:
+      - .:/app
+
+  grades-postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: gradesdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - '5433:5432'  # Avoid conflict with other Postgres instances
+    volumes:
+      - grades-pgdata:/var/lib/postgresql/data
+
+volumes:
+  grades-pgdata:
