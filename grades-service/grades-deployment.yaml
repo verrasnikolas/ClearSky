@@ -21,7 +21,7 @@ spec:
           env:
             - name: PGHOST
               value: grades-postgres
-            - name: PGNAME
+            - name: PGDATABASE
               value: gradesdb
             - name: PGUSER
               value: postgres
