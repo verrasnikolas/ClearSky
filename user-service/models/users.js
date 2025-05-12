@@ -7,11 +7,6 @@ const User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true,
     },
-    academicId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -22,6 +17,15 @@ const User = sequelize.define('User', {
     },
     name: {
         type: DataTypes.STRING,
+        allowNull: false,
+    },
+    academicId: {
+        type: DataTypes.STRING,
+        allowNull: true, // Nullable για instructors & institution reps
+        unique: true,
+    },
+    role: {
+        type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
         allowNull: false,
     },
 }, {
