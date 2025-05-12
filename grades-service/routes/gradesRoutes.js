@@ -4,7 +4,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 const parseExcelUpload = require('../middlewares/parseExcelUpload');
-const { uploadInitialGrades } = require('../controllers/gradesController');
+const { uploadInitialGrades, getStudentGrades } = require('../controllers/gradesController');
 
 router.post(
     '/upload',
@@ -12,5 +12,7 @@ router.post(
     parseExcelUpload,
     uploadInitialGrades
 );
+
+router.get('/student/:studentId', getStudentGrades);
 
 module.exports = router;

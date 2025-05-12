@@ -120,7 +120,7 @@ const parseExcelUpload = (req, res, next) => {
         req.courseMeta = {
             code: courseCode,
             title: courseTitle,
-            courseSemester,
+            semester: courseSemester,
             questionWeights,
             gradesCount: gradeEntries.length
         };
