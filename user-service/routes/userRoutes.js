@@ -1,10 +1,18 @@
 const express = require('express');
-const router  = express.Router();
-const uc      = require('../controllers/userController');
+const router = express.Router();
+const uc = require('../controllers/userController');
+const { createUserValidationRules, updateUserValidationRules, validateUser } = require('../middlewares/verificationMiddleware');
 
-router.post('/', uc.addUser);                              // POST   /users
-router.get('/:id', uc.getUserById);                         // GET    /users/:id
-router.get('/academic/:academicid', uc.getUserByAcademicId); // GET   /users/academic/:academicid
-router.put('/:id', uc.updateUser);                          // PUT    /users/:id
+// Create User
+router.post('/', [...createUserValidationRules, validateUser], uc.addUser);
+
+// Get User by ID
+router.get('/:id', uc.getUserById);
+
+// Get User by Academic ID
+router.get('/academic/:academicId', uc.getUserByAcademicId);
+
+// Update User
+router.put('/:id', [...updateUserValidationRules, validateUser], uc.updateUser);
 
 module.exports = router;

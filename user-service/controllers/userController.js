@@ -3,9 +3,6 @@ const User = require('../models/users.js');
 exports.addUser = async (req, res) => {
     try {
         const { email, name, academicId } = req.body;
-        if (!email || !name || !academicId) {
-            return res.status(400).json({ error: 'Missing fields' });
-        }
         const newUser = await User.create({ email, name, academicId });
         return res.status(201).json(newUser);
     } catch (err) {
