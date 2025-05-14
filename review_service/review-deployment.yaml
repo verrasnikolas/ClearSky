@@ -20,7 +20,7 @@ spec:
             - containerPort: 3003
           env:
             - name: DB_HOST
-              value: postgres
+              value: review-postgres
             - name: DB_NAME
               value: reviewdb
             - name: DB_USER

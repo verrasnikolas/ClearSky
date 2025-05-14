@@ -1,22 +1,13 @@
-# Delete review-service related resources
-kubectl delete -f grades-service\grades-service.yaml
-kubectl delete -f grades-service\grades-deployment.yaml
+cd grades-service
+./delete
+cd ..
 
-# Delete PostgreSQL related resources
-kubectl delete -f grades-service\postgres-service.yaml
-kubectl delete -f grades-service\postgres-deployment.yaml
-kubectl delete -f grades-service\postgres-pvc.yaml
+cd review_service
+./delete
+cd ..
 
-kubectl delete -f review_service\review-service.yaml
-kubectl delete -f review_service\review-deployment.yaml
-
-# Delete PostgreSQL related resources
-kubectl delete -f review_service\postgres-service.yaml
-kubectl delete -f review_service\postgres-deployment.yaml
-kubectl delete -f review_service\postgres-pvc.yaml
-
-# stats
-kubectl delete -f stats-service.yaml
-kubectl delete -f stats-deployment.yaml
+cd statistics-service
+./delete
+cd ..
 
 Write-Host "All resources deleted successfully!"

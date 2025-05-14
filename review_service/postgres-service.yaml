@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: review-postgres
 spec:
   type: ClusterIP
   selector:
-    app: postgres
+    app: review-postgres
   ports:
     - port: 5432
       targetPort: 5432

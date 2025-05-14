@@ -6,6 +6,6 @@ cd review_service
 docker build -t review-service:latest .
 cd ..
 
-cd statisticss-service
+cd statistics-service
 docker build -t stats-service:latest .
 cd ..
