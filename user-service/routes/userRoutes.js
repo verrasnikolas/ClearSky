@@ -15,7 +15,7 @@ router.get('/academic/:academicId', uc.getUserByAcademicId);
 // Update User
 router.put('/:id', [...updateUserValidationRules, validateUser], uc.updateUser);
 
-router.put('/:id/change-password', uc.changePassword);
+router.patch('/:id/password', uc.changePassword);
 
 module.exports = router;
 
