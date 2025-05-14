@@ -2,8 +2,15 @@ const User = require('../models/users.js');
 
 exports.addUser = async (req, res) => {
     try {
-        const { email, name, academicId } = req.body;
-        const newUser = await User.create({ email, name, academicId });
+        const { email, name, academicId, password, role } = req.body;
+
+        if (!password) {
+            return res.status(400).json({ error: 'Password is required' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await User.create({ email, name, academicId, role, password: hashedPassword });
         return res.status(201).json(newUser);
     } catch (err) {
         console.error(err);
@@ -49,23 +56,27 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-exports.registerInstitution = async (req, res) => {
+const bcrypt = require('bcrypt');
+
+exports.changePassword = async (req, res) => {
     try {
-        const { userId, institutionName } = req.body;
-
-        const user = await User.findByPk(userId);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-
-        if (user.role !== 'institution_representative') {
-            return res.status(403).json({ error: 'Permission denied. Only institution representatives can register institutions.' });
+        const { newPassword } = req.body;
+        if (!newPassword) {
+            return res.status(400).json({ error: 'New password is required' });
         }
 
-        // Dummy Logic (θα γίνει σε άλλο microservice later)
-        console.log(`Institution "${institutionName}" registered by ${user.name} (id: ${user.id})`);
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-        return res.status(201).json({ message: `Institution "${institutionName}" registered successfully` });
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        return res.json({ message: 'Password updated successfully' });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+
