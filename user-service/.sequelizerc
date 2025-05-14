@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   'config': '/app/config/config.json',
-  'model-path': path.resolve(__dirname, 'models'),
+  'models-path': path.resolve(__dirname, 'models'), // Corrected property name
   'migrations-path': path.resolve(__dirname, 'migrations'),
-  'seeders-path': path.resolve(__dirname, 'seeders'), // Αν έχεις seeders
+  'seeders-path': path.resolve(__dirname, 'seeders'),
 };

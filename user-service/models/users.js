@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
         autoIncrement: true,
     },
@@ -21,8 +21,7 @@ const User = sequelize.define('User', {
     },
     academicId: {
         type: DataTypes.STRING,
-        allowNull: true, // Nullable για instructors & institution reps
-        unique: true,
+        allowNull: true, // Nullable για instructors & institution rep
     },
     password: {
         type: DataTypes.STRING,
