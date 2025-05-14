@@ -24,6 +24,10 @@ const User = sequelize.define('User', {
         allowNull: true, // Nullable για instructors & institution reps
         unique: true,
     },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     role: {
         type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
         allowNull: false,
