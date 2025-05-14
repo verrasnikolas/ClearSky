@@ -1,15 +1,17 @@
 const express = require('express');
 require('dotenv').config();
 const app = express();
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3002;
 const { startConsumer } = require('./messaging/eventSubscriber');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
 
-const statisticsRoutes = require('./routes/statisticsRoutes');
-const sequelize = require('./config/db');
-
+const statsRoutes = require('./routes/statsRoutes');
 app.use(express.json());
-app.use('/api/statistics', statisticsRoutes);
+app.use('/api/stats', statsRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Statistics Service is running');
+});
 
 (async () => {
     await connectRabbitMQ();
@@ -31,12 +33,6 @@ app.use('/api/statistics', statisticsRoutes);
     });
 })();
 
-app.listen(port, async () => {
-    try {
-        await sequelize.authenticate();
-        console.log(`✅ Connected to PostgreSQL`);
-        console.log(`✅ Statistics Service running on port ${port}`);
-    } catch (error) {
-        console.error('❌ Unable to connect to the database:', error);
-    }
+app.listen(port, () => {
+    console.log(`Statistics Service running on port ${port}`);
 });
