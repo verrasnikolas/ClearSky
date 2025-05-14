@@ -1,0 +1,48 @@
+.container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.uploadSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.uploadSection input[type="file"] {
+    padding: 0.5rem;
+}
+
+.uploadSection button {
+    width: fit-content;
+    padding: 0.5rem 1rem;
+}
+
+.previewBox {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    background: #fff;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+}
+
+.buttonGroup {
+    margin-top: 1rem;
+}
+
+.buttonGroup button {
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.messageBox {
+    margin-top: 1rem;
+    color: #333;
+    font-weight: 500;
+}
