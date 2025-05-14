@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3003/api/reviews';
+const API_URL = 'http://localhost:30003/api/reviews';
 
 export const submitReview = (review) => axios.post(API_URL, review);
 
