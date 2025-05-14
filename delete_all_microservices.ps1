@@ -16,7 +16,7 @@ kubectl delete -f review_service\postgres-deployment.yaml
 kubectl delete -f review_service\postgres-pvc.yaml
 
 # stats
-kubectl delete -f stats-service.yaml
-kubectl delete -f stats-deployment.yaml
+kubectl delete -f statistics-service\stats-service.yaml
+kubectl delete -f statistics-service\stats-deployment.yaml
 
 Write-Host "All resources deleted successfully!"
