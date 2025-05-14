@@ -25,3 +25,12 @@ const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
     console.log(`🚀 User Service running on port ${PORT}`);
 });
+
+const { startConsumer } = require('./messaging/startConsumer');
+const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
+
+
+(async () => {
+    await connectRabbitMQ();
+    await startConsumer(handleevent);
+})();
