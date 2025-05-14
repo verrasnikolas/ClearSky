@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3002;
-const { startConsumer } = require('./messaging/eventSubscriber');
+const { startConsumer } = require('./messaging/startConsumer');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
 
 const statsRoutes = require('./routes/statsRoutes');
