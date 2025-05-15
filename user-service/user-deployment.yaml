@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: your-dockerhub-username/user-service:latest # Replace with your Docker Hub image
+          ports:
+            - containerPort: 3005
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-credentials
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: user-db-config
+                  key: database
+            - name: DB_HOST
+              value: user-db # Matches the name of your PostgreSQL Service
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: user-db-config
+                  key: port
+            - name: NODE_ENV
+              value: "development" # Or "production" based on your needs
