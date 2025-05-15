@@ -17,5 +17,8 @@ router.put('/:id', [...updateUserValidationRules, validateUser], uc.updateUser);
 
 router.patch('/:id/password', uc.changePassword);
 
+router.post('/login', uc.loginUser);
+
+
 module.exports = router;
 
