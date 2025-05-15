@@ -1,0 +1,88 @@
+.container {
+    padding: 2rem 3rem;
+    background-color: #f3faff;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+.heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1c1c1c;
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.button {
+    padding: 0.6rem 1.2rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.table th {
+    background-color: #f4f8fb;
+    font-weight: 600;
+    color: #333;
+}
+
+.table th, .table td {
+    border: 1px solid #dcdcdc;
+    padding: 14px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.chartGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.2rem;
+}
+
+.chartBox {
+    background: white;
+    height: 150px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    color: #333;
+    font-size: 1rem;
+}
+
+.layout {
+    min-height: 100vh;
+    background-color: #f3faff;
+    margin: 0;
+    padding: 0;
+}

@@ -32,3 +32,8 @@
     padding: 1rem;
     border-radius: 8px;
 }
+
+.layout {
+    min-height: 100vh;
+    background-color: #f3faff;
+}
