@@ -17,7 +17,25 @@ spec:
           image: stats-service:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 3002 # The port the stats service listens on
+            - containerPort: 3002
           env:
+            - name: PORT
+              value: "3002"
             - name: GRADES_SERVICE_URL
-              value: http://grades-service:3001/api/grades
+              value: "http://grades-service:3001/api/grades"
+            - name: DB_HOST
+              value: "stats-postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "stats_db"
+            - name: DB_USER
+              value: "stats_user"
+            - name: DB_PASSWORD
+              value: "1234"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-service"
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_QUEUE
+              value: "grades_queue"

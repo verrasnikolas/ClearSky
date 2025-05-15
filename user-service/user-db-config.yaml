@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-db-config
+data:
+  database: usersdb
+  port: "5432"

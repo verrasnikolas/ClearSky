@@ -9,3 +9,7 @@ cd ..
 cd statistics-service
 docker build -t stats-service:latest .
 cd ..
+
+cd upload-service
+docker build -t upload-excel-image .
+cd ..

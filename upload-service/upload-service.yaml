@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-excel-service
+spec:
+  type: NodePort
+  selector:
+    app: upload-excel-service
+  ports:
+    - protocol: TCP
+      port: 3006 # Internal port for the service
+      targetPort: 3006 # Port the container is listening on
+      nodePort: 30036 # Port exposed on the Node (if using NodePort)

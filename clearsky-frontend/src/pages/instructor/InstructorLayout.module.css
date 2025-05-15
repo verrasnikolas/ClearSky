@@ -1,0 +1,39 @@
+.container {
+    padding: 2rem;
+}
+
+.navbar {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+
+.navList {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+}
+
+.navList a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.navList a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.content {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.layout {
+    min-height: 100vh;
+    background-color: #f3faff;
+}
