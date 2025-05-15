@@ -1,5 +1,5 @@
 import React from 'react';
-import ReviewList from '../components/ReviewList';
+import ReviewList from '../../components/ReviewList';
 import styles from './InstructorPage.module.css';
 
 const InstructorPage = () => {
