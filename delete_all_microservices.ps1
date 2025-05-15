@@ -10,4 +10,8 @@ cd statistics-service
 ./delete
 cd ..
 
+cd upload-service
+./delete
+cd ..
+
 Write-Host "All resources deleted successfully!"

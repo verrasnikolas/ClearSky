@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats-postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stats-postgres
+  template:
+    metadata:
+      labels:
+        app: stats-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: stats_db
+            - name: POSTGRES_USER
+              value: stats_user
+            - name: POSTGRES_PASSWORD
+              value: "your_postgres_password" # Replace with your actual password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: stats-postgres-storage
+      volumes:
+        - name: stats-postgres-storage
+          persistentVolumeClaim:
+            claimName: stats-postgres-pvc
