@@ -1,0 +1,25 @@
+.gradesBox {
+    background: #f8faff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 1rem;
+}
+
+.questionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.questionTable th,
+.questionTable td {
+    border: 1px solid #ddd;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+}
+
+.questionTable th {
+    background-color: #eaeaea;
+    font-weight: 600;
+}

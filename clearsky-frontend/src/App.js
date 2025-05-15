@@ -5,8 +5,10 @@ import Navbar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import StudentLogin from './pages/student/StudentLogin';
 import StudentStatisticsPage from './pages/student/StudentStatistcs';
-import InstructorPage from './pages/InstructorPage';
+import InstructorPage from './pages/instructor/InstructorPage';
 import StudentPage from "./pages/student/StudentPage";
+import GradeDetails from './components/GradeDetails'; // create this next
+import UploadGrades from './pages/instructor/UploadGrades';
 
 
 function App() {
@@ -21,9 +23,12 @@ function App() {
                 <Route path="/student/login" element={<StudentLogin />} />
                 <Route path="/student/statistics" element={<StudentStatisticsPage />} />
                 <Route path="/student/studentpage" element={<StudentPage />} />
+                <Route path="/student/grades/:courseId" element={<GradeDetails />} />
 
                 {/* Instructor route */}
                 <Route path="/instructor" element={<InstructorPage />} />
+                <Route path="/instructor/upload" element={<UploadGrades />} />
+
             </Routes>
         </Router>
     );

@@ -1,6 +1,1 @@
-PORT=3002
-DB_USER=your_user
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_NAME=your_database
-DB_PORT=5432
+./.gitignore
