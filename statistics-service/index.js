@@ -2,8 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3002;
-const { startConsumer } = require('./messaging/startConsumer');
-const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
+const { startConsumer, connectRabbitMQ, handleEvent } = require('./messaging/');
 
 const statsRoutes = require('./routes/statsRoutes');
 app.use(express.json());
@@ -16,6 +15,7 @@ app.get('/', (req, res) => {
 (async () => {
     await connectRabbitMQ();
     await startConsumer((event) => {
+        handleEvent(event)
         if (event.type === 'initial_grades_parsed') {
             const { courseMeta, gradeEntries } = event.data;
 
