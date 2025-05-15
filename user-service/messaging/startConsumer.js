@@ -15,4 +15,4 @@ async function startConsumer(onEvent) {
     console.log(`[🔔] Subscribed to "${exchangeName}"`);
 }
 
-module.exports = { startConsumer };
+module.exports = { startConsumer }

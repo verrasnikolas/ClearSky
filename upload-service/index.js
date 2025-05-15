@@ -1,4 +1,4 @@
-const express = require('express');
+ const express = require('express');
 const uploadRoutes = require('./routes/uploadRoutes');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
 const port = process.env.PORT || 3006;

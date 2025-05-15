@@ -1,4 +1,6 @@
 const User = require('../models/users.js');
+const bcrypt = require('bcrypt');
+const { generateAccessToken, generateRefreshToken } = require('../utils/token');
 
 exports.addUser = async (req, res) => {
     try {
@@ -56,7 +58,6 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-const bcrypt = require('bcrypt');
 
 exports.changePassword = async (req, res) => {
     try {
@@ -80,47 +81,13 @@ exports.changePassword = async (req, res) => {
     }
 };
 
-exports.loginUser = async (req, res) => {
-    const { role, email, academicId, password } = req.body;
-
-    if (!role || !password) {
-        return res.status(400).json({ error: 'Role and password are required' });
-    }
-
-    let user;
-
+exports.getUserByEmail = async (req, res) => {
     try {
-        if (role === 'student') {
-            if (!academicId) return res.status(400).json({ error: 'Academic ID is required for students' });
-            user = await User.findOne({ where: { academicId, role } });
-        } else if (role === 'instructor' || role === 'institution_representative') {
-            if (!email) return res.status(400).json({ error: 'Email is required for instructors and institution representatives' });
-            user = await User.findOne({ where: { email, role } });
-        } else {
-            return res.status(400).json({ error: 'Invalid role' });
-        }
-
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        // Success login response (no token creation here)
-        return res.json({
-            id: user.id,
-            name: user.name,
-            role: user.role,
-            message: 'Login successful'
-        });
-
+        const user = await User.findOne({ where: { email: req.params.email } });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        return res.json(user);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-

@@ -14,6 +14,7 @@ services:
       - user_pgdata:/var/lib/postgresql/data
 
   user-service:
+    image: your-username/user-service:v2
     build: .
     ports:
       - "3005:3005"
