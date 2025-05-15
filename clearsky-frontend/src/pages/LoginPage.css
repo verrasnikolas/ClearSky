@@ -1,0 +1,140 @@
+.page {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(to right, #eef4ff, #f9fbff);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.left {
+    flex: 1;
+    padding: 4rem;
+    color: #1c1c1c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.left h1 span {
+    color: #007bff;
+}
+
+.left p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.left ul {
+    list-style: none;
+    padding: 0;
+    line-height: 2;
+}
+
+.left li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.right {
+    flex: 1;
+    background: linear-gradient(135deg, #f5faff, #eaf1ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.logo {
+    color: #007bff;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.inputGroup {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.inputGroup label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.inputWithIcon {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.6rem;
+    gap: 10px;
+    background: #f9f9f9;
+}
+
+.inputWithIcon input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+}
+
+.radioGroup {
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.radioGroup label {
+    margin-right: 1.5rem;
+}
+
+.loginBtn {
+    width: 100%;
+    padding: 0.8rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.loginBtn:hover {
+    background: #0056b3;
+}
+
+.forgot {
+    display: block;
+    margin-top: 1rem;
+    color: #007bff;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
