@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 3002;
 const { startConsumer } = require('./messaging/startConsumer');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
-const { CourseStats } = require('./config/db'); // Import the initialized CourseStats model
+const { sequelize, CourseStats } = require('./config/db'); // Import sequelize as well
 const statsRoutes = require('./routes/statsRoutes');
 
 app.use(express.json());
@@ -30,7 +30,7 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
     }, {});
 
     try {
-        await CourseStats.upsert({ // Now 'upsert' should be a function
+        await CourseStats.upsert({
             courseCode: courseMeta.code,
             semester: courseMeta.semester,
             averageGrade: parseFloat(averageGrade.toFixed(2)),
@@ -43,27 +43,37 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 }
 
 (async () => {
-    await connectRabbitMQ();
-    await startConsumer(async (event) => { // Make the callback async
-        if (event.type === 'initial_grades_parsed') {
-            const { courseMeta, gradeEntries } = event.data;
+    try {
+        // Sync the model with the database. This will create the table if it doesn't exist
+        // and apply any defined indexes, including the unique index.
+        await sequelize.sync();
+        console.log('Database synchronized successfully.');
 
-            console.log('\n Received Event: initial_grades_parsed');
-            console.log('------------------------------------------');
-            console.log('📘 Course Metadata:');
-            console.log(JSON.stringify(courseMeta, null, 2));
+        await connectRabbitMQ();
+        await startConsumer(async (event) => {
+            if (event.type === 'initial_grades_parsed') {
+                const { courseMeta, gradeEntries } = event.data;
 
-            console.log('\n Grade Entries:');
-            gradeEntries.forEach((g, index) => {
-                console.log(`  #${index + 1} | Student ID: ${g.studentId}, Grade: ${g.initialGrade}`);
-                console.log(`     Questions: ${JSON.stringify(g.questionGrades)}`);
-            });
+                console.log('\n Received Event: initial_grades_parsed');
+                console.log('------------------------------------------');
+                console.log('📘 Course Metadata:');
+                console.log(JSON.stringify(courseMeta, null, 2));
 
-            await calculateAndStoreStats(courseMeta, gradeEntries); // Calculate and store stats
-        }
-    });
+                console.log('\n Grade Entries:');
+                gradeEntries.forEach((g, index) => {
+                    console.log(`  #${index + 1} | Student ID: ${g.studentId}, Grade: ${g.initialGrade}`);
+                    console.log(`     Questions: ${JSON.stringify(g.questionGrades)}`);
+                });
+
+                await calculateAndStoreStats(courseMeta, gradeEntries);
+            }
+        });
+
+        app.listen(port, () => {
+            console.log(`Statistics Service running on port ${port}`);
+        });
+
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
 })();
-
-app.listen(port, () => {
-    console.log(`Statistics Service running on port ${port}`);
-});
