@@ -1,47 +1,33 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: postgres-db
+  name: stats-postgres-deployment
 spec:
-  serviceName: "postgres-service"
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-db
+      app: stats-postgres
   template:
     metadata:
       labels:
-        app: postgres-db
+        app: stats-postgres
     spec:
       containers:
         - name: postgres
-          image: postgres:15-alpine
+          image: postgres:15
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: password
             - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: database_name
+              value: stats_db
+            - name: POSTGRES_USER
+              value: stats_user
+            - name: POSTGRES_PASSWORD
+              value: "your_postgres_password" # Replace with your actual password
           volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-    - metadata:
-        name: postgres-data
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+            - mountPath: /var/lib/postgresql/data
+              name: stats-postgres-storage
+      volumes:
+        - name: stats-postgres-storage
+          persistentVolumeClaim:
+            claimName: stats-postgres-pvc
