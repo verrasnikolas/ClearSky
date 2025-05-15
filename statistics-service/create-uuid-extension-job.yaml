@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-uuid-extension
+spec:
+  template:
+    spec:
+      containers:
+        - name: db-initializer
+          image: postgres:15
+          env:
+            - name: DB_HOST
+              value: stats-postgres
+            - name: DB_NAME
+              value: stats_db
+            - name: DB_USER
+              value: stats_user
+            - name: DB_PASSWORD
+              value: "1234"
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -e
+              until PGPASSWORD="$DB_PASSWORD" psql -w -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"; do
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 5
+              done
+              echo "uuid-ossp extension created successfully."
+      restartPolicy: Never
+  backoffLimit: 3

@@ -1,8 +1,7 @@
-const CourseStats = require('../models/courseStats');
+const { CourseStats } = require('../config/db');
 
 const getCourseStats = async (req, res) => {
     const { courseCode, semester } = req.params;
-
     try {
         const stats = await CourseStats.findOne({
             where: {

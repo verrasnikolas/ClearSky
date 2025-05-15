@@ -19,11 +19,11 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: stats_db
+              value: "stats_db"
             - name: POSTGRES_USER
-              value: stats_user
+              value: "stats_user"
             - name: POSTGRES_PASSWORD
-              value: "your_postgres_password" # Replace with your actual password
+              value: "1234"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: stats-postgres-storage

@@ -4,9 +4,9 @@ const app = express();
 const port = process.env.PORT || 3002;
 const { startConsumer } = require('./messaging/startConsumer');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
-const CourseStats = require('./models/courseStats'); // Import the new model
-
+const { CourseStats } = require('./config/db'); // Import the initialized CourseStats model
 const statsRoutes = require('./routes/statsRoutes');
+
 app.use(express.json());
 app.use('/api/stats', statsRoutes);
 
@@ -30,7 +30,7 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
     }, {});
 
     try {
-        await CourseStats.upsert({ // Use upsert to either create or update if the course and semester already exist
+        await CourseStats.upsert({ // Now 'upsert' should be a function
             courseCode: courseMeta.code,
             semester: courseMeta.semester,
             averageGrade: parseFloat(averageGrade.toFixed(2)),
