@@ -5,25 +5,40 @@ services:
     image: postgres:13
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}  # θα είναι postgres (από το .env)
-      POSTGRES_PASSWORD: ${DB_PASS}  # θα είναι root (από το .env)
-      POSTGRES_DB: ${DB_NAME}  # usersdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - user_pgdata:/var/lib/postgresql/data
+    networks:
+      - default
 
   user-service:
-    image: your-username/user-service:v2
     build: .
     ports:
       - "3005:3005"
     depends_on:
       - user-db
+      - rabbitmq
     env_file:
       - .env
     environment:
       NODE_ENV: development
+    networks:
+      - default
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - default
 
 volumes:
   user_pgdata:
+
+networks:
+  default:
