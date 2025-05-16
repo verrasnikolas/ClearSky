@@ -27,3 +27,4 @@ logs/
 # Coverage/test outputs (optional if using Jest or similar)
 coverage/
 
+config/db_instructions

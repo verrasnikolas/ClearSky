@@ -1,7 +1,7 @@
 const xlsx = require('xlsx');
 const path = require('path');
 
-function parseExcel(file) {
+function parseExcel(file, instructorId) {
     const ext = path.extname(file.originalname);
     if (ext !== '.xlsx') {
         throw new Error('Invalid file type');
@@ -89,6 +89,7 @@ function parseExcel(file) {
             title: courseTitle,
             semester: courseSemester,
             questionWeights,
+            instructorId,
             gradesCount: gradeEntries.length
         },
         gradeEntries,

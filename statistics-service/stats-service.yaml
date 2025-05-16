@@ -8,6 +8,6 @@ spec:
     app: stats-service
   ports:
     - protocol: TCP
-      port: 3002 # Exposed port on the service
-      targetPort: 3002 # Port in the container
-      nodePort: 30032 # Exposes it on <NodeIP>:30032 (as you had before)
+      port: 3002
+      targetPort: 3002
+      nodePort: 30032

@@ -48,11 +48,6 @@ const uploadInitialGrades = async (req, res) => {
             }
         }
 
-        // 3. Stub for calling user-service (for later)
-        // await axios.post('http://user-service/api/users/bulk-create', {
-        //   users: extractedUsers
-        // });
-
         res.status(201).json({
             message: 'Grades uploaded successfully',
             courseId: course.id,

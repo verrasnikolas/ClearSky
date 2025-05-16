@@ -1,5 +1,16 @@
 require('dotenv').config();
 
+const sharedConfig = {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres'
+};
+
 module.exports = {
-    gradesServiceUrl: process.env.GRADES_SERVICE_URL || 'http://grades-service:3001/api/grades'
+    development: sharedConfig,
+    test: sharedConfig,
+    production: sharedConfig
 };

@@ -1,55 +1,54 @@
 'use strict';
-const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Course extends Model {
-    static associate(models) {
-      Course.hasMany(models.GradeEntry, {
-        foreignKey: 'course_id',
-        onDelete: 'CASCADE'
-      });
-    }
-  }
-
-  Course.init({
+  const Course = sequelize.define('Course', {
     id: {
       type: DataTypes.UUID,
+      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
-      allowNull: false,
-      primaryKey: true
     },
     code: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     title: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     semester: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     grading_scale: {
-      type: DataTypes.STRING,
-      defaultValue: '0-10'
+      type: DataTypes.TEXT,
+      defaultValue: '0-10',
     },
     question_weights: {
       type: DataTypes.JSONB,
-      allowNull: false
+      allowNull: false,
+    },
+    instructor_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
     }
   }, {
-    sequelize,
-    modelName: 'Course',
-    tableName: 'Courses',
-    timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ['code', 'semester']
+    tableName: 'courses',
+    timestamps: false,
+    uniqueKeys: {
+      unique_code_semester: {
+        fields: ['code', 'semester'],
       }
-    ]
+    }
   });
+
+  Course.associate = (models) => {
+
+    Course.hasMany(models.InitialGrade, {
+      foreignKey: 'course_id',
+      onDelete: 'CASCADE'
+    });
+
+  };
 
   return Course;
 };

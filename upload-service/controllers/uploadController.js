@@ -7,7 +7,8 @@ const uploadInitialGrades = async (req, res) => {
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'No file uploaded' });
 
-        const { courseMeta, gradeEntries, extractedUsers, skippedRows } = parseExcel(file);
+        const instructorId = req.body.instructor_id;
+        const { courseMeta, gradeEntries, extractedUsers, skippedRows } = parseExcel(file, instructorId);
 
         // Publish event to broker (RabbitMQ/NATS etc)
         publish(INITIAL_GRADES_PARSED, {
