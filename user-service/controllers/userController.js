@@ -1,8 +1,15 @@
 const User = require('../models/users.js');
+const bcrypt = require('bcrypt');
+const { generateAccessToken, generateRefreshToken } = require('../utils/token');
 
 exports.addUser = async (req, res) => {
     try {
         const { email, name, academicId, password, role } = req.body;
+
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(409).json({ error: 'User already exists' });
+        }
 
         if (!password) {
             return res.status(400).json({ error: 'Password is required' });
@@ -56,8 +63,6 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-const bcrypt = require('bcrypt');
-
 exports.changePassword = async (req, res) => {
     try {
         const { newPassword } = req.body;
@@ -80,3 +85,13 @@ exports.changePassword = async (req, res) => {
     }
 };
 
+exports.getUserByEmail = async (req, res) => {
+    try {
+        const user = await User.findOne({ where: { email: req.params.email } });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        return res.json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};

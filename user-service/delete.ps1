@@ -9,13 +9,6 @@ Write-Host "Deleted user-service-deployment."
 kubectl delete -f user-migration-job.yaml -n default
 Write-Host "Deleted user-migration-job."
 
-# Delete User Service ConfigMap and Secret
-kubectl delete -f user-db-config.yaml -n default
-Write-Host "Deleted user-db-config."
-
-kubectl delete -f user-db-credentials.yaml -n default
-Write-Host "Deleted user-db-credentials."
-
 # Delete PostgreSQL resources for User Service
 kubectl delete -f user-db-service.yaml -n default
 Write-Host "Deleted user-db-service."

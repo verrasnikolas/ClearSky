@@ -5,7 +5,7 @@ const User = sequelize.define('User', {
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
+        defaultValue: DataTypes.UUIDV4,
     },
     email: {
         type: DataTypes.STRING,
@@ -21,7 +21,7 @@ const User = sequelize.define('User', {
     },
     academicId: {
         type: DataTypes.STRING,
-        allowNull: true, // Nullable για instructors & institution rep
+        allowNull: true,
     },
     password: {
         type: DataTypes.STRING,
@@ -30,6 +30,10 @@ const User = sequelize.define('User', {
     role: {
         type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
         allowNull: false,
+    },
+    forcePasswordReset: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     },
 }, {
     tableName: 'users',

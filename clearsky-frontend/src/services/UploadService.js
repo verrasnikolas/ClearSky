@@ -1,9 +1,9 @@
-import axios from 'axios';
+// src/services/UploadService.js
+import { uploadApi } from './api';
 
-// ✅ Εδώ βάζεις το σωστό host/port του upload microservice
-const API_URL = 'http://localhost:30036/api/upload'; // Ή docker service name:port
+const API_ENDPOINT = '/'; // Τα endpoints είναι σχετικά με το baseURL που ορίστηκε στο uploadApi
 
 export const uploadInitialGrades = (formData) =>
-    axios.post(`${API_URL}/initial`, formData, {
+    uploadApi.post(`${API_ENDPOINT}/initial`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
     });

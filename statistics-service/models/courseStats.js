@@ -1,3 +1,4 @@
+// models/courseStats.js
 module.exports = (sequelize, DataTypes) => {
     const CourseStats = sequelize.define('CourseStats', {
         id: {
@@ -9,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        courseName: { // Add the courseName field
+            type: DataTypes.STRING,
+            allowNull: true, // Adjust allowNull based on your requirements
+        },
         semester: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -18,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         gradeDistribution: {
+            type: DataTypes.JSONB,
+            allowNull: true,
+        },
+        questionAverages: { // Add this field to store average question scores
+            type: DataTypes.JSONB,
+            allowNull: true,
+        },
+        questionDistributions: { // Add this field to store question distributions
             type: DataTypes.JSONB,
             allowNull: true,
         },

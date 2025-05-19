@@ -22,23 +22,47 @@ import {
     Person as PersonIcon,
     Lock as LockIcon
 } from '@mui/icons-material';
+import { userApi } from '../services/api'; // Import του userApi
 
-export default function LoginPage() {
+export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε την onLogin prop
     const navigate = useNavigate();
-
-    // 1️⃣ local state for form
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('student');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // 2️⃣ handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // no real auth yet—just route by role
-        if (role === 'student') {
-            navigate('/student/statistics');
-        } else {
-            navigate('/instructor');
+        setLoading(true);
+        setError(null);
+        try {
+            const requestBody = {
+                password: password,
+                role: role
+            };
+
+            if (role === 'student') {
+                requestBody.academicId = username;
+            } else {
+                requestBody.email = username;
+            }
+
+            const response = await userApi.post('/auth/login', requestBody);
+            const { accessToken, refreshToken } = response.data;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            onLogin(accessToken); // ✅ Καλούμε την onLogin prop με το accessToken
+            // Redirect τον χρήστη στην κατάλληλη σελίδα ανάλογα με τον ρόλο
+            if (role === 'student') {
+                navigate('/student/statistics');
+            } else {
+                navigate('/instructor');
+            }
+        } catch (err) {
+            setError(err.response?.data?.error || 'Login failed');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -106,6 +130,11 @@ export default function LoginPage() {
 
                     {/* 3️⃣ attach handleSubmit here */}
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
+                        {error && (
+                            <Typography color="error" sx={{ mb: 1 }}>
+                                {error}
+                            </Typography>
+                        )}
                         <TextField
                             fullWidth
                             label="Username"
@@ -156,8 +185,9 @@ export default function LoginPage() {
                             variant="contained"
                             size="large"
                             type="submit"
+                            disabled={loading}
                         >
-                            Login
+                            {loading ? 'Logging in...' : 'Login'}
                         </Button>
 
                         <Box textAlign="center" sx={{ mt: 1 }}>

@@ -14,28 +14,19 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15
+          image: postgres:13
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: user-db-credentials
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: user-db-credentials
-                  key: password
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: user-db-config
-                  key: database
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "root"
+            - name: DB_NAME
+              value: "usersdb"
           volumeMounts:
-            - name: user-db-storage
-              mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql/data
+              name: user-db-storage
       volumes:
         - name: user-db-storage
           persistentVolumeClaim:

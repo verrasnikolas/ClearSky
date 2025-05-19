@@ -14,31 +14,38 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: your-dockerhub-username/user-service:latest # Replace with your Docker Hub image
+          image: user-service:latest # Make sure your Docker image is tagged as user-service:latest or adjust accordingly
+          imagePullPolicy: Never # Use 'IfNotPresent' if you push your image to a registry
           ports:
             - containerPort: 3005
           env:
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: user-db-credentials
-                  key: username
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: user-db-credentials
-                  key: password
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: user-db-config
-                  key: database
+            - name: PORT
+              value: "3005"
             - name: DB_HOST
-              value: user-db # Matches the name of your PostgreSQL Service
+              value: "user-db" # Kubernetes Service name for the database
             - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: user-db-config
-                  key: port
+              value: "5432"
+            - name: DB_NAME
+              value: "usersdb"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "root"
+            - name: JWT_SECRET
+              value: "super_secret"
+            - name: TOKEN_EXPIRY
+              value: "2h"
+            - name: REFRESH_TOKEN_SECRET
+              value: "refresh_secret"
+            - name: USER_SERVICE_URL
+              value: "http://user-service:3005" # Internal service URL
+            - name: EMAIL_USER
+              value: "clearskydemo@gmail.com"
+            - name: EMAIL_PASSWORD
+              value: "eeisynbnnxlgmkch"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-service" # Kubernetes Service name for RabbitMQ
+            - name: RABBITMQ_PORT
+              value: "5672"
             - name: NODE_ENV
-              value: "development" # Or "production" based on your needs
+              value: "development"
