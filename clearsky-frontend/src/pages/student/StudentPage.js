@@ -4,7 +4,11 @@ import GradeDetails from '../../components/GradeDetails';
 import ReviewStatus from '../../components/ReviewStatus';
 import styles from './StudentPage.module.css';
 import StudentNavbar from './StudentNavbar';
-import { getGradesByUser } from '../../services/GradeService';
+import {
+    getGradesByUser,
+    getGradeForStudentCourse
+} from '../../services/GradeService';
+import { getReviewStatus } from '../../services/ReviewService';
 
 const STUDENT_ID = '03181110';
 
@@ -25,14 +29,39 @@ const StudentPage = () => {
         setSelectedCourseForReview(course);
     };
 
-    const handleViewGrades = (course) => {
+    const handleViewGrades = async (course) => {
         clearAll();
-        setSelectedCourseForGrades(course);
+        try {
+            const res = await getGradeForStudentCourse(STUDENT_ID, course.courseId);
+            const gradeData = res.data;
+
+            setSelectedCourseForGrades({
+                courseId: course.courseId,
+                name: course.name,
+                term: course.term,
+                grade: gradeData.grade,
+                question_grades: gradeData.question_grades
+            });
+        } catch (err) {
+            console.error('Failed to fetch grade details:', err);
+            alert('Could not load grades for this course.');
+        }
     };
 
-    const handleViewStatus = (course) => {
+    const handleViewStatus = async (course) => {
         clearAll();
-        setSelectedReviewStatus(course);
+        try {
+            const res = await getReviewStatus(STUDENT_ID, course.courseId);
+            setSelectedReviewStatus({
+                courseId: course.courseId,
+                name: course.name,
+                term: course.term,
+                ...res.data // includes reason, status, response, timestamps
+            });
+        } catch (err) {
+            console.error('No review found:', err);
+            alert('No review request found for this course.');
+        }
     };
 
     useEffect(() => {
@@ -41,13 +70,15 @@ const StudentPage = () => {
                 const res = await getGradesByUser(STUDENT_ID);
                 const extracted = res.data.map((entry, index) => ({
                     id: index + 1,
-                    name: entry.course.title,
-                    term: entry.course.semester,
-                    status: entry.final_grade !== null ? 'closed' : 'open',
+                    courseId: entry.course_id,
+                    name: entry.course_name,
+                    term: entry.semester,
+                    status: entry.grading_status
                 }));
                 setCourses(extracted);
             } catch (err) {
                 console.error('Failed to fetch courses for student:', err);
+                alert('Failed to load courses.');
             }
         };
         fetchCourses();
@@ -68,7 +99,7 @@ const StudentPage = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {courses.map(course => (
+                    {courses.map((course) => (
                         <tr key={course.id}>
                             <td>{course.name}</td>
                             <td>{course.term}</td>
@@ -101,7 +132,7 @@ const StudentPage = () => {
 
                 {selectedCourseForReview && (
                     <div className={styles.detailsSection}>
-                        <ReviewForm course={selectedCourseForReview} />
+                        <ReviewForm course={selectedCourseForReview} studentId={STUDENT_ID} />
                     </div>
                 )}
 

@@ -1,4 +1,3 @@
-// src/pages/StudentStatisticsPage.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './StudentStatisticsPage.module.css';
@@ -26,7 +25,6 @@ const StudentStatisticsPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Fetch available course + examPeriod pairs
     useEffect(() => {
         axios
             .get('http://localhost:30032/api/stats/all-courses')
@@ -69,13 +67,21 @@ const StudentStatisticsPage = () => {
     };
 
     const getPassFailPieData = () => {
-        const averages = Object.values(selectedStats.questionAverages || {});
-        const passed = averages.filter(avg => avg >= 5).length;
-        const failed = averages.length - passed;
+        const passed = selectedStats.passCount ?? 0;
+        const failed = selectedStats.notPassCount ?? 0;
+        const total = passed + failed;
 
         return [
-            { name: 'Passed', value: passed },
-            { name: 'Failed', value: failed }
+            {
+                name: 'Passed',
+                value: passed,
+                percentage: total ? ((passed / total) * 100).toFixed(1) : 0
+            },
+            {
+                name: 'Failed',
+                value: failed,
+                percentage: total ? ((failed / total) * 100).toFixed(1) : 0
+            }
         ];
     };
 
@@ -126,33 +132,59 @@ const StudentStatisticsPage = () => {
                             Stats for {selectedCourseInfo.courseCode} – {selectedCourseInfo.examPeriod}
                         </h3>
 
+                        {/* Combined: Grade Distribution and Pie Chart */}
                         <div className={styles.chartGrid}>
-                            <div className={styles.chartBox}>
-                                📊 Average Grade: {selectedStats.averageGrade ?? 'N/A'}
-                            </div>
-
-                            <div className={styles.chartBox} style={{ width: '100%', height: '300px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
+                            <div className={styles.chartBox} style={{ height: '300px' }}>
+                                <h4>📊 Grade Distribution</h4>
+                                <ResponsiveContainer width="100%" height="90%">
                                     <BarChart data={getGradeDistributionData()}>
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="grade" />
+                                        <XAxis
+                                            dataKey="grade"
+                                            type="number"
+                                            domain={[0, 10]}
+                                            ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                        />
                                         <YAxis allowDecimals={false} />
                                         <Tooltip />
                                         <Bar dataKey="count" fill="#8884d8" />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
+
+                            <div className={styles.chartBox} style={{ height: '300px' }}>
+                                <h4>✅ Pass vs ❌ Fail (Avg ≥ 5)</h4>
+                                <ResponsiveContainer width="100%" height="90%">
+                                    <PieChart>
+                                        <Pie
+                                            data={getPassFailPieData()}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={90}
+                                            label={({ name, percentage }) => `${name}: ${percentage}%`}
+                                        >
+                                            <Cell fill="#82ca9d" />
+                                            <Cell fill="#ff6961" />
+                                        </Pie>
+                                        <Legend />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
                         </div>
 
+                        {/* Question-Level Charts */}
                         {selectedStats.questionDistributions && selectedStats.questionAverages && (
                             <>
                                 <h3 className={styles.subheading}>📊 Question Performance</h3>
                                 <div className={styles.chartGrid}>
                                     {Object.entries(selectedStats.questionDistributions).map(([question, dist]) => {
-                                        const data = Object.entries(dist).map(([score, count]) => ({
-                                            score: Number(score),
-                                            count
+                                        const data = Array.from({ length: 11 }, (_, i) => ({
+                                            score: i,
+                                            count: dist[i] ?? 0
                                         }));
+
                                         const average = selectedStats.questionAverages[question];
 
                                         return (
@@ -160,7 +192,12 @@ const StudentStatisticsPage = () => {
                                                 <ResponsiveContainer width="100%" height="100%">
                                                     <BarChart data={data}>
                                                         <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="score" />
+                                                        <XAxis
+                                                            dataKey="score"
+                                                            type="number"
+                                                            domain={[0, 10]}
+                                                            ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                                        />
                                                         <YAxis domain={[0, 'dataMax + 1']} />
                                                         <Tooltip />
                                                         <Bar dataKey="count" fill="#82ca9d" />
@@ -174,29 +211,6 @@ const StudentStatisticsPage = () => {
                                     })}
                                 </div>
                             </>
-                        )}
-
-                        {selectedStats.questionAverages && (
-                            <div className={styles.pieWrapper}>
-                                <h3 className={styles.subheading}>✅ Pass vs ❌ Fail (Avg ≥ 5)</h3>
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <PieChart>
-                                        <Pie
-                                            data={getPassFailPieData()}
-                                            dataKey="value"
-                                            nameKey="name"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius={100}
-                                            label
-                                        >
-                                            <Cell fill="#82ca9d" />
-                                            <Cell fill="#ff6961" />
-                                        </Pie>
-                                        <Legend />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
                         )}
                     </>
                 )}

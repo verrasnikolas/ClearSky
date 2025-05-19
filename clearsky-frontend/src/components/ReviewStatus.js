@@ -1,29 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './ReviewStatus.module.css';
-import { getAllReviews } from '../services/ReviewService'; // or filter by course
 
 const ReviewStatus = ({ course }) => {
-    const [review, setReview] = useState(null);
+    if (!course) return null;
 
-    useEffect(() => {
-        const fetchReview = async () => {
-            const res = await getAllReviews();
-            const match = res.data.find(r => r.gradeEntryId === course.id);
-            setReview(match || { status: 'N/A', response: 'No review submitted.' });
-        };
-        fetchReview();
-    }, [course]);
+    const { name, term, status, reason, response } = course;
+
+    const hasReview = reason || status;
 
     return (
-        <div className={styles.box}>
-            <div className={styles.header}>REVIEW REQUEST STATUS — {course.name} ({course.term})</div>
-            <div className={styles.message}>
-                <strong>Status:</strong> {review?.status || 'N/A'}
-            </div>
-            <textarea readOnly className={styles.responseBox} value={review?.response || 'No instructor response yet.'} />
-            <div className={styles.footer}>
-                <button className={styles.button}>Download Attachment</button>
-                <button className={styles.button}>Ack</button>
+        <div className={styles.wrapper}>
+            <h2 className={styles.title}>
+                REVIEW REQUEST STATUS — {name} ({term})
+            </h2>
+
+            <p className={styles.label}>
+                <strong>Status:</strong> {status ?? 'N/A'}
+            </p>
+
+            {hasReview ? (
+                <div className={styles.reviewBox}>
+                    <p><strong>Reason:</strong> {reason}</p>
+                    <p><strong>Instructor Response:</strong> {response || 'Not responded yet.'}</p>
+                </div>
+            ) : (
+                <div className={styles.reviewBox}>
+                    No review submitted.
+                </div>
+            )}
+
+            <div className={styles.actions}>
+                <button className={styles.btn}>Download Attachment</button>
+                <button className={styles.btn}>Ack</button>
             </div>
         </div>
     );

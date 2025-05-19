@@ -32,35 +32,62 @@ export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε τ�
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    //Uncomment for real login
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+    //     setError(null);
+    //     try {
+    //         const requestBody = {
+    //             password: password,
+    //             role: role
+    //         };
+    //
+    //         if (role === 'student') {
+    //             requestBody.academicId = username;
+    //         } else {
+    //             requestBody.email = username;
+    //         }
+    //
+    //         const response = await userApi.post('/auth/login', requestBody);
+    //         const { accessToken, refreshToken } = response.data;
+    //         localStorage.setItem('accessToken', accessToken);
+    //         localStorage.setItem('refreshToken', refreshToken);
+    //         onLogin(accessToken); // ✅ Καλούμε την onLogin prop με το accessToken
+    //         // Redirect τον χρήστη στην κατάλληλη σελίδα ανάλογα με τον ρόλο
+    //         if (role === 'student') {
+    //             navigate('/student/statistics');
+    //         } else {
+    //             navigate('/instructor');
+    //         }
+    //     } catch (err) {
+    //         setError(err.response?.data?.error || 'Login failed');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    //Use for mock login
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
         try {
-            const requestBody = {
-                password: password,
-                role: role
-            };
+            // TEMP: Simulate login while backend is down
+            const mockToken = 'mock-access-token';
+            localStorage.setItem('accessToken', mockToken);
+            localStorage.setItem('refreshToken', 'mock-refresh-token');
+            onLogin(mockToken);
 
-            if (role === 'student') {
-                requestBody.academicId = username;
-            } else {
-                requestBody.email = username;
-            }
-
-            const response = await userApi.post('/auth/login', requestBody);
-            const { accessToken, refreshToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            onLogin(accessToken); // ✅ Καλούμε την onLogin prop με το accessToken
-            // Redirect τον χρήστη στην κατάλληλη σελίδα ανάλογα με τον ρόλο
+            // Redirect the user based on role
             if (role === 'student') {
                 navigate('/student/statistics');
             } else {
                 navigate('/instructor');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed');
+            setError('Temporary login failure.');
         } finally {
             setLoading(false);
         }
@@ -177,6 +204,8 @@ export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε τ�
                         >
                             <FormControlLabel value="student" control={<Radio />} label="Student" />
                             <FormControlLabel value="instructor" control={<Radio />} label="Instructor" />
+                            <FormControlLabel value="institution_representative" control={<Radio />} label="Institution Representative" />
+
                         </RadioGroup>
 
                         {/* 4️⃣ make this button submit the form */}

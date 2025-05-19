@@ -7,7 +7,11 @@ const ReviewRequest = sequelize.define('ReviewRequest', {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
-    gradeEntryId: {
+    student_id: {
+        type: DataTypes.STRING, // or DataTypes.UUID if you're enforcing UUID format
+        allowNull: false
+    },
+    course_id: {
         type: DataTypes.UUID,
         allowNull: false
     },

@@ -1,53 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './GradeDetails.module.css';
-import { getGradesByUser } from '../services/GradeService';
-
-const STUDENT_ID = '03181110';
 
 const GradeDetails = ({ course }) => {
-    const [entry, setEntry] = useState(null);
+    if (!course) return null;
 
-    useEffect(() => {
-        const fetchGrades = async () => {
-            try {
-                const res = await getGradesByUser(STUDENT_ID);
-                const courseGrades = res.data;
-
-                // Match by course title
-                const match = courseGrades.find(g => g.course.title === course.name);
-                setEntry(match || null);
-            } catch (err) {
-                console.error('Failed to fetch grade data:', err);
-            }
-        };
-
-        fetchGrades();
-    }, [course]);
-
-    if (!entry) return <p>No grades found for {course.name}.</p>;
+    const { name, term, grade, question_grades } = course;
 
     return (
-        <div className={styles.gradesBox}>
-            <h4>{entry.course.title} – {entry.course.semester}</h4>
-            <p><strong>Initial Grade:</strong> {entry.initial_grade}</p>
-            {entry.final_grade && <p><strong>Final Grade:</strong> {entry.final_grade}</p>}
+        <div className={styles.wrapper}>
+            <h2 className={styles.title}>📘 Grade Details</h2>
 
-            <table className={styles.questionTable}>
+            <div className={styles.infoGrid}>
+                <div><strong>Course:</strong> {name}</div>
+                <div><strong>Exam Period:</strong> {term}</div>
+                <div><strong>Final Grade:</strong> <span className={styles.grade}>{grade}</span></div>
+            </div>
+
+            <h3 className={styles.subtitle}>📝 Question Breakdown</h3>
+            <table className={styles.table}>
                 <thead>
                 <tr>
-                    <th>Q#</th>
-                    <th>Score</th>
-                    <th>Weight (%)</th>
+                    <th>Question</th>
+                    <th>Grade</th>
                 </tr>
                 </thead>
                 <tbody>
-                {entry.questions.map(q => (
-                    <tr key={q.question_id}>
-                        <td>{q.question_id}</td>
-                        <td>{q.initial_score}</td>
-                        <td>{q.weight}</td>
-                    </tr>
-                ))}
+                {question_grades &&
+                    Object.entries(question_grades).map(([question, score]) => (
+                        <tr key={question}>
+                            <td>{question}</td>
+                            <td className={score >= 5 ? styles.pass : styles.fail}>{score}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>

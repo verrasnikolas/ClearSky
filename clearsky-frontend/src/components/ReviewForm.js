@@ -2,22 +2,31 @@ import React, { useState } from 'react';
 import { submitReview } from '../services/ReviewService';
 import styles from './ReviewForm.module.css';
 
-const ReviewForm = () => {
-    const [gradeEntryId, setGradeEntryId] = useState('');
+const ReviewForm = ({ course, studentId }) => {
     const [reason, setReason] = useState('');
+    const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await submitReview({ gradeEntryId, reason });
-        alert('Review submitted!');
-        setGradeEntryId('');
-        setReason('');
+
+        try {
+            await submitReview({
+                student_id: studentId,
+                course_id: course.courseId,
+                reason
+            });
+            setSubmitted(true);
+            setReason('');
+        } catch (err) {
+            console.error('Failed to submit review:', err);
+            alert('Something went wrong.');
+        }
     };
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.header}>
-                NEW REVIEW REQUEST <span className={styles.context}>physics – spring 2025</span>
+                NEW REVIEW REQUEST <span className={styles.context}>{course.name} – {course.term}</span>
             </div>
             <form onSubmit={handleSubmit} className={styles.form}>
                 <label className={styles.label}>Message to instructor</label>
@@ -29,14 +38,13 @@ const ReviewForm = () => {
                     required
                 />
                 <div className={styles.buttonContainer}>
-                    <button type="submit" className={styles.button}>
-                        Submit grade review request
+                    <button type="submit" className={styles.button} disabled={submitted}>
+                        {submitted ? 'Review Submitted' : 'Submit grade review request'}
                     </button>
                 </div>
             </form>
         </div>
     );
-
 };
 
 export default ReviewForm;

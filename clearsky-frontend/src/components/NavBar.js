@@ -28,8 +28,6 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
                 <li><Link to="/">Home</Link></li>
                 {isLoggedIn && (
                     <>
-                        <li><Link to="/student/statistics">Statistics</Link></li>
-                        <li><Link to="/student/grades">My Grades</Link></li>
                         <li><Link to="/instructor">Instructor</Link></li>
                         <li><button onClick={handleLogout}>Logout</button></li>
                     </>

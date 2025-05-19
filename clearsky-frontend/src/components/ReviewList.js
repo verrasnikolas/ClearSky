@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllReviews, replyToReview } from '../services/ReviewService';
-import ReviewReplyForm from './ReviewReplyForm'; // <-- make sure this exists
+import ReviewReplyForm from './ReviewReplyForm';
 import styles from './ReviewList.module.css';
 
 const ReviewList = () => {
@@ -14,7 +14,6 @@ const ReviewList = () => {
     const fetchReviews = async () => {
         try {
             const result = await getAllReviews();
-            console.log("Fetched reviews:", result);
             setReviews(result.data);
         } catch (err) {
             console.error("Failed to fetch reviews:", err);
@@ -23,7 +22,13 @@ const ReviewList = () => {
 
     const handleReplySubmit = async (update) => {
         try {
-            await replyToReview(update.id, update);
+            await replyToReview({
+                student_id: update.student_id,
+                course_id: update.course_id,
+                status: update.status,
+                response: update.response
+            });
+
             setSelectedReview(null);
             fetchReviews();
         } catch (err) {
@@ -41,7 +46,8 @@ const ReviewList = () => {
                 <table className={styles.table}>
                     <thead>
                     <tr>
-                        <th>Grade Entry ID</th>
+                        <th>Student ID</th>
+                        <th>Course ID</th>
                         <th>Reason</th>
                         <th>Status</th>
                         <th>Response</th>
@@ -51,7 +57,8 @@ const ReviewList = () => {
                     <tbody>
                     {reviews.map((review) => (
                         <tr key={review.id}>
-                            <td>{review.gradeEntryId}</td>
+                            <td>{review.student_id}</td>
+                            <td>{review.course_id}</td>
                             <td>{review.reason}</td>
                             <td>{review.status}</td>
                             <td>{review.response || '-'}</td>
