@@ -6,6 +6,9 @@ const statsController = require('../controllers/statsController');
 router.get('/courses/:courseCode/:semester', statsController.getCourseStats);
 
 // GET /api/stats/courses/:courseCode
-router.get('/courses/:courseCode', statsController.getAllCourseStats); // New route for all semesters
+router.get('/courses/:courseCode', statsController.getAllCourseStats);
+
+// GET /api/stats/all-courses
+router.get('/all-courses', statsController.getAllCoursesWithExamPeriods); // New route
 
 module.exports = router;
