@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        courseName: { // Add the courseName field
+        courseName: {
             type: DataTypes.STRING,
-            allowNull: true, // Adjust allowNull based on your requirements
+            allowNull: true,
         },
         semester: {
             type: DataTypes.STRING,
@@ -26,12 +26,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSONB,
             allowNull: true,
         },
-        questionAverages: { // Add this field to store average question scores
+        questionAverages: {
             type: DataTypes.JSONB,
             allowNull: true,
         },
-        questionDistributions: { // Add this field to store question distributions
+        questionDistributions: {
             type: DataTypes.JSONB,
+            allowNull: true,
+        },
+        passCount: {      // New field for pass count
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        notPassCount: {   // New field for not pass count
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
     }, {

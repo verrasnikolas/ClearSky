@@ -2,7 +2,7 @@
 kubectl delete -f user-service.yaml -n default
 Write-Host "Deleted user-service."
 
-kubectl delete -f user-service-deployment.yaml -n default
+kubectl delete -f user-deployment.yaml -n default
 Write-Host "Deleted user-service-deployment."
 
 # Delete User Service migration Job

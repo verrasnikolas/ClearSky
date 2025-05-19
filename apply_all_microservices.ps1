@@ -17,4 +17,12 @@ cd upload-service
 ./apply
 cd ..
 
+cd user-service
+./apply
+cd ..
+
+cd clearsky-frontend
+./apply
+cd ..
+
 Write-Host "All resources applied successfully!"

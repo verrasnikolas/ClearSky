@@ -14,6 +14,14 @@ cd upload-service
 ./delete
 cd ..
 
+cd user-service
+./delete
+cd ..
+
+cd clearsky-frontend
+./delete
+cd ..
+
 docker stop rabbitmq
 docker rm rabbitmq
 

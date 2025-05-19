@@ -13,3 +13,11 @@ cd ..
 cd upload-service
 docker build -t upload-excel-image .
 cd ..
+
+cd user-service
+docker build -t user-service:latest .
+cd ..
+
+cd clearsky-frontend
+docker build -t clearsky-frontend:latest .
+cd ..
