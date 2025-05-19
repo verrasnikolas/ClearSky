@@ -27,14 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
-    },
-    initial_grade_id: {
-      type: DataTypes.UUID,
-      allowNull: true
     }
   }, {
     tableName: 'final_grades',
-    timestamps: true
+    timestamps: false,
+    uniqueKeys: {
+      unique_student_course: {
+        fields: ['student_id', 'course_id']
+      }
+    }
   });
 
   FinalGrade.associate = models => {
@@ -43,6 +44,8 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     });
   };
+
+
 
   return FinalGrade;
 };

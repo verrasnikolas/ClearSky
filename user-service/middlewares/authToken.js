@@ -1,16 +1,25 @@
 const jwt = require('jsonwebtoken');
+const { isTokenRevoked } = require('../utils/blacklist');
 
-exports.authenticateToken = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.status(401).json({ error: 'Missing token' });
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(403).json({ error: 'Invalid token' });
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
     }
+
+    if (isTokenRevoked(token)) {
+        return res.status(401).json({ error: 'Token has been revoked' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+        req.user = user;
+        next();
+    });
 };
+
+module.exports = authenticateToken;

@@ -24,7 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'initial_grades',
-    timestamps: true
+    timestamps: false,
+    uniqueKeys: {
+      unique_student_course: {
+        fields: ['student_id', 'course_id']
+      }
+    }
   });
 
   InitialGrade.associate = (models) => {

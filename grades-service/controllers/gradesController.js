@@ -1,65 +1,8 @@
 // controllers/gradesController.js
-const { Course, GradeEntry, QuestionGrade } = require('../models');
-const { sequelize } = require('../models');
+const { Course, InitialGrade, FinalGrade } = require('../models');
 
 // POST /api/grades/upload
-const uploadInitialGrades = async (req, res) => {
-    const { courseMeta, gradeEntries, extractedUsers, skippedRows } = req;
-    try {
-        // 1. Find or create course
-        const [course] = await Course.findOrCreate({
-            where: {
-                code: courseMeta.code,
-                semester: courseMeta.semester
-            },
-            defaults: {
-                title: courseMeta.title,
-                question_weights: courseMeta.questionWeights
-            }
-        });
-
-        // 2. Save each grade entry and its question grades
-        for (const grade of gradeEntries) {
-            const transaction = await sequelize.transaction();
-            try {
-                const gradeEntry = await GradeEntry.create({
-                    course_id: course.id,
-                    student_id: grade.studentId,
-                    initial_grade: grade.initialGrade,
-                    status: 'initial'
-                }, { transaction });
-
-                const questionGrades = Object.entries(grade.questionGrades).map(
-                    ([questionId, score]) => ({
-                        grade_entry_id: gradeEntry.id,
-                        question_id: questionId,
-                        initial_score: score,
-                        status: 'initial'
-                    })
-                );
-
-                await QuestionGrade.bulkCreate(questionGrades, { transaction });
-
-                await transaction.commit(); // commit just this student
-            } catch (err) {
-                await transaction.rollback(); // rollback this one only
-                console.error(`Failed to save grades for ${grade.studentId}`, err);
-                // Optional: collect failed IDs to report
-            }
-        }
-
-        res.status(201).json({
-            message: 'Grades uploaded successfully',
-            courseId: course.id,
-            insertedGrades: courseMeta.gradesCount,
-            skippedRows
-        });
-
-    } catch (err) {
-        console.error('Upload failed:', err);
-        res.status(500).json({ error: 'Failed to save grades' });
-    }
-};
+const uploadInitialGrades = async (req, res) => {};
 
 // GET /api/grades/
 const getGrades = async (req, res) => {
@@ -72,58 +15,85 @@ const getGrades = async (req, res) => {
 };
 
 // GET /api/grades/student/:studentId
-const getStudentGrades = async (req, res) => {
-    const { studentId } = req.params;
+const getStudentGradedCourses = async (req, res) => {
+    const studentId = req.params.studentId;
     try {
-        const grades = await GradeEntry.findAll({
+        const initialGrades = await InitialGrade.findAll({
             where: { student_id: studentId },
-            include: [
-                {
-                    model: Course,
-                    attributes: ['code', 'title', 'semester', 'question_weights']
-                },
-                {
-                    model: QuestionGrade,
-                    attributes: ['question_id', 'initial_score', 'final_score', 'status']
-                }
-            ],
-            order: [['createdAt', 'DESC']]
+            include: [{ model: Course }],
+            raw: true,
+            nest: true
+        });
+        const finalGrades = await FinalGrade.findAll({
+            where: { student_id: studentId },
+            include: [{ model: Course }],
+            raw: true,
+            nest: true
         });
 
-        const formatted = grades.map(entry => {
-            const questionWeights = entry.Course.question_weights || {};
+        const courseMap = new Map();
+        for (const grade of finalGrades) {
+            const key = grade.course_id;
+            courseMap.set(key, {
+                course_id: key,
+                course_name: grade.Course.title,
+                semester: grade.Course.semester,
+                grading_status: 'closed'
+            });
+        }
+        for (const grade of initialGrades) {
+            const key = grade.course_id;
+            if (!courseMap.has(key)) {
+                courseMap.set(key, {
+                    course_id: key,
+                    course_name: grade.Course.title,
+                    semester: grade.Course.semester,
+                    grading_status: 'open'
+                });
+            }
+        }
 
-            const questions = entry.QuestionGrades.map(q => ({
-                question_id: q.question_id,
-                initial_score: q.initial_score,
-                final_score: q.final_score,
-                status: q.status,
-                weight: questionWeights[q.question_id] || null
-            }));
-
-            return {
-                course: {
-                    code: entry.Course.code,
-                    title: entry.Course.title,
-                    semester: entry.Course.semester
-                },
-                initial_grade: entry.initial_grade,
-                final_grade: entry.final_grade,
-                status: entry.status,
-                questions
-            };
-        });
-
-        res.status(200).json(formatted);
-
-    } catch (err) {
-        console.error('Failed to fetch student grades:', err);
-        res.status(500).json({ error: 'Could not retrieve student grades' });
+        const courseList = Array.from(courseMap.values());
+        res.status(200).json(courseList);
+    } catch (error) {
+        console.error('❌ Error fetching graded courses:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
+const getStudentGradeForCourse = async (req, res) => {
+    const { studentId, courseId } = req.params;
+
+    try {
+        const initialGrade = await InitialGrade.findOne({
+            where: { student_id: studentId, course_id: courseId },
+            raw: true
+        });
+
+        if (initialGrade) {
+            return res.status(200).json({...initialGrade});
+        }
+
+        const finalGrade = await FinalGrade.findOne({
+            where: { student_id: studentId, course_id: courseId },
+            raw: true
+        });
+
+        if (finalGrade) {
+            return res.status(200).json({...finalGrade});
+        }
+
+        return res.status(404).json({ error: 'No grade found for this student in the given course.' });
+    } catch (err) {
+        console.error('❌ Failed to get specific grade:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
+    getStudentGradedCourses,
     uploadInitialGrades,
     getGrades,
-    getStudentGrades
+    getStudentGradeForCourse
 };

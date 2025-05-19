@@ -22,11 +22,16 @@ async function saveInitialGrades(courseId, gradeEntries) {
             course_id: courseId,
             student_id: entry.studentId,
             grade: entry.initialGrade,
-            question_grades: entry.questionGrades,
-            status: 'initial' // optional: ENUM('initial', 'reviewed')
+            question_grades: entry.questionGrades
         }));
 
         await InitialGrade.bulkCreate(toInsert, { transaction });
+
+        await Course.update(
+            { initial_grades_submission_at: new Date() },
+            { where: { id: courseId }, transaction }
+        );
+
         await transaction.commit();
         console.log(`✅ Saved ${toInsert.length} initial grades for course ${courseId}`);
     } catch (err) {

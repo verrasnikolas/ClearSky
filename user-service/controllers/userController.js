@@ -63,7 +63,6 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-
 exports.changePassword = async (req, res) => {
     try {
         const { newPassword } = req.body;

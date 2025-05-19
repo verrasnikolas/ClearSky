@@ -1,16 +1,12 @@
-import axios from 'axios';
+// src/services/GradeService.js
+import { gradeApi } from './api';
 
-const API_URL = 'http://localhost:30031/api/grades';
+const API_ENDPOINT = '/'; // Τα endpoints είναι σχετικά με το baseURL που ορίστηκε στο gradeApi
 
 // Get all grades
-export const getAllGrades = () => axios.get(API_URL);
+export const getAllGrades = () => gradeApi.get(API_ENDPOINT);
 
-// Upload grades (if needed)
-export const uploadGrades = (formData) =>
-    axios.post(`${API_URL}/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-    });
+// Get grades by user ID
+export const getGradesByUser = (userId) => gradeApi.get(`/student/${userId}`);
 
-// Get grades by user ID (if your backend supports it)
-export const getGradesByUser = (userId) =>
-    axios.get(`${API_URL}/student/${userId}`);
+// ... άλλες λειτουργίες που αφορούν τα grades

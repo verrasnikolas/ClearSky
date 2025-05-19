@@ -35,15 +35,13 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()')
+      initial_grades_submission_at: {
+        allowNull: true,
+        type: Sequelize.DATE
       },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()')
+      final_grades_submission_at: {
+        allowNull: true,
+        type: Sequelize.DATE
       },
     });
   },
