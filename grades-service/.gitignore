@@ -28,3 +28,9 @@ logs/
 coverage/
 
 config/db_instructions
+
+DB_HOST=grades-postgres
+DB_NAME=gradesdb
+DB_USER=postgres
+DB_PASSWORD=1234
+DB_PORT=5432
