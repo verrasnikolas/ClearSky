@@ -25,11 +25,11 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
         return;
     }
 
-    const totalGrade = gradeEntries.reduce((sum, entry) => sum + entry.initialGrade, 0);
+    const totalGrade = gradeEntries.reduce((sum, entry) => sum + entry.grade, 0);
     const averageGrade = totalGrade / gradeEntries.length;
 
     const gradeDistribution = gradeEntries.reduce((acc, entry) => {
-        const grade = Math.round(entry.initialGrade);
+        const grade = Math.round(entry.grade);
         acc[grade] = (acc[grade] || 0) + 1;
         return acc;
     }, {});
@@ -54,7 +54,7 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
     }
 
     // Calculate pass/not_pass counts
-    const passCount = gradeEntries.filter(entry => entry.initialGrade >= 5).length;
+    const passCount = gradeEntries.filter(entry => entry.grade >= 5).length;
     const notPassCount = gradeEntries.length - passCount;
 
 
@@ -93,7 +93,7 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 
                 console.log('\n Grade Entries:');
                 gradeEntries.forEach((g, index) => {
-                    console.log(`  #${index + 1} | Student ID: ${g.studentId}, Grade: ${g.initialGrade}`);
+                    console.log(`  #${index + 1} | Student ID: ${g.studentId}, Grade: ${g.grade}`);
                     console.log(`     Questions: ${JSON.stringify(g.questionGrades)}`);
                 });
 
