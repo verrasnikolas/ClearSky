@@ -22,27 +22,27 @@ spec:
             - name: PORT
               value: "3005"
             - name: DB_HOST
-              value: "user-db-service" # Kubernetes Service name for the database
+              value: "user-db" # Kubernetes Service name for the database
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: ${DB_NAME}
+              value: "usersdb"
             - name: DB_USER
-              value: ${DB_USER}
+              value: "postgres"
             - name: DB_PASS
-              value: ${DB_PASS}
+              value: "root"
             - name: JWT_SECRET
-              value: ${JWT_SECRET}
+              value: "super_secret"
             - name: TOKEN_EXPIRY
-              value: ${TOKEN_EXPIRY}
+              value: "2h"
             - name: REFRESH_TOKEN_SECRET
-              value: ${REFRESH_TOKEN_SECRET}
+              value: "refresh_secret"
             - name: USER_SERVICE_URL
               value: "http://user-service:3005" # Internal service URL
             - name: EMAIL_USER
-              value: ${EMAIL_USER}
+              value: "clearskydemo@gmail.com"
             - name: EMAIL_PASSWORD
-              value: ${EMAIL_PASSWORD}
+              value: "eeisynbnnxlgmkch"
             - name: RABBITMQ_HOST
               value: "rabbitmq-service" # Kubernetes Service name for RabbitMQ
             - name: RABBITMQ_PORT
