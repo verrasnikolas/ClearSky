@@ -61,7 +61,7 @@ const getApiInstance = (baseURL) => {
 // ... (οι ορισμοί των userApi, gradeApi, κ.λπ.) ...
 
 // Instances για κάθε microservice
-export const userApi = getApiInstance('http://localhost:3005/api');       // User Service
+export const userApi = getApiInstance('http://localhost:3005');       // User Service
 export const gradeApi = getApiInstance('http://localhost:30031/api/grades'); // Grade Service
 export const uploadApi = getApiInstance('http://localhost:30036/api/upload'); // Upload Service
 export const reviewApi = getApiInstance('http://localhost:30003/api/reviews'); // Review Service
