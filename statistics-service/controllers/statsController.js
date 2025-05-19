@@ -1,6 +1,7 @@
-// statsController.js
+// controllers/statsController.js
 const { CourseStats } = require('../config/db');
-const { Op } = require('sequelize');
+// const { Grade } = require('../models/Grade'); // Removed import as we're not directly querying it
+const { Sequelize, Op } = require('sequelize');
 
 const getCourseStats = async (req, res) => {
     const { courseCode, semester } = req.params;
@@ -19,6 +20,7 @@ const getCourseStats = async (req, res) => {
         res.status(200).json({
             averageGrade: stats.averageGrade,
             gradeDistribution: stats.gradeDistribution,
+            questionAverages: stats.questionAverages, // Return the stored average question scores
         });
     } catch (error) {
         console.error('Error fetching statistics:', error);
@@ -48,31 +50,30 @@ const getAllCourseStats = async (req, res) => {
 
 const getAllCoursesWithExamPeriods = async (req, res) => {
     try {
-        // Find all unique combinations of courseCode and semester
         const coursesWithExamPeriods = await CourseStats.findAll({
-            attributes: ['courseCode', 'semester'], // Select both courseCode and semester
-            group: ['courseCode', 'semester'],      // Group by both fields for unique combinations
+            attributes: ['courseCode', 'courseName', 'semester'],
+            group: ['courseCode', 'courseName', 'semester'],
         });
 
         if (!coursesWithExamPeriods || coursesWithExamPeriods.length === 0) {
             return res.status(404).json({ message: 'No course statistics found.' });
         }
 
-        // Format the results as an array of objects
         const courseExamPeriods = coursesWithExamPeriods.map(item => ({
             courseCode: item.courseCode,
-            examPeriod: item.semester, // Renamed 'semester' to 'examPeriod' for clarity
+            courseName: item.courseName,
+            examPeriod: item.semester,
         }));
 
         res.status(200).json(courseExamPeriods);
     } catch (error) {
-        console.error('Error fetching courses with exam periods:', error);
-        res.status(500).json({ error: 'Failed to fetch courses with exam periods.', details: error.message });
+        console.error('Error fetching courses with exam periods and names:', error);
+        res.status(500).json({ error: 'Failed to fetch courses with exam periods and names.', details: error.message });
     }
 };
 
 module.exports = {
     getCourseStats,
     getAllCourseStats,
-    getAllCoursesWithExamPeriods // Export the new function
+    getAllCoursesWithExamPeriods,
 };

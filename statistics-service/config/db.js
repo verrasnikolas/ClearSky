@@ -1,3 +1,4 @@
+// config/db.js
 const { Sequelize } = require('sequelize');
 require('dotenv').config(); // Ensure .env variables are loaded
 

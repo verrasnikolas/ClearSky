@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 require('dotenv').config();
 const app = express();
@@ -33,12 +34,24 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
         return acc;
     }, {});
 
+    // Calculate average score per question
+    const questionAverages = {};
+    if (gradeEntries.length > 0 && gradeEntries[0].questionGrades) {
+        const firstEntryQuestions = Object.keys(gradeEntries[0].questionGrades);
+        firstEntryQuestions.forEach(question => {
+            const totalScore = gradeEntries.reduce((sum, entry) => (entry.questionGrades && entry.questionGrades[question] !== undefined ? sum + entry.questionGrades[question] : sum), 0);
+            questionAverages[question] = parseFloat((totalScore / gradeEntries.length).toFixed(2));
+        });
+    }
+
     try {
         await CourseStats.upsert({
             courseCode: courseMeta.code,
+            courseName: courseMeta.title, // Assuming courseMeta.title is the course name
             semester: courseMeta.semester,
             averageGrade: parseFloat(averageGrade.toFixed(2)),
             gradeDistribution: distribution,
+            questionAverages: questionAverages, // Store the average question scores
         });
         console.log(`Statistics calculated and stored for ${courseMeta.code} - ${courseMeta.semester}`);
     } catch (error) {
@@ -48,8 +61,6 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 
 (async () => {
     try {
-        // Sync the model with the database. This will create the table if it doesn't exist
-        // and apply any defined indexes, including the unique index.
         await sequelize.sync();
         console.log('Database synchronized successfully.');
 

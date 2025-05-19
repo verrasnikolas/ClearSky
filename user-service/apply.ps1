@@ -1,20 +1,3 @@
-# Apply ConfigMap for User Service DB Configuration (Non-sensitive data)
-kubectl apply -f user-db-config.yaml -n default
-Write-Host "Applied user-db-config.yaml"
-
-# Apply Secret for User Service DB Credentials (Sensitive data)
-kubectl apply -f user-db-credentials.yaml -n default
-Write-Host "Applied user-db-credentials.yaml"
-
-# Verify the Secret exists before proceeding
-Write-Host "Verifying the existence of the user-db-credentials Secret..."
-$secretExists = kubectl get secret user-db-credentials -n default -o name 2>&1
-if ($LASTEXITCODE -ne 0 -or $secretExists -like "*NotFound*") {
-    Write-Error "The user-db-credentials Secret was not created successfully. Please check the output above and ensure your user-db-credentials.yaml is correct."
-    exit 1
-}
-Write-Host "user-db-credentials Secret verified."
-
 # Apply PostgreSQL resources for User Service
 kubectl apply -f user-db-pvc.yaml -n default
 Write-Host "Applied user-db-pvc.yaml"
