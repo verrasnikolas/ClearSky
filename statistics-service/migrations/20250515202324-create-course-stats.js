@@ -37,6 +37,10 @@ module.exports = {
         type: Sequelize.JSONB,
         allowNull: true
       },
+      gradesGreaterThanFive: { // ADD THIS LINE
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE
     });

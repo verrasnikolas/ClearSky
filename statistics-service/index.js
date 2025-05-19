@@ -53,15 +53,22 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
         });
     }
 
+    // Calculate pass/not_pass counts
+    const passCount = gradeEntries.filter(entry => entry.initialGrade >= 5).length;
+    const notPassCount = gradeEntries.length - passCount;
+
+
     try {
         await CourseStats.upsert({
             courseCode: courseMeta.code,
-            courseName: courseMeta.title, // Assuming courseMeta.title is the course name
+            courseName: courseMeta.title,
             semester: courseMeta.semester,
             averageGrade: parseFloat(averageGrade.toFixed(2)),
             gradeDistribution: gradeDistribution,
-            questionAverages: questionAverages, // Store the average question scores
-            questionDistributions: questionDistributions, // Store the question distributions
+            questionAverages: questionAverages,
+            questionDistributions: questionDistributions,
+            passCount: passCount,  // Store the pass count
+            notPassCount: notPassCount, // Store the not pass count
         });
         console.log(`Statistics calculated and stored for ${courseMeta.code} - ${courseMeta.semester}`);
     } catch (error) {
