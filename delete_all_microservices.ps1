@@ -15,5 +15,6 @@ cd upload-service
 cd ..
 
 docker stop rabbitmq
+docker rm rabbitmq
 
 Write-Host "All resources deleted successfully!"
