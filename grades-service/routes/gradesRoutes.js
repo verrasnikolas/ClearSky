@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const { uploadInitialGrades, getStudentGrades } = require('../controllers/gradesController');
+const { uploadInitialGrades, getStudentGradedCourses, getStudentGradeForCourse } = require('../controllers/gradesController');
 
 router.post(
     '/upload',
@@ -10,6 +10,7 @@ router.post(
     uploadInitialGrades
 );
 
-router.get('/student/:studentId', getStudentGrades);
+router.get('/student/:studentId', getStudentGradedCourses);
+router.get('/student/:studentId/course/:courseId', getStudentGradeForCourse);
 
 module.exports = router;

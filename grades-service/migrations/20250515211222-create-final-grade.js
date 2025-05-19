@@ -35,20 +35,16 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
-      initial_grade_id: {
-        type: Sequelize.UUID,
-        allowNull: true
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('NOW()')
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()')
       }
+    });
+    await queryInterface.addConstraint('final_grades', {
+      fields: ['student_id', 'course_id'],
+      type: 'unique',
+      name: 'unique_student_course'
     });
   },
 

@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
     instructor_id: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    initial_grades_submission_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    final_grades_submission_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'courses',
