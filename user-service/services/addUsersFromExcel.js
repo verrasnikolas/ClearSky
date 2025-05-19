@@ -25,7 +25,7 @@ async function addUsersFromExcel(extractedUsers = []) {
         const tempPassword = academicId || 'changeme123';
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-        const newUser = await User.create({
+        await User.create({
             name,
             email,
             academicId,
@@ -33,16 +33,8 @@ async function addUsersFromExcel(extractedUsers = []) {
             role: 'student',
             forcePasswordReset: true,
         });
-
-        console.log(`✅ Created new user: ${email}`);
-
-        // Προαιρετικά: Στείλε email καλωσορίσματος
-        await sendWelcomeEmail({
-            name,
-            email,
-            password: tempPassword
-        });
     }
+    console.log(`✅ Created new users from excel`);
 }
 
 module.exports = { addUsersFromExcel };
