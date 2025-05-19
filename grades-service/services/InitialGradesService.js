@@ -21,7 +21,7 @@ async function saveInitialGrades(courseId, gradeEntries) {
         const toInsert = gradeEntries.map(entry => ({
             course_id: courseId,
             student_id: entry.studentId,
-            grade: entry.initialGrade,
+            grade: entry.grade,
             question_grades: entry.questionGrades
         }));
 

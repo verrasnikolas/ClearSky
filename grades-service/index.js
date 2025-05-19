@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
 
 (async () => {
         await db.sequelize.authenticate();
+
         console.log('✅ Connected to the database');
 
         await connectRabbitMQ();
