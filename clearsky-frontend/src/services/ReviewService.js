@@ -1,9 +1,10 @@
-import axios from 'axios';
+// src/services/ReviewService.js
+import { reviewApi } from './api';
 
-const API_URL = 'http://localhost:30003/api/reviews';
+const API_ENDPOINT = '/'; // Τα endpoints είναι σχετικά με το baseURL που ορίστηκε στο reviewApi
 
-export const submitReview = (review) => axios.post(API_URL, review);
+export const submitReview = (review) => reviewApi.post(API_ENDPOINT, review);
 
-export const getAllReviews = () => axios.get(API_URL);
+export const getAllReviews = () => reviewApi.get(API_ENDPOINT);
 
-export const replyToReview = (id, data) => axios.patch(`${API_URL}/${id}`, data);
+export const replyToReview = (id, data) => reviewApi.patch(`/${id}`, data);

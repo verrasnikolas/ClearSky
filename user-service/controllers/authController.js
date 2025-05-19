@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { generateAccessToken, generateRefreshToken } = require('../utils/token');
 const { addRevokedToken, isTokenRevoked } = require('../utils/blacklist');
-const User = require('../models/users'); // 👈 Import του μοντέλου User
+const User = require('../models/users');
 
 exports.login = async (req, res) => {
     const { email, academicId, password, role } = req.body;
@@ -67,12 +67,22 @@ exports.refreshToken = (req, res) => {
 
 exports.logout = (req, res) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const accessToken = authHeader && authHeader.split(' ')[1];
+    const refreshToken = req.body.refreshToken; // 👈 Προσπαθούμε να λάβουμε το refreshToken από το body
 
-    if (!token) {
-        return res.status(400).json({ error: 'No token provided' });
+    if (!accessToken && !refreshToken) {
+        return res.status(400).json({ error: 'No token provided for logout' });
     }
 
-    addRevokedToken(token);
+    if (accessToken) {
+        addRevokedToken(accessToken);
+        console.log(`[AUTH-SERVICE] ✅ Access token revoked: ${accessToken.substring(0, 10)}...`);
+    }
+
+    if (refreshToken) {
+        addRevokedToken(refreshToken);
+        console.log(`[AUTH-SERVICE] ✅ Refresh token revoked: ${refreshToken.substring(0, 10)}...`);
+    }
+
     return res.json({ message: 'Logged out successfully' });
 };
