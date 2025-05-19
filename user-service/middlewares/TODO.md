@@ -1,2 +1,4 @@
-Implement a login feature
-Implement authentication feature - as a middleware?
+-Make sure the frontend sends to the backend the token
+-Decrypt the token at each microservice
+-Implement a middlewear to check the token and authorize the action in each microservice
+-Check for the correct use of refresh and blacklist implementations
