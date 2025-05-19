@@ -1,6 +1,6 @@
 const parseExcel = require('../services/excelParser');
 const {publish} = require('../messaging/eventPublisher');
-const { INITIAL_GRADES_PARSED } = require('../events/eventTypes');
+const { INITIAL_GRADES_PARSED, FINAL_GRADES_PARSED } = require('../events/eventTypes');
 
 const uploadInitialGrades = async (req, res) => {
     try {
@@ -29,6 +29,31 @@ const uploadInitialGrades = async (req, res) => {
     }
 };
 
+const uploadFinalGrades = async (req, res) => {
+    try {
+        const file = req.file;
+        if (!file) return res.status(400).json({ error: 'No file uploaded' });
+
+        const instructorId = req.body.instructor_id;
+        const { courseMeta, gradeEntries } = parseExcel(file, instructorId);
+
+        publish(FINAL_GRADES_PARSED, {
+            courseMeta,
+            gradeEntries
+        });
+
+        res.status(200).json({
+            message: 'Excel uploaded and event emitted',
+            uploaded: gradeEntries.length
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to process upload' });
+    }
+};
+
 module.exports = {
-    uploadInitialGrades
+    uploadInitialGrades,
+    uploadFinalGrades
 };

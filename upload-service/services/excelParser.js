@@ -53,9 +53,9 @@ function parseExcel(file, instructorId) {
         const email = row[2]?.toString().trim();
         const declaredSemester = row[3]?.toString().trim();
         const declaredCourse = row[4]?.toString().trim();
-        const initialGrade = parseFloat(row[6]);
+        const grade = parseFloat(row[6]);
 
-        if (!studentId || isNaN(initialGrade) || !declaredSemester) {
+        if (!studentId || isNaN(grade) || !declaredSemester) {
             skippedRows.push({ row: i + 1, reason: 'Missing required fields', studentId });
             continue;
         }
@@ -79,7 +79,7 @@ function parseExcel(file, instructorId) {
             questionGrades[qid] = isNaN(score) ? null : score;
         });
 
-        gradeEntries.push({ studentId, initialGrade, questionGrades });
+        gradeEntries.push({ studentId, grade, questionGrades });
         extractedUsers.push({ id: studentId, name: fullName, email });
     }
 
