@@ -14,6 +14,10 @@ cd upload-service
 ./delete
 cd ..
 
+cd user-service
+./delete
+cd ..
+
 docker stop rabbitmq
 docker rm rabbitmq
 

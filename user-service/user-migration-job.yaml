@@ -1,34 +1,34 @@
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: user-migration-job
-spec:
-  template:
-    spec:
-      containers:
-        - name: migrate
-          # Use the same image as your user-service, as it contains your code,
-          # dependencies (including sequelize-cli), and migration files.
-          image: user-service:latest
-          imagePullPolicy: Never # Or 'IfNotPresent' if you push your image to a registry
-          command: ["npx"]
-          args: ["sequelize-cli", "db:migrate"] # The command to run your migrations
+  apiVersion: batch/v1
+  kind: Job
+  metadata:
+    name: user-migration-job
+  spec:
+    template:
+      spec:
+        containers:
+          - name: migrate
+            # Use the same image as your user-service, as it contains your code,
+            # dependencies (including sequelize-cli), and migration files.
+            image: user-service:latest
+            imagePullPolicy: Never # Or 'IfNotPresent' if you push your image to a registry
+            command: ["npx"]
+            args: ["sequelize-cli", "db:migrate"] # The command to run your migrations
 
-          # Pass the database connection details as environment variables.
-          # These must match what your application expects and how your postgres service is named.
-          env:
-            - name: DB_HOST
-              value: user-db
-            - name: DB_NAME
-              value: "usersdb"
-            - name: DB_USER
-              value: postgres
-            - name: DB_PASS
-              value: "root"
-            - name: DB_PORT
-              value: "5432"
+            # Pass the database connection details as environment variables.
+            # These must match what your application expects and how your postgres service is named.
+            env:
+              - name: DB_HOST
+                value: "user-db"
+              - name: DB_NAME
+                value: "usersdb"
+              - name: DB_USER
+                value: "postgres"
+              - name: DB_PASS
+                value: "root"
+              - name: DB_PORT
+                value: "5432"
 
-      # Jobs are designed to run to completion, so restartPolicy should be Never
-      restartPolicy: Never
-  # Optional: Configure retries if the job fails
-  backoffLimit: 3 # Retry the job up to 3 times on failure
+        # Jobs are designed to run to completion, so restartPolicy should be Never
+        restartPolicy: Never
+    # Optional: Configure retries if the job fails
+    backoffLimit: 3 # Retry the job up to 3 times on failure

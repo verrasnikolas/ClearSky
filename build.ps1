@@ -13,3 +13,7 @@ cd ..
 cd upload-service
 docker build -t upload-excel-image .
 cd ..
+
+cd user-service
+docker build -t user-service:latest .
+cd ..

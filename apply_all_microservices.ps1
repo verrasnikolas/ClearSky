@@ -17,4 +17,8 @@ cd upload-service
 ./apply
 cd ..
 
+cd user-service
+./apply
+cd ..
+
 Write-Host "All resources applied successfully!"
