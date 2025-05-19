@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSONB,
             allowNull: true,
         },
+        questionDistributions: { // Add this field to store question distributions
+            type: DataTypes.JSONB,
+            allowNull: true,
+        },
     }, {
         tableName: 'course_stats',
         timestamps: true,

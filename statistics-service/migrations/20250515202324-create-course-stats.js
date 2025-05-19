@@ -1,4 +1,3 @@
-// migrations/xxxx-create-course-stats.js
 'use strict';
 
 module.exports = {
@@ -31,6 +30,10 @@ module.exports = {
         allowNull: true
       },
       questionAverages: { // ADD THIS LINE
+        type: Sequelize.JSONB,
+        allowNull: true
+      },
+      questionDistributions: { // ADD THIS LINE
         type: Sequelize.JSONB,
         allowNull: true
       },
