@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const sequelize = require('./config/database');
+const sequelize = require('./config/database.js');
 const app = express();
 
 app.use(express.json());
@@ -19,7 +19,10 @@ app.get('/', (req, res) => {
 });
 
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes'); // 👈 Προσθήκη αυτής της γραμμής
+
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);   // 👈 Προσθήκη αυτής της γραμμής
 
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
@@ -29,8 +32,16 @@ app.listen(PORT, () => {
 const { startConsumer } = require('./messaging/startConsumer');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
 
-
 (async () => {
     await connectRabbitMQ();
-    await startConsumer(handleevent);
+    await startConsumer((event) => {
+        if (event.type === 'initial_grades_parsed') {
+            const { extractedUsers } = event.data;
+
+            console.log('\n Users :');
+            extractedUsers.forEach((u, index) => {
+                console.log(`  #${index + 1} | Student ID: ${u.id}, Full Name: ${u.name}, Email: ${u.email}`);
+            });
+        }
+    });
 })();

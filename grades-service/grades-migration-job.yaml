@@ -12,7 +12,7 @@ spec:
           image: grades-service:latest
           imagePullPolicy: Never # Or 'IfNotPresent' if you prefer
           command: ["npx"]
-          args: ["sequelize-cli", "db:migrate"] # The command to run your migrations
+          args: ["sequelize-cli", "db:migrate"] # The command to run your mig
 
           # Pass the database connection details as environment variables.
           # These must match what your application expects and how your postgres service is named.
