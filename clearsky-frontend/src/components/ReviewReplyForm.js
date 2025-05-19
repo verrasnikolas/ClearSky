@@ -4,17 +4,19 @@ import styles from './ReviewReplyForm.module.css';
 const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
     const [status, setStatus] = useState('APPROVED');
     const [response, setResponse] = useState('');
-    const [file, setFile] = useState(null); // optional for attachments
+    const [file, setFile] = useState(null); // optional future feature
 
     if (!selectedReview) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         onSubmit({
-            id: selectedReview.id,
+            student_id: selectedReview.student_id,
+            course_id: selectedReview.course_id,
             status,
-            response,
-            attachment: file, // you can extend this on backend
+            response
+            // You can also include file/attachment logic here later
         });
     };
 
@@ -23,8 +25,8 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
             <div className={styles.header}>
                 REPLY TO GRADE REVIEW REQUEST
                 <span className={styles.context}>
-          {selectedReview.course || 'Course'} – {selectedReview.term || 'Term'} – {selectedReview.student || 'Student'}
-        </span>
+                    Student: {selectedReview.student_id} | Course: {selectedReview.course_id}
+                </span>
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit}>
@@ -45,17 +47,21 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
                     placeholder="Explain your decision"
                     value={response}
                     onChange={(e) => setResponse(e.target.value)}
+                    required
                 />
 
+                {/* Optional file upload for future */}
+                {/*
                 <input
                     type="file"
                     className={styles.fileInput}
                     onChange={(e) => setFile(e.target.files[0])}
                 />
+                */}
 
                 <div className={styles.buttonContainer}>
                     <button type="submit" className={styles.button}>
-                        Upload reply attachment
+                        Submit Reply
                     </button>
                 </div>
             </form>

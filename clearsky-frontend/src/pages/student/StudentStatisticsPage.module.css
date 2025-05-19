@@ -65,8 +65,8 @@
 
 .chartGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* wider columns */
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
@@ -76,6 +76,8 @@
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    min-width: 280px;
+    max-width: 100%;
 }
 
 .pieWrapper {

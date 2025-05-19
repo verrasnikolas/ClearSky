@@ -1,25 +1,62 @@
-.gradesBox {
-    background: #f8faff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-top: 1rem;
+.wrapper {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    margin: auto;
+    margin-top: 2rem;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.questionTable {
+.title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.subtitle {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    color: #555;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+}
+
+.grade {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #1976d2;
+}
+
+.table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    background-color: #fdfdfd;
 }
 
-.questionTable th,
-.questionTable td {
+.table th,
+.table td {
+    padding: 10px 12px;
     border: 1px solid #ddd;
-    padding: 0.5rem 0.75rem;
     text-align: center;
 }
 
-.questionTable th {
-    background-color: #eaeaea;
+.pass {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.fail {
+    color: #d32f2f;
     font-weight: 600;
 }

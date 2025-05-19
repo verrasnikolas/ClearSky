@@ -27,6 +27,16 @@ function App() {
         localStorage.removeItem('refreshToken');
     };
 
+    // REMOVE THIS FOR REAL LOGIN
+    if (!localStorage.getItem('accessToken')) {
+        const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
+            'eyJzdWIiOiJkZXYtdXNlciIsInJvbGUiOiJpbnN0cnVjdG9yIn0.' +
+            'devsignature';
+        localStorage.setItem('accessToken', fakeToken);
+        localStorage.setItem('refreshToken', 'fake-refresh-token');
+    }
+
+
     return (
         <Router>
             <Navbar isLoggedIn={!!authToken} onLogout={handleLogout} />

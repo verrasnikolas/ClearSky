@@ -40,7 +40,6 @@ export default function UploadGrades() {
         multiple: false
     });
 
-    // 2) upload handler
     const handleUpload = async () => {
         if (!file) {
             setMessage({ text: 'Please select a file first.', severity: 'error' });
@@ -49,6 +48,7 @@ export default function UploadGrades() {
         setLoading(true);
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('instructor_id', '7a3b6d8e-1c94-4a6f-9a4d-2d3d5f219e55'); // mock UUID
 
         try {
             const res = await uploadInitialGrades(formData);
