@@ -13,6 +13,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      courseName: { // ADD THIS LINE
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       semester: {
         type: Sequelize.STRING,
         allowNull: false
@@ -22,6 +26,14 @@ module.exports = {
         allowNull: true
       },
       gradeDistribution: {
+        type: Sequelize.JSONB,
+        allowNull: true
+      },
+      questionAverages: { // ADD THIS LINE
+        type: Sequelize.JSONB,
+        allowNull: true
+      },
+      questionDistributions: { // ADD THIS LINE
         type: Sequelize.JSONB,
         allowNull: true
       },

@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 require('dotenv').config();
 const app = express();
@@ -27,18 +28,40 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
     const totalGrade = gradeEntries.reduce((sum, entry) => sum + entry.initialGrade, 0);
     const averageGrade = totalGrade / gradeEntries.length;
 
-    const distribution = gradeEntries.reduce((acc, entry) => {
+    const gradeDistribution = gradeEntries.reduce((acc, entry) => {
         const grade = Math.round(entry.initialGrade);
         acc[grade] = (acc[grade] || 0) + 1;
         return acc;
     }, {});
 
+    // Calculate average score per question and distribution
+    const questionAverages = {};
+    const questionDistributions = {};
+    if (gradeEntries.length > 0 && gradeEntries[0].questionGrades) {
+        const firstEntryQuestions = Object.keys(gradeEntries[0].questionGrades);
+        firstEntryQuestions.forEach(question => {
+            const totalScore = gradeEntries.reduce((sum, entry) => (entry.questionGrades && entry.questionGrades[question] !== undefined ? sum + entry.questionGrades[question] : sum), 0);
+            questionAverages[question] = parseFloat((totalScore / gradeEntries.length).toFixed(2));
+
+            questionDistributions[question] = gradeEntries.reduce((acc, entry) => {
+                const score = entry.questionGrades ? entry.questionGrades[question] : undefined;
+                if (score !== undefined) {
+                    acc[score] = (acc[score] || 0) + 1;
+                }
+                return acc;
+            }, {});
+        });
+    }
+
     try {
         await CourseStats.upsert({
             courseCode: courseMeta.code,
+            courseName: courseMeta.title, // Assuming courseMeta.title is the course name
             semester: courseMeta.semester,
             averageGrade: parseFloat(averageGrade.toFixed(2)),
-            gradeDistribution: distribution,
+            gradeDistribution: gradeDistribution,
+            questionAverages: questionAverages, // Store the average question scores
+            questionDistributions: questionDistributions, // Store the question distributions
         });
         console.log(`Statistics calculated and stored for ${courseMeta.code} - ${courseMeta.semester}`);
     } catch (error) {
@@ -48,8 +71,6 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 
 (async () => {
     try {
-        // Sync the model with the database. This will create the table if it doesn't exist
-        // and apply any defined indexes, including the unique index.
         await sequelize.sync();
         console.log('Database synchronized successfully.');
 
