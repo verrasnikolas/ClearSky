@@ -6,6 +6,11 @@ exports.addUser = async (req, res) => {
     try {
         const { email, name, academicId, password, role } = req.body;
 
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(409).json({ error: 'User already exists' });
+        }
+
         if (!password) {
             return res.status(400).json({ error: 'Password is required' });
         }

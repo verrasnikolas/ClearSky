@@ -33,8 +33,18 @@ async function addUsersFromExcel(extractedUsers = []) {
             role: 'student',
             forcePasswordReset: true,
         });
+
+        console.log(`✅ Created user ${email}`);
+
+        // ✉️ Στείλε email καλωσορίσματος
+        await sendWelcomeEmail({
+            name,
+            email,
+            password: tempPassword
+        });
     }
-    console.log(`✅ Created new users from excel`);
+
+    console.log(`🎉 Ολοκληρώθηκε η προσθήκη χρηστών από Excel`);
 }
 
 module.exports = { addUsersFromExcel };
