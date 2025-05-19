@@ -36,9 +36,11 @@ export default function LoginPage() {
         e.preventDefault();
         // no real auth yet—just route by role
         if (role === 'student') {
-            navigate('/student/statistics');
-        } else {
+            navigate('/student/studentpage');
+        } else if (role === 'instructor') {
             navigate('/instructor');
+        } else {
+            navigate('/representative');
         }
     };
 
@@ -148,6 +150,7 @@ export default function LoginPage() {
                         >
                             <FormControlLabel value="student" control={<Radio />} label="Student" />
                             <FormControlLabel value="instructor" control={<Radio />} label="Instructor" />
+                            <FormControlLabel value="representative" control={<Radio />} label="Institution Representative" />
                         </RadioGroup>
 
                         {/* 4️⃣ make this button submit the form */}

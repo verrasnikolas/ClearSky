@@ -12,6 +12,7 @@ import UploadGrades from './pages/instructor/UploadGrades';
 import InstructorLayout from './pages/instructor/InstructorLayout';
 import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
+import RepresentativePage from './pages/RepresentativePage';
 
 function App() {
     return (
@@ -41,6 +42,8 @@ function App() {
                     <Route path="statistics" element={<InstructorStatisticsPage />} />
 
                 </Route>
+
+                <Route path="/representative" element={<RepresentativePage />} />
 
 
             </Routes>
