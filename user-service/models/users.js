@@ -31,6 +31,10 @@ const User = sequelize.define('User', {
         type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
         allowNull: false,
     },
+    forcePasswordReset: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
 }, {
     tableName: 'users',
     timestamps: false,

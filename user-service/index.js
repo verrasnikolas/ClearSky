@@ -5,7 +5,22 @@ const app = express();
 
 app.use(express.json());
 
-// DB Connection & Sync
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
+
+const PORT = process.env.PORT || 3005;
+app.listen(PORT, () => {
+    console.log(`🚀 User Service running on port ${PORT}`);
+});
+
+// 👉 Messaging setup
+const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
+const { startConsumer } = require('./messaging/startConsumer');
+const { addUsersFromExcel } = require('./services/addUsersFromExcel');
+
+// DB Connection
 sequelize.authenticate()
     .then(() => {
         console.log('Connected to DB');
@@ -14,34 +29,13 @@ sequelize.authenticate()
     .then(() => console.log('Tables synced'))
     .catch(err => console.error('DB Connection Error:', err));
 
-app.get('/', (req, res) => {
-    res.send('User Service is running');
-});
-
-const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/authRoutes'); // 👈 Προσθήκη αυτής της γραμμής
-
-app.use('/users', userRoutes);
-app.use('/auth', authRoutes);   // 👈 Προσθήκη αυτής της γραμμής
-
-const PORT = process.env.PORT || 3005;
-app.listen(PORT, () => {
-    console.log(`🚀 User Service running on port ${PORT}`);
-});
-
-const { startConsumer } = require('./messaging/startConsumer');
-const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
-
+// Start consuming messages
 (async () => {
     await connectRabbitMQ();
-    await startConsumer((event) => {
+    await startConsumer(async (event) => {
         if (event.type === 'initial_grades_parsed') {
             const { extractedUsers } = event.data;
-
-            console.log('\n Users :');
-            extractedUsers.forEach((u, index) => {
-                console.log(`  #${index + 1} | Student ID: ${u.id}, Full Name: ${u.name}, Email: ${u.email}`);
-            });
+            await addUsersFromExcel(extractedUsers);
         }
     });
 })();
