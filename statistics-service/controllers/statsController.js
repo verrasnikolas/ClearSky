@@ -1,6 +1,6 @@
 // controllers/statsController.js
 const { CourseStats } = require('../config/db');
-// const { Grade } = require('../models/Grade'); // Removed import as we're not directly querying it
+// const { Grade } = require('../models/Grade');
 const { Sequelize, Op } = require('sequelize');
 
 const getCourseStats = async (req, res) => {
@@ -21,7 +21,9 @@ const getCourseStats = async (req, res) => {
             averageGrade: stats.averageGrade,
             gradeDistribution: stats.gradeDistribution,
             questionAverages: stats.questionAverages,
-            questionDistributions: stats.questionDistributions, // Include question distributions
+            questionDistributions: stats.questionDistributions,
+            passCount: stats.passCount,       // Include pass count in response
+            notPassCount: stats.notPassCount, // Include not pass count in response
         });
     } catch (error) {
         console.error('Error fetching statistics:', error);

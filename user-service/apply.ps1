@@ -28,7 +28,7 @@ if (-not $userDbReady) {
 }
 
 # Apply the User Service deployment
-kubectl apply -f user-service-deployment.yaml -n default
+kubectl apply -f user-deployment.yaml -n default
 Write-Host "Applied user-service-deployment.yaml"
 
 # Apply the User Service
