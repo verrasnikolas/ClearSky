@@ -5,6 +5,7 @@ import { userApi } from '../services/api'; // Import του userApi
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
     const navigate = useNavigate();
+    const userRole = localStorage.getItem('userRole');
 
     const handleLogout = async () => {
         const refreshToken = localStorage.getItem('refreshToken'); // 👈 Λαμβάνουμε το refreshToken
@@ -21,15 +22,37 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
         }
     };
 
+    const getHomeLink = () => {
+        switch (userRole) {
+            case 'instructor':
+                return '/instructor/upload';
+            case 'student':
+                return '/student/statistics';
+            default:
+                return '/';
+        }
+    };
+
+    const handleHomeClick = () => {
+        navigate(getHomeLink());
+    };
+
     return (
         <nav className={styles.navbar}>
             <div className={styles.logo}>clearSKY</div>
             <ul className={styles.links}>
-                <li><Link to="/">Home</Link></li>
                 {isLoggedIn && (
                     <>
-                        <li><Link to="/instructor">Instructor</Link></li>
-                        <li><button onClick={handleLogout}>Logout</button></li>
+                        <li>
+                            <button onClick={handleHomeClick} className={styles.navButton}>
+                                Home
+                            </button>
+                        </li>
+                        <li>
+                            <button onClick={handleLogout} className={styles.navButton}>
+                                Logout
+                            </button>
+                        </li>
                     </>
                 )}
                 {!isLoggedIn && (

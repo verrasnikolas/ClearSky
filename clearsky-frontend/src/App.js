@@ -12,7 +12,8 @@ import UploadGrades from './pages/instructor/UploadGrades';
 import InstructorLayout from './pages/instructor/InstructorLayout';
 import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
-import RepresentativePage from './pages/RepresentativePage';
+import RepresentativePage from './pages/representative/RepresentativePage';
+import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics'; // add this at the top
 
 function App() {
     const [authToken, setAuthToken] = useState(localStorage.getItem('accessToken') || null);
@@ -36,14 +37,28 @@ function App() {
         localStorage.setItem('refreshToken', 'fake-refresh-token');
     }
 
+    const getRedirectPathForRole = () => {
+        const role = localStorage.getItem('userRole');
+        switch (role) {
+            case 'student':
+                return '/student/statistics';
+            case 'instructor':
+                return '/instructor/upload';
+            case 'institution_representative':
+                return '/representative';
+            default:
+                return '/login';
+        }
+    };
+
+
 
     return (
         <Router>
             <Navbar isLoggedIn={!!authToken} onLogout={handleLogout} />
             <Routes>
                 <Route path="/" element={authToken ? <Navigate to="/student/statistics" /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/login" element={authToken ? <Navigate to="/student/statistics" /> : <LoginPage onLogin={handleLogin} />} />
-
+                <Route path="/login" element={authToken ? <Navigate to={getRedirectPathForRole()} /> : <LoginPage onLogin={handleLogin} />} />
                 {/* Student routes */}
                 <Route path="/student" element={authToken ? <Navigate to="/student/statistics" /> : <Navigate to="/login" />} />
                 <Route path="/student/statistics" element={authToken ? <StudentStatisticsPage /> : <Navigate to="/login" />} />
@@ -59,10 +74,11 @@ function App() {
                     <Route index element={<UploadGrades />} />
                     <Route path="upload" element={<UploadGrades />} />
                     <Route path="reviews" element={<InstructorPage />} />
-                    <Route path="statistics" element={<InstructorStatisticsPage />} />
+                    <Route path="statistics" element={<InstructorStatisticsPage/>} />
                 </Route>
 
                 <Route path="/representative" element={<RepresentativePage />} />
+                <Route path="/representative/statistics" element={authToken ? <RepresentativeStatisticsPage /> : <Navigate to="/login" />} />
 
 
             </Routes>

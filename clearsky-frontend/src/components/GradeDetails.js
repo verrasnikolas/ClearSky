@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './GradeDetails.module.css';
+import { FaBook, FaPen } from 'react-icons/fa';
 
 const GradeDetails = ({ course }) => {
     if (!course) return null;
@@ -8,7 +9,7 @@ const GradeDetails = ({ course }) => {
 
     return (
         <div className={styles.wrapper}>
-            <h2 className={styles.title}>📘 Grade Details</h2>
+            <h2 className={styles.title}><FaBook style={{marginRight: '0.5rem'}}/> Grade Details</h2>
 
             <div className={styles.infoGrid}>
                 <div><strong>Course:</strong> {name}</div>
@@ -16,7 +17,7 @@ const GradeDetails = ({ course }) => {
                 <div><strong>Final Grade:</strong> <span className={styles.grade}>{grade}</span></div>
             </div>
 
-            <h3 className={styles.subtitle}>📝 Question Breakdown</h3>
+            <h3 className={styles.subtitle}><FaPen style={{marginRight: '0.5rem'}}/> Question Breakdown</h3>
             <table className={styles.table}>
                 <thead>
                 <tr>

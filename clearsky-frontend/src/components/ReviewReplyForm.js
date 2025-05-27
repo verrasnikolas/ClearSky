@@ -8,16 +8,31 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
 
     if (!selectedReview) return null;
 
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //
+    //     onSubmit({
+    //         student_id: selectedReview.student_id,
+    //         course_id: selectedReview.course_id,
+    //         status,
+    //         response
+    //         // You can also include file/attachment logic here later
+    //     });
+    // };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        onSubmit({
-            student_id: selectedReview.student_id,
-            course_id: selectedReview.course_id,
-            status,
-            response
-            // You can also include file/attachment logic here later
-        });
+        const formData = new FormData();
+        formData.append('student_id', selectedReview.student_id);
+        formData.append('course_id', selectedReview.course_id);
+        formData.append('status', status);
+        formData.append('response', response);
+        if (file) {
+            formData.append('attachment', file);
+        }
+
+        onSubmit(formData); // call parent handler with form data
     };
 
     return (
@@ -58,6 +73,14 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
                     onChange={(e) => setFile(e.target.files[0])}
                 />
                 */}
+                <label className={styles.label}>Attachment (optional)</label>
+                <input
+                    type="file"
+                    accept=".pdf,.docx,.png,.jpg"
+                    className={styles.fileInput}
+                    onChange={(e) => setFile(e.target.files[0])}
+                />
+
 
                 <div className={styles.buttonContainer}>
                     <button type="submit" className={styles.button}>

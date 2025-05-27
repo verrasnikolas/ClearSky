@@ -32,14 +32,23 @@
 }
 
 .btn {
-    background-color: #0d6efd;
+    background-color: #007bff;
     color: white;
+    padding: 0.5rem 1rem;
     border: none;
-    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn:hover {
-    background-color: #0b5ed7;
+    background-color: #0056b3;
+}
+
+.btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }

@@ -19,6 +19,10 @@ const ReviewRequest = sequelize.define('ReviewRequest', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    attachment: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     status: {
         type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED'),
         defaultValue: 'PENDING'
@@ -26,6 +30,13 @@ const ReviewRequest = sequelize.define('ReviewRequest', {
     response: {
         type: DataTypes.STRING
     }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['student_id', 'course_id']
+        }
+    ]
 });
 
 module.exports = ReviewRequest;

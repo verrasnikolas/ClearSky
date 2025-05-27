@@ -1,0 +1,37 @@
+.representative-navbar {
+    background-color: #e9f1ff;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid #007bff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li a {
+    color: #007bff;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 16px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-links li a:hover {
+    border-bottom: 2px solid #007bff;
+    color: #0056b3;
+}
+
+.nav-links li a.active {
+    color: #0d47a1;
+    border-bottom: 2px solid #0d47a1;
+}

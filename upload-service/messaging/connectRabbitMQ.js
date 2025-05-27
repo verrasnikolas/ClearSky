@@ -4,7 +4,7 @@ let channel;
 
 async function connectRabbitMQ() {
     const connection = await amqplib.connect('amqp://host.docker.internal:5672');
-    // const connection = await amqplib.connect('amqp://localhost');
+    // const connection = await amqplib.connect('amqp://host.do');
     channel = await connection.createChannel();
     console.log('[✔] Connected to RabbitMQ');
 }

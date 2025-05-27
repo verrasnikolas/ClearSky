@@ -20,14 +20,25 @@ const ReviewList = () => {
         }
     };
 
-    const handleReplySubmit = async (update) => {
+    // const handleReplySubmit = async (update) => {
+    //     try {
+    //         await replyToReview({
+    //             student_id: update.student_id,
+    //             course_id: update.course_id,
+    //             status: update.status,
+    //             response: update.response
+    //         });
+    //
+    //         setSelectedReview(null);
+    //         fetchReviews();
+    //     } catch (err) {
+    //         console.error("Failed to update review:", err);
+    //     }
+    // };
+
+    const handleReplySubmit = async (formData) => {
         try {
-            await replyToReview({
-                student_id: update.student_id,
-                course_id: update.course_id,
-                status: update.status,
-                response: update.response
-            });
+            await replyToReview(formData); // Now passing FormData directly
 
             setSelectedReview(null);
             fetchReviews();
@@ -35,6 +46,7 @@ const ReviewList = () => {
             console.error("Failed to update review:", err);
         }
     };
+
 
     return (
         <div className={styles.container}>

@@ -74,24 +74,36 @@ export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε τ�
         setError(null);
 
         try {
-            // TEMP: Simulate login while backend is down
+            console.log("Logging in as:", role); // Debugging line
+
             const mockToken = 'mock-access-token';
             localStorage.setItem('accessToken', mockToken);
             localStorage.setItem('refreshToken', 'mock-refresh-token');
+            localStorage.setItem('userRole', role);
             onLogin(mockToken);
 
-            // Redirect the user based on role
-            if (role === 'student') {
-                navigate('/student/statistics');
-            } else {
-                navigate('/instructor');
+            // Redirect based on role
+            switch (role) {
+                case 'student':
+                    navigate('/student/statistics');
+                    break;
+                case 'instructor':
+                    navigate('/instructor/upload');
+                    break;
+                case 'institution_representative':
+                    navigate('/representative');
+                    break;
+                default:
+                    setError('Unknown role selected');
             }
+
         } catch (err) {
             setError('Temporary login failure.');
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <Grid

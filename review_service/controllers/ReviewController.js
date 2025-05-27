@@ -8,10 +8,26 @@ exports.submitReviewRequest = async (req, res) => {
     }
 
     try {
+        // Optional: Pre-check if review already exists
+        const existingReview = await ReviewRequest.findOne({
+            where: { student_id, course_id }
+        });
+
+        if (existingReview) {
+            return res.status(409).json({ error: 'A review request already exists for this course.' });
+        }
+
+        // Proceed to create new review
         const review = await ReviewRequest.create({ student_id, course_id, reason });
         res.status(201).json(review);
     } catch (err) {
         console.error('Error creating review:', err);
+
+        // Handle uniqueness error in case DB constraint exists
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).json({ error: 'A review request already exists for this course.' });
+        }
+
         res.status(500).json({ error: 'Failed to submit review request.' });
     }
 };
@@ -19,6 +35,7 @@ exports.submitReviewRequest = async (req, res) => {
 
 exports.replyToReviewRequest = async (req, res) => {
     const { student_id, course_id, status, response } = req.body;
+    const file = req.file;
 
     if (!student_id || !course_id || !status || !response) {
         return res.status(400).json({ error: 'Missing required fields: student_id, course_id, status, response.' });
@@ -26,10 +43,7 @@ exports.replyToReviewRequest = async (req, res) => {
 
     try {
         const review = await ReviewRequest.findOne({
-            where: {
-                student_id,
-                course_id
-            }
+            where: { student_id, course_id }
         });
 
         if (!review) {
@@ -38,14 +52,19 @@ exports.replyToReviewRequest = async (req, res) => {
 
         review.status = status;
         review.response = response;
-        await review.save();
 
+        if (file) {
+            review.attachment = file.filename; // Save filename to DB
+        }
+
+        await review.save();
         res.json(review);
     } catch (err) {
         console.error('Error replying to review:', err);
         res.status(500).json({ error: 'Failed to update review.' });
     }
 };
+
 
 
 exports.getAllReviews = async (req, res) => {

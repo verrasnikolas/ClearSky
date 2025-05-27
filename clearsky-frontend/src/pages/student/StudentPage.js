@@ -4,6 +4,9 @@ import GradeDetails from '../../components/GradeDetails';
 import ReviewStatus from '../../components/ReviewStatus';
 import styles from './StudentPage.module.css';
 import StudentNavbar from './StudentNavbar';
+import { Alert } from '@mui/material'; // ⬅ Make sure this is imported
+
+
 import {
     getGradesByUser,
     getGradeForStudentCourse
@@ -12,21 +15,47 @@ import { getReviewStatus } from '../../services/ReviewService';
 
 const STUDENT_ID = '03181110';
 
+
+
 const StudentPage = () => {
     const [courses, setCourses] = useState([]);
     const [selectedCourseForReview, setSelectedCourseForReview] = useState(null);
     const [selectedCourseForGrades, setSelectedCourseForGrades] = useState(null);
     const [selectedReviewStatus, setSelectedReviewStatus] = useState(null);
 
+    const [errorMessage, setErrorMessage] = useState(null);
+
     const clearAll = () => {
         setSelectedCourseForReview(null);
         setSelectedCourseForGrades(null);
         setSelectedReviewStatus(null);
+        setErrorMessage(null); // 👈 Clear any previous errors
     };
 
-    const handleAskReview = (course) => {
+
+    const handleAskReview = async (course) => {
         clearAll();
-        setSelectedCourseForReview(course);
+
+        try {
+            const res = await getReviewStatus(STUDENT_ID, course.courseId);
+
+            if (res?.data?.status) {
+                setErrorMessage('You have already submitted a review request for this course.');
+                return;
+            }
+
+            // No existing review found, allow form
+            setSelectedCourseForReview(course);
+        } catch (err) {
+            // If the backend returns 404 for no review — allow it
+            if (err.response && err.response.status === 404) {
+                setSelectedCourseForReview(course);
+            } else {
+            console.error('Error checking review status:', err);
+            alert('Could not check review status. Please try again.');
+        }
+
+    }
     };
 
     const handleViewGrades = async (course) => {
@@ -89,6 +118,13 @@ const StudentPage = () => {
             <StudentNavbar />
             <div className={styles.container}>
                 <h2 className={styles.heading}>My Courses</h2>
+                {errorMessage && (
+                    <div style={{ marginBottom: '1rem' }}>
+                        <Alert severity="error" onClose={() => setErrorMessage(null)}>
+                            {errorMessage}
+                        </Alert>
+                    </div>
+                )}
                 <table className={styles.table}>
                     <thead>
                     <tr>
