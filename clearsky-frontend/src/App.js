@@ -14,6 +14,7 @@ import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
 import RepresentativePage from './pages/representative/RepresentativePage';
 import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics'; // add this at the top
+import UploadFinalGrades from './pages/instructor/UploadFinalGrades';
 
 function App() {
     const [authToken, setAuthToken] = useState(localStorage.getItem('accessToken') || null);
@@ -75,6 +76,7 @@ function App() {
                     <Route path="upload" element={<UploadGrades />} />
                     <Route path="reviews" element={<InstructorPage />} />
                     <Route path="statistics" element={<InstructorStatisticsPage/>} />
+                    <Route path="upload-final" element={<UploadFinalGrades />} />
                 </Route>
 
                 <Route path="/representative" element={<RepresentativePage />} />
