@@ -1,13 +1,12 @@
-import axios from 'axios';
-
-const API_BASE = 'http://localhost:30035/users';  // Adjust to match your actual backend
+// src/services/userService.js
+import { userApi } from './api';
 
 /**
  * Create a new user.
  * payload: { email, name, academicId, password, role }
  */
 export function createUser(payload) {
-    return axios.post(API_BASE, payload);
+    return userApi.post('/users', payload);
 }
 
 /**
@@ -16,5 +15,9 @@ export function createUser(payload) {
  * payload: { newPassword }
  */
 export function changePassword(id, payload) {
-    return axios.patch(`${API_BASE}/${id}/password`, payload);
+    return userApi.patch(`/users/${id}/password`, payload);
+}
+
+export function getUserByAcademicId(academicId) {
+    return userApi.get(`/users/academic/${academicId}`);
 }
