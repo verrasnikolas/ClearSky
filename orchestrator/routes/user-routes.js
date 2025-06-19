@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user-controller');
-const { authenticate, authorize } = require('../middleware/authentication'); // demo middleware
+const { authenticate, authorize } = require('../middleware/authentication'); // demo middlewares
 
 router.post('/', userController.createUser);
 router.get('/:id', authenticate, authorize(['admin', 'user']), userController.getUser);

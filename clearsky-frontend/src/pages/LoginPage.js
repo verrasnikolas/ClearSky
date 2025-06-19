@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Grid,
@@ -22,87 +21,74 @@ import {
     Person as PersonIcon,
     Lock as LockIcon
 } from '@mui/icons-material';
-import { userApi } from '../services/api'; // Import του userApi
+import { userApi } from '../services/api';
+import {decodeToken} from "../auth/token"; // Import του userApi
 
-export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε την onLogin prop
-    const navigate = useNavigate();
-    const [username, setUsername] = useState('');
+export default function LoginPage({ onLogin }) { // Λαμβάνουμε την onLogin prop
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('student');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    //Uncomment for real login
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setError(null);
-    //     try {
-    //         const requestBody = {
-    //             password: password,
-    //             role: role
-    //         };
-    //
-    //         if (role === 'student') {
-    //             requestBody.academicId = username;
-    //         } else {
-    //             requestBody.email = username;
-    //         }
-    //
-    //         const response = await userApi.post('/auth/login', requestBody);
-    //         const { accessToken, refreshToken } = response.data;
-    //         localStorage.setItem('accessToken', accessToken);
-    //         localStorage.setItem('refreshToken', refreshToken);
-    //         onLogin(accessToken); // ✅ Καλούμε την onLogin prop με το accessToken
-    //         // Redirect τον χρήστη στην κατάλληλη σελίδα ανάλογα με τον ρόλο
-    //         if (role === 'student') {
-    //             navigate('/student/statistics');
-    //         } else {
-    //             navigate('/instructor');
-    //         }
-    //     } catch (err) {
-    //         setError(err.response?.data?.error || 'Login failed');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    //Use for mock login
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
         try {
-            console.log("Logging in as:", role); // Debugging line
-
-            const mockToken = 'mock-access-token';
-            localStorage.setItem('accessToken', mockToken);
-            localStorage.setItem('refreshToken', 'mock-refresh-token');
-            localStorage.setItem('userRole', role);
-            onLogin(mockToken);
-
-            // Redirect based on role
-            switch (role) {
-                case 'student':
-                    navigate('/student/statistics');
-                    break;
-                case 'instructor':
-                    navigate('/instructor/upload');
-                    break;
-                case 'institution_representative':
-                    navigate('/representative');
-                    break;
-                default:
-                    setError('Unknown role selected');
-            }
+            const requestBody = {
+                identifier, // this can be email, academicId, or username
+                password
+            };
+            const response = await userApi.post('/auth/login', requestBody);
+            const { accessToken, refreshToken, user } = response.data;
+            const decoded = decodeToken(accessToken);
+            onLogin(accessToken, refreshToken); // App.js will handle redirect
 
         } catch (err) {
-            setError('Temporary login failure.');
+            setError(err.response?.data?.error || 'Login failed');
         } finally {
             setLoading(false);
         }
     };
+
+
+    //Use for mock login
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+    //     setError(null);
+    //
+    //     try {
+    //         console.log("Logging in as:", role); // Debugging line
+    //
+    //         const mockToken = 'mock-access-token';
+    //         localStorage.setItem('accessToken', mockToken);
+    //         localStorage.setItem('refreshToken', 'mock-refresh-token');
+    //         localStorage.setItem('userRole', role);
+    //         onLogin(mockToken);
+    //
+    //         // Redirect based on role
+    //         switch (role) {
+    //             case 'student':
+    //                 navigate('/student/statistics');
+    //                 break;
+    //             case 'instructor':
+    //                 navigate('/instructor/upload');
+    //                 break;
+    //             case 'institution_representative':
+    //                 navigate('/representative');
+    //                 break;
+    //             default:
+    //                 setError('Unknown role selected');
+    //         }
+    //
+    //     } catch (err) {
+    //         setError('Temporary login failure.');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
 
     return (
@@ -176,10 +162,10 @@ export default function LoginPage({ onLogin }) { // ✅ Λαμβάνουμε τ�
                         )}
                         <TextField
                             fullWidth
-                            label="Username"
+                            label="Username/Email"
                             margin="normal"
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
+                            value={identifier}
+                            onChange={e => setIdentifier(e.target.value)}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">

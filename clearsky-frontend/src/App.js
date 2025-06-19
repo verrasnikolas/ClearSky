@@ -1,45 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { decodeToken, isTokenExpired } from './auth/token';
+import { tryToRefreshToken } from './auth/refresh';
+
 import Navbar from './components/NavBar';
-import HomePage from './pages/HomePage';
-import StudentLogin from './pages/LoginPage';
 import StudentStatisticsPage from './pages/student/StudentStatistcs';
 import InstructorPage from './pages/instructor/InstructorPage';
 import StudentPage from "./pages/student/StudentPage";
-import GradeDetails from './components/GradeDetails'; // create this next
+import GradeDetails from './components/GradeDetails';
 import UploadGrades from './pages/instructor/UploadGrades';
 import InstructorLayout from './pages/instructor/InstructorLayout';
 import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
 import RepresentativePage from './pages/representative/RepresentativePage';
 import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics'; // add this at the top
+// Protected Route wrapper
+const PrivateRoute = ({ children }) => {
+    const token = localStorage.getItem('accessToken');
+    return token ? children : <Navigate to="/login" />;
+};
 
 function App() {
-    const [authToken, setAuthToken] = useState(localStorage.getItem('accessToken') || null);
+    const [authToken, setAuthToken] = useState(localStorage.getItem('accessToken'));
+    console.log(authToken)
+    const [userRole, setUserRole] = useState(() => {
+        const decoded = decodeToken(localStorage.getItem('accessToken'));
+        return decoded?.role || null;
+    });
 
-    const handleLogin = (token) => {
-        setAuthToken(token);
+    useEffect(() => {
+        (async () => {
+            if (!authToken) return;
+
+            const decoded = decodeToken(authToken);
+            if (!decoded) return handleLogout();
+
+            if (isTokenExpired(authToken)) {
+                const newDecoded = await tryToRefreshToken();
+                if (!newDecoded) return handleLogout();
+
+                setAuthToken(localStorage.getItem('accessToken'));
+                setUserRole(newDecoded.role);
+            } else {
+                setUserRole(decoded.role);
+            }
+        })();
+    }, [authToken]);
+
+    const handleLogin = (accessToken, refreshToken) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        setAuthToken(accessToken);
+        const decoded = decodeToken(accessToken);
+        if (decoded?.role) {
+            setUserRole(decoded.role);
+        } else {
+            handleLogout();
+        }
     };
 
     const handleLogout = () => {
         setAuthToken(null);
+        setUserRole(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
     };
 
     // REMOVE THIS FOR REAL LOGIN
-    if (!localStorage.getItem('accessToken')) {
-        const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-            'eyJzdWIiOiJkZXYtdXNlciIsInJvbGUiOiJpbnN0cnVjdG9yIn0.' +
-            'devsignature';
-        localStorage.setItem('accessToken', fakeToken);
-        localStorage.setItem('refreshToken', 'fake-refresh-token');
-    }
+    // if (!localStorage.getItem('accessToken')) {
+    //     const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
+    //         'eyJzdWIiOiJkZXYtdXNlciIsInJvbGUiOiJpbnN0cnVjdG9yIn0.' +
+    //         'devsignature';
+    //     localStorage.setItem('accessToken', fakeToken);
+    //     localStorage.setItem('refreshToken', 'fake-refresh-token');
+    // }
 
     const getRedirectPathForRole = () => {
-        const role = localStorage.getItem('userRole');
-        switch (role) {
+        switch (userRole) {
             case 'student':
                 return '/student/statistics';
             case 'instructor':
@@ -51,35 +89,33 @@ function App() {
         }
     };
 
-
-
     return (
         <Router>
             <Navbar isLoggedIn={!!authToken} onLogout={handleLogout} />
             <Routes>
-                <Route path="/" element={authToken ? <Navigate to="/student/statistics" /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/login" element={authToken ? <Navigate to={getRedirectPathForRole()} /> : <LoginPage onLogin={handleLogin} />} />
-                {/* Student routes */}
-                <Route path="/student" element={authToken ? <Navigate to="/student/statistics" /> : <Navigate to="/login" />} />
-                <Route path="/student/statistics" element={authToken ? <StudentStatisticsPage /> : <Navigate to="/login" />} />
-                <Route path="/student/studentpage" element={authToken ? <StudentPage /> : <Navigate to="/login" />} />
-                <Route path="/student/grades/:courseId" element={authToken ? <GradeDetails /> : <Navigate to="/login" />} />
-                <Route path="/student/grades" element={authToken ? <StudentPage /> : <Navigate to="/login" />} />
-                <Route path="/student/review-request" element={authToken ? <StudentPage /> : <Navigate to="/login" />} />
-                <Route path="/student/review-status" element={authToken ? <StudentPage /> : <Navigate to="/login" />} />
+                {/* Public Routes */}
+                <Route path="/login" element={!authToken ? <LoginPage onLogin={handleLogin} /> : <Navigate to={getRedirectPathForRole()} />} />
+                <Route path="/" element={<Navigate to={authToken ? getRedirectPathForRole() : '/login'} />} />
 
+                {/* Student Routes */}
+                <Route path="/student/statistics" element={<PrivateRoute><StudentStatisticsPage /></PrivateRoute>} />
+                <Route path="/student/studentpage" element={<PrivateRoute><StudentPage /></PrivateRoute>} />
+                <Route path="/student/grades/:courseId" element={<PrivateRoute><GradeDetails /></PrivateRoute>} />
+                <Route path="/student/grades" element={<PrivateRoute><StudentPage /></PrivateRoute>} />
+                <Route path="/student/review-request" element={<PrivateRoute><StudentPage /></PrivateRoute>} />
+                <Route path="/student/review-status" element={<PrivateRoute><StudentPage /></PrivateRoute>} />
 
-                {/* Instructor route */}
-                <Route path="/instructor" element={authToken ? <InstructorLayout /> : <Navigate to="/login" />}>
+                {/* Instructor Routes */}
+                <Route path="/instructor" element={<PrivateRoute><InstructorLayout /></PrivateRoute>}>
                     <Route index element={<UploadGrades />} />
                     <Route path="upload" element={<UploadGrades />} />
                     <Route path="reviews" element={<InstructorPage />} />
-                    <Route path="statistics" element={<InstructorStatisticsPage/>} />
+                    <Route path="statistics" element={<InstructorStatisticsPage />} />
                 </Route>
 
-                <Route path="/representative" element={<RepresentativePage />} />
-                <Route path="/representative/statistics" element={authToken ? <RepresentativeStatisticsPage /> : <Navigate to="/login" />} />
-
+                {/* Representative Routes */}
+                <Route path="/representative" element={<PrivateRoute><RepresentativePage /></PrivateRoute>} />
+                <Route path="/representative/statistics" element={<PrivateRoute><RepresentativeStatisticsPage /></PrivateRoute>} />
 
             </Routes>
         </Router>

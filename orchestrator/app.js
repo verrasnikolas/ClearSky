@@ -1,5 +1,5 @@
 // app.js - main file of orchestrator
-// setup Express server, basic middleware and connect routes
+// setup Express server, basic middlewares and connect routes
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000; // PORT 300 by default for orchestrator
@@ -16,7 +16,7 @@ app.use('/grades', gradesRoutes); // Mount το grades routes στο /grades pat
 
 // more routes here
 
-// Error handling middleware (πρέπει να οριστεί τελευταίο)
+// Error handling middlewares (πρέπει να οριστεί τελευταίο)
 const errorHandler = require('./middleware/error-handler');
 app.use(errorHandler);
 

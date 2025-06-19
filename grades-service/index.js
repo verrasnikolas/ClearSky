@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
         await connectRabbitMQ();
         //await startConsumer((event) => handleEvent(event));  αν θέλουμε να προσθέσουμε
-        //                                                     middleware, καλύτερη σύνταξη
+        //                                                     middlewares, καλύτερη σύνταξη
         await startConsumer(handleEvent);
 
         app.listen(port, () => {

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from '../student/StudentStatisticsPage.module.css';
-import axios from 'axios';
 import {
     BarChart,
     Bar,
@@ -15,6 +13,7 @@ import {
     Cell,
     Legend
 } from 'recharts';
+import { getCourseStats, getAllCourses } from '../../services/StatsService';
 
 const InstructorStatisticsPage = () => {
     // const navigate = useNavigate();
@@ -25,8 +24,7 @@ const InstructorStatisticsPage = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios
-            .get('http://localhost:30032/api/stats/all-courses')
+        getAllCourses()
             .then((res) => setCourses(res.data))
             .catch((err) => {
                 console.error(err);
@@ -43,18 +41,16 @@ const InstructorStatisticsPage = () => {
         setSelectedStats(null);
         setError(null);
 
-        axios
-            .get(`http://localhost:30032/api/stats/courses/${courseCode}/${encodeURIComponent(examPeriod)}`)
+        getCourseStats(courseCode, examPeriod)
             .then((res) => {
                 setSelectedStats(res.data);
                 setSelectedCourseInfo({ courseCode, examPeriod });
-                setLoading(false);
             })
             .catch((err) => {
                 console.error(err);
                 setError('Failed to load course statistics');
-                setLoading(false);
-            });
+            })
+            .finally(() => setLoading(false));
     };
 
     const getGradeDistributionData = () => {

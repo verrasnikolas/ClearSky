@@ -11,10 +11,14 @@ module.exports = {
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal('uuid_generate_v4()')
       },
-      academicId: {
+      username: {
         type: Sequelize.STRING,
-        allowNull: true,
-        unique: true
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
@@ -25,9 +29,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      password: {
+      academicId: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
+        unique: true
       },
       role: {
         type: Sequelize.ENUM('student', 'instructor', 'institution_representative'),
