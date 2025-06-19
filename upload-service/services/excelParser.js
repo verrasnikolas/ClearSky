@@ -7,7 +7,7 @@ function parseExcel(file, instructorId) {
         throw new Error('Invalid file type');
     }
 
-    const workbook = xlsx.readFile(file.path);
+    const workbook = xlsx.read(file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
     const rows = xlsx.utils.sheet_to_json(sheet, { header: 1 }).filter(

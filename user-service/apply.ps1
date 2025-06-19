@@ -12,7 +12,7 @@ Write-Host "Applied user-db-service.yaml"
 Write-Host "Waiting for user-db deployment and pod to be ready..."
 $userDbReady = $false
 for ($i = 0; $i -lt 30; $i++) {
-    $deploymentStatus = kubectl get deployment user-db-deployment -n default -o json | ConvertFrom-Json
+    $deploymentStatus = kubectl get deployment user-db -n default -o json | ConvertFrom-Json
     $podStatus = kubectl get pod -l app=user-db -n default -o json | ConvertFrom-Json #get the pod
 
     # Check deployment status

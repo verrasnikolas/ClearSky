@@ -3,6 +3,11 @@ const {publish} = require('../messaging/eventPublisher');
 const { INITIAL_GRADES_PARSED, FINAL_GRADES_PARSED } = require('../events/eventTypes');
 
 const uploadInitialGrades = async (req, res) => {
+    console.log('[DEBUG] req.user:', req.user);
+    console.log('[BACKEND] Content-Type:', req.headers['content-type']);
+    console.log('[BACKEND] req.file:', req.file);
+    console.log('[BACKEND] req.body:', req.body);
+
     try {
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'No file uploaded' });

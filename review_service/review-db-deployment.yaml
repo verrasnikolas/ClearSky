@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: review-postgres-deployment
+  name: review-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: review-postgres
+      app: review-db
   template:
     metadata:
       labels:
-        app: review-postgres
+        app: review-db
     spec:
       containers:
         - name: postgres
@@ -26,8 +26,8 @@ spec:
               value: "1234"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: review-postgres-storage
+              name: review-db-storage
       volumes:
-        - name: review-postgres-storage
+        - name: review-db-storage
           persistentVolumeClaim:
-            claimName: review-postgres-pvc
+            claimName: review-db-pvc

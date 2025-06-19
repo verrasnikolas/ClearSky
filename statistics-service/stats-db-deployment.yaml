@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stats-postgres-deployment
+  name: stats-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stats-postgres
+      app: stats-db
   template:
     metadata:
       labels:
-        app: stats-postgres
+        app: stats-db
     spec:
       containers:
         - name: postgres
@@ -26,8 +26,8 @@ spec:
               value: "1234"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: stats-postgres-storage
+              name: stats-db-storage
       volumes:
-        - name: stats-postgres-storage
+        - name: stats-db-storage
           persistentVolumeClaim:
-            claimName: stats-postgres-pvc
+            claimName: stats-db-pvc

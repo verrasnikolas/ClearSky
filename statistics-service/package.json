@@ -16,7 +16,8 @@
     "amqplib": "^0.10.8",
     "sequelize": "^6.6.3",
     "pg": "^8.11.3",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.3"

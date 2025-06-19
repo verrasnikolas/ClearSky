@@ -18,7 +18,7 @@ spec:
           # These must match what your application expects and how your postgres service is named.
           env:
             - name: DB_HOST
-              value: stats-postgres # This is the name of your Kubernetes Service for Postgres
+              value: stats-db # This is the name of your Kubernetes Service for Postgres
             - name: DB_NAME
               value: "stats_db"
             - name: DB_USER

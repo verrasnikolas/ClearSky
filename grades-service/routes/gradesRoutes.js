@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const { uploadInitialGrades, getStudentGradedCourses, getStudentGradeForCourse } = require('../controllers/gradesController');
+const { authenticateToken } = require('../middlewares/authToken');
 
 router.post(
     '/upload',
@@ -10,7 +11,7 @@ router.post(
     uploadInitialGrades
 );
 
-router.get('/student/:studentId', getStudentGradedCourses);
-router.get('/student/:studentId/course/:courseId', getStudentGradeForCourse);
+router.get('/student/:studentId', authenticateToken, getStudentGradedCourses);
+router.get('/student/:studentId/course/:courseId', authenticateToken, getStudentGradeForCourse);
 
 module.exports = router;

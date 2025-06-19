@@ -7,6 +7,15 @@ const User = sequelize.define('User', {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
     },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+    type: DataTypes.STRING,
+        allowNull: false,
+},
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -23,10 +32,6 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     role: {
         type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
         allowNull: false,
@@ -38,6 +43,13 @@ const User = sequelize.define('User', {
 }, {
     tableName: 'users',
     timestamps: false,
+    validate: {
+        studentMustHaveAcademicId() {
+            if (this.role === 'student' && !this.academicId) {
+                throw new Error('Students must have an academicId');
+            }
+        }
+    }
 });
 
 module.exports = User;

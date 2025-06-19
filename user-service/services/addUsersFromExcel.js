@@ -6,45 +6,40 @@ const { sendWelcomeEmail } = require('./sendWelcomeEmail');
 async function addUsersFromExcel(extractedUsers = []) {
     if (!Array.isArray(extractedUsers) || extractedUsers.length === 0) return;
 
-    for (const u of extractedUsers) {
-        const { id: academicId, name, email } = u;
+    const transaction = await sequelize.transaction();
+    try {
+        for (const u of extractedUsers) {
+            const { id: academicId, name, email } = u;
+            const username = email.split('@')[0];
+            const tempPassword = academicId || 'changeme123';
+            const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-        // Έλεγξε αν υπάρχει ήδη χρήστης με αυτό το email ή academicId
-        const existingUser = await User.findOne({
-            where: {
-                email
+            const existingUser = await User.findOne({ where: { email }, transaction });
+            if (existingUser) {
+                console.log(`User already exists: ${email}`);
+                continue;
             }
-        });
 
-        if (existingUser) {
-            console.log(`ℹ️ User already exists: ${email}`);
-            continue;
+            await User.create({
+                name,
+                email,
+                academicId,
+                username,
+                password: hashedPassword,
+                role: 'student',
+                forcePasswordReset: true,
+            }, { transaction });
+
+            await sendWelcomeEmail({ name, email, password: tempPassword }); // optionally move out of transaction
         }
 
-        // Δημιουργία κωδικού (hashed academicId)
-        const tempPassword = academicId || 'changeme123';
-        const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-        await User.create({
-            name,
-            email,
-            academicId,
-            password: hashedPassword,
-            role: 'student',
-            forcePasswordReset: true,
-        });
-
-        console.log(`✅ Created user ${email}`);
-
-        // ✉️ Στείλε email καλωσορίσματος
-        await sendWelcomeEmail({
-            name,
-            email,
-            password: tempPassword
-        });
+        await transaction.commit();
+        console.log(`🎉 Ολοκληρώθηκε η προσθήκη χρηστών από Excel`);
+    } catch (err) {
+        await transaction.rollback();
+        console.error('❌ Failed to add users from Excel:', err.message);
+        throw err;
     }
-
-    console.log(`🎉 Ολοκληρώθηκε η προσθήκη χρηστών από Excel`);
 }
 
 module.exports = { addUsersFromExcel };

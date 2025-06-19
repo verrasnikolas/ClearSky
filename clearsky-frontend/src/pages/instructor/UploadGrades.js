@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { decodeToken } from '../../auth/token';
 import { useDropzone } from 'react-dropzone';
 import {
     Container,
@@ -45,10 +46,23 @@ export default function UploadGrades() {
             setMessage({ text: 'Please select a file first.', severity: 'error' });
             return;
         }
+
+        const decoded = decodeToken(localStorage.getItem('accessToken'));
+        const instructorId = decoded?.userId;
+
+        if (!instructorId) {
+            setMessage({ text: 'Invalid token. Please log in again.', severity: 'error' });
+            return;
+        }
+
         setLoading(true);
         const formData = new FormData();
+        console.log('[FRONTEND] File object:', file);
         formData.append('file', file);
-        formData.append('instructor_id', '7a3b6d8e-1c94-4a6f-9a4d-2d3d5f219e55'); // mock UUID
+        formData.append('instructor_id', instructorId); // UUID
+        for (let [key, value] of formData.entries()) {
+            console.log(`[FRONTEND] FormData field: ${key}`, value);
+        }
 
         try {
             const res = await uploadInitialGrades(formData);

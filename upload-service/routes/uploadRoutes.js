@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 const { uploadInitialGrades, uploadFinalGrades } = require('../controllers/uploadController');
+const { authenticateToken } = require('../middlewares/authToken');
 
-router.post('/initial', upload.single('file'), uploadInitialGrades);
-router.post('/final', upload.single('file'), uploadFinalGrades);
+router.post('/initial', authenticateToken, upload.single('file'), uploadInitialGrades);
+router.post('/final', authenticateToken, upload.single('file'), uploadFinalGrades);
 
 module.exports = router;
 
