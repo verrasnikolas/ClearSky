@@ -1,5 +1,8 @@
 docker run -d --hostname rabbit-host --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 
+cd clearsky-frontend
+./apply
+cd ..
 
 cd grades-service
 ./apply
@@ -18,10 +21,6 @@ cd upload-service
 cd ..
 
 cd user-service
-./apply
-cd ..
-
-cd clearsky-frontend
 ./apply
 cd ..
 
