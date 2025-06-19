@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grades-postgres-deployment
+  name: grades-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: grades-postgres
+      app: grades-db
   template:
     metadata:
       labels:
-        app: grades-postgres
+        app: grades-db
     spec:
       containers:
         - name: postgres
@@ -26,8 +26,8 @@ spec:
               value: "1234"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: grades-postgres-storage
+              name: grades-db-storage
       volumes:
-        - name: grades-postgres-storage
+        - name: grades-db-storage
           persistentVolumeClaim:
-            claimName: grades-postgres-pvc
+            claimName: grades-db-pvc

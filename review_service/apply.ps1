@@ -1,7 +1,7 @@
 # Apply PostgreSQL related resources
-kubectl apply -f postgres-pvc.yaml
-kubectl apply -f postgres-deployment.yaml
-kubectl apply -f postgres-service.yaml
+kubectl apply -f review-db-pvc.yaml
+kubectl apply -f review-db-deployment.yaml
+kubectl apply -f review-db-service.yaml
 
 # Apply review-service related resources
 kubectl apply -f review-deployment.yaml

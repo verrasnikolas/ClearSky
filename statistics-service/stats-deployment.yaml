@@ -24,7 +24,7 @@ spec:
             - name: GRADES_SERVICE_URL
               value: "http://grades-service:3001/api/grades"
             - name: DB_HOST
-              value: "stats-postgres"
+              value: "stats-db"
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
@@ -39,3 +39,9 @@ spec:
               value: "5672"
             - name: RABBITMQ_QUEUE
               value: "grades_queue"
+            - name: JWT_SECRET
+              value: "super_secret"
+            - name: TOKEN_EXPIRY
+              value: "1h"
+            - name: REFRESH_TOKEN_SECRET
+              value: "refresh_secret"

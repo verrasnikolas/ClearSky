@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-deployment
+  name: user-service
 spec:
   replicas: 1
   selector:
@@ -34,7 +34,7 @@ spec:
             - name: JWT_SECRET
               value: "super_secret"
             - name: TOKEN_EXPIRY
-              value: "2h"
+              value: "1h"
             - name: REFRESH_TOKEN_SECRET
               value: "refresh_secret"
             - name: USER_SERVICE_URL

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: create-uuid-extension
+  name: stats-create-uuid-extension
 spec:
   template:
     spec:
@@ -9,19 +9,19 @@ spec:
         - name: extension-creator
           image: postgres:15
           env:
-            - name: PGHOST
-              value: grades-postgres
-            - name: PGDATABASE
-              value: gradesdb
-            - name: PGUSER
-              value: postgres
-            - name: PGPASSWORD
+            - name: DB_HOST
+              value: stats-db
+            - name: DB_NAME
+              value: stats_db
+            - name: DB_USER
+              value: stats_user
+            - name: DB_PASSWORD
               value: "1234"
           command: ["/bin/bash", "-c"]
           args:
             - |
               set -e
-              until PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"; do
+              until PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"; do
                 echo "Waiting for PostgreSQL to be ready..."
                 sleep 5
               done

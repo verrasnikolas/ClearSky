@@ -20,7 +20,7 @@ spec:
             - containerPort: 3003
           env:
             - name: DB_HOST
-              value: review-postgres
+              value: review-db
             - name: DB_NAME
               value: reviewdb
             - name: DB_USER
@@ -29,3 +29,9 @@ spec:
               value: "1234"
             - name: DB_PORT
               value: "5432"
+            - name: JWT_SECRET
+              value: "super_secret"
+            - name: TOKEN_EXPIRY
+              value: "1h"
+            - name: REFRESH_TOKEN_SECRET
+              value: "refresh_secret"

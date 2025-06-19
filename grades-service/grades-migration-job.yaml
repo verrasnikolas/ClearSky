@@ -17,15 +17,15 @@ spec:
           # Pass the database connection details as environment variables.
           # These must match what your application expects and how your postgres service is named.
           env:
-            - name: PGHOST
-              value: grades-postgres # This is the name of your Kubernetes Service for Postgres
-            - name: PGDATABASE
+            - name: DB_HOST
+              value: grades-db # This is the name of your Kubernetes Service for Postgres
+            - name: DB_NAME
               value: "gradesdb"
-            - name: PGUSER
+            - name: DB_USER
               value: postgres
-            - name: PGPASSWORD
+            - name: DB_PASSWORD
               value: "1234" # Replace with a Kubernetes Secret reference in production!
-            - name: PGPORT
+            - name: DB_PORT
               value: "5432"
 
       # Jobs are designed to run to completion, so restartPolicy should be Never

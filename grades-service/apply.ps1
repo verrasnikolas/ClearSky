@@ -1,21 +1,20 @@
 # Apply PostgreSQL resources
-kubectl apply -f postgres-pvc.yaml
-Write-Host "Applied grades-postgres-pvc.yaml"
+kubectl apply -f grades-db-pvc.yaml
+Write-Host "Applied grades-db-pvc.yaml"
 
-kubectl apply -f postgres-deployment.yaml
-Write-Host "Applied grades-postgres-deployment.yaml"
+kubectl apply -f grades-db-deployment.yaml
+Write-Host "Applied grades-db-deployment.yaml"
 
-kubectl apply -f postgres-service.yaml
-Write-Host "Applied grades-postgres-service.yaml"
+kubectl apply -f grades-db-service.yaml
+Write-Host "Applied grades-db-service.yaml"
 
-# Wait for the grades-postgres deployment to be ready
-Write-Host "Waiting for grades-postgres deployment to be ready..."
+Write-Host "Waiting for grades-db to be ready..."
 $postgresReady = $false
 for ($i = 0; $i -lt 30; $i++) { # Try for up to 5 minutes (30 * 10 seconds)
-    $status = kubectl get deployment grades-postgres-deployment -n default -o json | ConvertFrom-Json
+    $status = kubectl get deployment grades-db -n default -o json | ConvertFrom-Json
     if ($status.status.readyReplicas -eq $status.spec.replicas) {
         $postgresReady = $true
-        Write-Host "grades-postgres deployment is ready."
+        Write-Host "grades-db is ready."
         break
     }
     Write-Host "Waiting... ($($i * 10) seconds)"
@@ -23,27 +22,27 @@ for ($i = 0; $i -lt 30; $i++) { # Try for up to 5 minutes (30 * 10 seconds)
 }
 
 if (-not $postgresReady) {
-    Write-Error "grades-postgres deployment did not become ready within the timeout."
+    Write-Error "grades-db did not become ready within the timeout."
     exit 1
 }
 
 # Apply the Job to create the uuid-ossp extension
-kubectl apply -f create-uuid-extension-job.yaml
-Write-Host "Applied create-uuid-extension-job.yaml"
+kubectl apply -f grades-create-uuid-extension-job.yaml
+Write-Host "Applied grades-grades-create-uuid-extension-job.yaml"
 
 # Wait for the create-uuid-extension Job to complete successfully
-Write-Host "Waiting for create-uuid-extension Job to complete..."
+Write-Host "Waiting for grades-create-uuid-extension Job to complete..."
 $extensionJobComplete = $false
 for ($i = 0; $i -lt 30; $i++) { # Try for up to 5 minutes
-    $status = kubectl get job create-uuid-extension -n default -o json | ConvertFrom-Json
+    $status = kubectl get job grades-create-uuid-extension -n default -o json | ConvertFrom-Json
     if ($status.status.succeeded -eq 1) {
         $extensionJobComplete = $true
         Write-Host "uuid-ossp extension created successfully."
         break
     }
     if ($status.status.failed -gt 0) {
-        Write-Error "create-uuid-extension Job failed. Check the Job logs for details."
-        kubectl logs -l job-name=create-uuid-extension -n default
+        Write-Error "grades-create-uuid-extension Job failed. Check the Job logs for details."
+        kubectl logs -l job-name=grades-create-uuid-extension -n default
         exit 1
     }
     Write-Host "Waiting... ($($i * 10) seconds)"
@@ -51,7 +50,7 @@ for ($i = 0; $i -lt 30; $i++) { # Try for up to 5 minutes
 }
 
 if (-not $extensionJobComplete) {
-    Write-Error "create-uuid-extension Job did not complete within the timeout."
+    Write-Error "grades-create-uuid-extension Job did not complete within the timeout."
     exit 1
 }
 
