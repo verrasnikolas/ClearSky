@@ -3,3 +3,6 @@ import { uploadApi } from './api';
 
 export const uploadInitialGrades = (formData) =>
     uploadApi.post('/initial', formData);
+
+export const uploadFinalGrades = (formData) =>
+    uploadApi.post('/final', formData);

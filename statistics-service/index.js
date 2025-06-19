@@ -99,6 +99,22 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 
                 await calculateAndStoreStats(courseMeta, gradeEntries);
             }
+            else if (event.type === 'final_grades_parsed') {
+                const { courseMeta, gradeEntries } = event.data;
+
+                console.log('\n Received Event: final_grades_parsed');
+                console.log('-----------------------------------------');
+                console.log('📘 Course Metadata:');
+                console.log(JSON.stringify(courseMeta, null, 2));
+
+                console.log('\n Grade Entries:');
+                gradeEntries.forEach((g, index) => {
+                    console.log(`  #${index + 1} | Student ID: ${g.studentId}, Grade: ${g.grade}`);
+                    console.log(`     Questions: ${JSON.stringify(g.questionGrades)}`);
+                });
+
+                await calculateAndStoreStats(courseMeta, gradeEntries);
+            }
         });
 
         app.listen(port, () => {
