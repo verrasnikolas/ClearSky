@@ -21,3 +21,7 @@ export function changePassword(id, payload) {
 export function getUserByAcademicId(academicId) {
     return userApi.get(`/users/academic/${academicId}`);
 }
+
+export function getUserByUsername(username) {
+    return userApi.get(`/users/username/${username}`);
+}

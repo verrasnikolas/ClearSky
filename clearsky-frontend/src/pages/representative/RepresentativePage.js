@@ -14,7 +14,12 @@ import {
     Button,
     Alert
 } from '@mui/material';
-import { createUser, changePassword, getUserByAcademicId } from '../../services/UserService';
+import {
+    createUser,
+    changePassword,
+    getUserByAcademicId,
+    getUserByUsername
+} from '../../services/UserService';
 
 const userTypes = [
     { label: 'Student', value: 'student' },
@@ -32,6 +37,8 @@ export default function RepresentativePage() {
     const [message, setMessage] = useState(null);
     const [severity, setSeverity] = useState('info');
 
+    const isStudent = type === 'student';
+
     const handleAddUser = async () => {
         try {
             const payload = {
@@ -41,10 +48,10 @@ export default function RepresentativePage() {
                 name
             };
 
-            if (type !== 'student') {
-                payload.username = username;
-            } else {
+            if (isStudent) {
                 payload.academicId = academicId;
+            } else {
+                payload.username = username;
             }
 
             const res = await createUser(payload);
@@ -63,19 +70,30 @@ export default function RepresentativePage() {
     };
 
     const handleChangePassword = async () => {
-        if (!academicId && type === 'student') {
-            setSeverity('warning');
-            setMessage('Please enter the Academic ID to change the student password.');
-            return;
-        }
+        let userId = null;
 
         try {
-            const res = await getUserByAcademicId(academicId);
-            const userId = res.data.id;
+            if (isStudent) {
+                if (!academicId) {
+                    setSeverity('warning');
+                    setMessage('Please enter the Academic ID.');
+                    return;
+                }
+                const res = await getUserByAcademicId(academicId);
+                userId = res.data.id;
+            } else {
+                if (!username) {
+                    setSeverity('warning');
+                    setMessage('Please enter the Username.');
+                    return;
+                }
+                const res = await getUserByUsername(username);
+                userId = res.data.id;
+            }
 
             await changePassword(userId, { newPassword: password });
             setSeverity('success');
-            setMessage(`Password updated for user with ID ${academicId}.`);
+            setMessage(`Password updated for user with ID ${userId}.`);
             setPassword('');
         } catch (err) {
             console.error(err);
@@ -83,8 +101,6 @@ export default function RepresentativePage() {
             setMessage(err.response?.data?.error || 'Password change failed');
         }
     };
-
-    const isStudent = type === 'student';
 
     return (
         <div>
@@ -108,7 +124,6 @@ export default function RepresentativePage() {
                                 </Select>
                             </FormControl>
 
-                            {/* Email */}
                             <TextField
                                 label="Email"
                                 value={email}
@@ -117,7 +132,6 @@ export default function RepresentativePage() {
                                 fullWidth
                             />
 
-                            {/* Username (not for student) */}
                             {!isStudent && (
                                 <TextField
                                     label="Username"
@@ -128,7 +142,6 @@ export default function RepresentativePage() {
                                 />
                             )}
 
-                            {/* Name (everyone) */}
                             <TextField
                                 label="Name"
                                 value={name}
@@ -137,7 +150,6 @@ export default function RepresentativePage() {
                                 fullWidth
                             />
 
-                            {/* Password */}
                             <TextField
                                 label="Password"
                                 type="password"
@@ -147,7 +159,6 @@ export default function RepresentativePage() {
                                 fullWidth
                             />
 
-                            {/* Academic ID (only for student) */}
                             {isStudent && (
                                 <TextField
                                     label="Academic ID"
@@ -158,16 +169,13 @@ export default function RepresentativePage() {
                                 />
                             )}
 
-                            {/* Buttons */}
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Button variant="contained" color="primary" onClick={handleAddUser}>
                                     Add User
                                 </Button>
-                                {isStudent && (
-                                    <Button variant="outlined" color="secondary" onClick={handleChangePassword}>
-                                        Change Password
-                                    </Button>
-                                )}
+                                <Button variant="outlined" color="secondary" onClick={handleChangePassword}>
+                                    Change Password
+                                </Button>
                             </Box>
                         </Box>
 
