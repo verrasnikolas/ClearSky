@@ -39,6 +39,10 @@ module.exports = {
         allowNull: false,
         defaultValue: 'student'
       },
+      forcePasswordReset: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
