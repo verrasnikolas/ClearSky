@@ -36,6 +36,28 @@ const InstructorStatisticsPage = () => {
     //     navigate('/student/studentpage');
     // };
 
+    // Helper function to format dates
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            // Options for formatting date and time
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // Use 24-hour format
+            };
+            return date.toLocaleDateString(undefined, options); // 'undefined' uses default locale
+        } catch (e) {
+            console.error("Error formatting date:", dateString, e);
+            return 'Invalid Date';
+        }
+    };
+
     const handleViewStats = (courseCode, examPeriod) => {
         setLoading(true);
         setSelectedStats(null);
@@ -43,8 +65,22 @@ const InstructorStatisticsPage = () => {
 
         getCourseStats(courseCode, examPeriod)
             .then((res) => {
-                setSelectedStats(res.data);
+                const fetchedStats = res.data;
+                setSelectedStats(fetchedStats);
                 setSelectedCourseInfo({ courseCode, examPeriod });
+                // Update the specific course in the `courses` state with fetched timestamps
+                setCourses(prevCourses =>
+                    prevCourses.map(course =>
+                        course.courseCode === courseCode && course.examPeriod === examPeriod
+                            ? {
+                                ...course,
+                                createdAt: fetchedStats.createdAt,
+                                updatedAt: fetchedStats.updatedAt
+                            }
+                            : course
+                    )
+                );
+                setLoading(false);
             })
             .catch((err) => {
                 console.error(err);
@@ -94,18 +130,22 @@ const InstructorStatisticsPage = () => {
                     <tr>
                         <th>Course Code</th>
                         <th>Exam Period</th>
+                        <th>Initial Grades Upload</th>
+                        <th>Final Grades Last Updated</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {courses.map(({ courseCode, examPeriod }, index) => (
+                    {courses.map((course, index) => (
                         <tr key={index}>
-                            <td>{courseCode}</td>
-                            <td>{examPeriod}</td>
+                            <td>{course.courseCode}</td>
+                            <td>{course.examPeriod}</td>
+                            <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
+                            <td>{course.updatedAt ? formatDate(course.updatedAt) : 'N/A'}</td>
                             <td>
                                 <button
                                     className={styles.button}
-                                    onClick={() => handleViewStats(courseCode, examPeriod)}
+                                    onClick={() => handleViewStats(course.courseCode, course.examPeriod)}
                                 >
                                     View Stats
                                 </button>
