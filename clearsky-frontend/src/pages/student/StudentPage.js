@@ -62,7 +62,7 @@ const StudentPage = () => {
     const handleViewGrades = async (course) => {
         clearAll();
         try {
-            const res = await getGradeForStudentCourse(course.courseId);
+            const res = await getGradeForStudentCourse(STUDENT_ID, course.courseId);
             const gradeData = res.data;
 
             setSelectedCourseForGrades({
@@ -97,7 +97,7 @@ const StudentPage = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await getGradesByUser();
+                const res = await getGradesByUser(STUDENT_ID);
                 const extracted = res.data.map((entry, index) => ({
                     id: index + 1,
                     courseId: entry.course_id,
