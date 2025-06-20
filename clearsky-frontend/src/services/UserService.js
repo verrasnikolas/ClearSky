@@ -17,10 +17,10 @@ export function changePassword(id, payload) {
     return userApi.patch(`/${id}/password`, payload); // fixed template literal
 }
 
-// export function getUserByAcademicId(academicId) {
-//     return userApi.get(`/users/academic/${academicId}`);
-// }
-//
-// export function getUserByUsername(username) {
-//     return userApi.get(`/users/username/${username}`);
-// }
+export function getUserByAcademicId(academicId, payload) {
+    return userApi.get(`/academic/${academicId}`, payload);
+}
+
+export function getUserByUsername(username, payload) {
+    return userApi.get(`/username/${username}`, payload);
+}
