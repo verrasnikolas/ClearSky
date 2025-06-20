@@ -16,3 +16,11 @@ export function createUser(payload) {
 export function changePassword(id, payload) {
     return userApi.patch(`/${id}/password`, payload); // fixed template literal
 }
+
+// export function getUserByAcademicId(academicId) {
+//     return userApi.get(`/users/academic/${academicId}`);
+// }
+//
+// export function getUserByUsername(username) {
+//     return userApi.get(`/users/username/${username}`);
+// }

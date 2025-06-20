@@ -1,8 +1,8 @@
-# Rabbit MQ
-kubectl apply -f rabbitmq-deployment.yaml
-Write-Host "Applied rabbitmq-deployment.yaml"
-kubectl apply -f rabbitmq-service.yaml
-Write-Host "Applied rabbitmq-service.yaml"
+docker run -d --hostname rabbit-host --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+
+cd clearsky-frontend
+./apply
+cd ..
 
 cd api-gateway
 ./apply

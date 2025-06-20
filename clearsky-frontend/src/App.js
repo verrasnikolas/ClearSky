@@ -14,6 +14,7 @@ import InstructorLayout from './pages/instructor/InstructorLayout';
 import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
 import RepresentativePage from './pages/representative/RepresentativePage';
+import UploadFinalGrades from './pages/instructor/UploadFinalGrades';
 import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics'; // add this at the top
 // Protected Route wrapper
 const PrivateRoute = ({ children }) => {
@@ -151,6 +152,7 @@ function App() {
                     <Route path="upload" element={<UploadGrades />} />
                     <Route path="reviews" element={<InstructorPage />} />
                     <Route path="statistics" element={<InstructorStatisticsPage />} />
+                    <Route path="upload-final" element={<UploadFinalGrades />} />
                 </Route>
 
                 {/* Representative Routes */}

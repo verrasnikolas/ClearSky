@@ -24,6 +24,8 @@ const getCourseStats = async (req, res) => {
             questionDistributions: stats.questionDistributions,
             passCount: stats.passCount,       // Include pass count in response
             notPassCount: stats.notPassCount, // Include not pass count in response
+            updatedAt: stats.updatedAt,
+            createdAt: stats.createdAt
         });
     } catch (error) {
         console.error('Error fetching statistics:', error);

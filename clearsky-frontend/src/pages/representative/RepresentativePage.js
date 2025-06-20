@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import RepresentativeNavbar from "./RepresentativeNavbar";
-
 import {
     Container,
     Card,
@@ -16,7 +14,12 @@ import {
     Button,
     Alert
 } from '@mui/material';
-import { createUser, changePassword } from '../../services/UserService';
+import {
+    createUser,
+    changePassword,
+    getUserByAcademicId,
+    getUserByUsername
+} from '../../services/UserService';
 
 const userTypes = [
     { label: 'Student', value: 'student' },
@@ -25,27 +28,38 @@ const userTypes = [
 ];
 
 export default function RepresentativePage() {
-    const [type, setType] = useState('Institution Representative');
+    const [type, setType] = useState('institution_representative');
+    const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [academicId, setAcademicId] = useState('');
     const [message, setMessage] = useState(null);
     const [severity, setSeverity] = useState('info');
 
+    const isStudent = type === 'student';
+
     const handleAddUser = async () => {
         try {
             const payload = {
-                email: username,
-                name: username,
-                academicId,
+                email,
                 password,
-                role: type // this will now be correct (e.g., 'student')
+                role: type,
+                name
             };
+
+            if (isStudent) {
+                payload.academicId = academicId;
+            } else {
+                payload.username = username;
+            }
 
             const res = await createUser(payload);
             setSeverity('success');
             setMessage(`User created! ID: ${res.data.id || academicId}`);
+            setEmail('');
             setUsername('');
+            setName('');
             setPassword('');
             setAcademicId('');
         } catch (err) {
@@ -56,21 +70,30 @@ export default function RepresentativePage() {
     };
 
     const handleChangePassword = async () => {
-        if (!academicId) {
-            setSeverity('warning');
-            setMessage('Please enter the Academic ID to change its password.');
-            return;
-        }
+        let userId = null;
 
         try {
-            // First, find the user by academicId
-            const res = await axios.get(`http://localhost:3005/users/academic/${academicId}`);
-            const userId = res.data.id;
+            if (isStudent) {
+                if (!academicId) {
+                    setSeverity('warning');
+                    setMessage('Please enter the Academic ID.');
+                    return;
+                }
+                const res = await getUserByAcademicId(academicId);
+                userId = res.data.id;
+            } else {
+                if (!username) {
+                    setSeverity('warning');
+                    setMessage('Please enter the Username.');
+                    return;
+                }
+                const res = await getUserByUsername(username);
+                userId = res.data.id;
+            }
 
-            // Now change password using user ID
             await changePassword(userId, { newPassword: password });
             setSeverity('success');
-            setMessage(`Password updated for user with ID ${academicId}.`);
+            setMessage(`Password updated for user with ID ${userId}.`);
             setPassword('');
         } catch (err) {
             console.error(err);
@@ -79,28 +102,15 @@ export default function RepresentativePage() {
         }
     };
 
-
     return (
-
         <div>
-            <RepresentativeNavbar/>
-            <Container maxWidth="md" sx={{py: 4}}>
+            <RepresentativeNavbar />
+            <Container maxWidth="md" sx={{ py: 4 }}>
                 <Card elevation={3}>
                     <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            User Management
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>User Management</Typography>
 
-                        <Box
-                            component="form"
-                            noValidate
-                            autoComplete="off"
-                            sx={{
-                                display: 'grid',
-                                gap: 2,
-                                mb: 2
-                            }}
-                        >
+                        <Box component="form" noValidate autoComplete="off" sx={{ display: 'grid', gap: 2, mb: 2 }}>
                             <FormControl fullWidth>
                                 <InputLabel>User Type</InputLabel>
                                 <Select
@@ -109,18 +119,34 @@ export default function RepresentativePage() {
                                     onChange={e => setType(e.target.value)}
                                 >
                                     {userTypes.map(u => (
-                                        <MenuItem key={u.value} value={u.value}>
-                                            {u.label}
-                                        </MenuItem>
+                                        <MenuItem key={u.value} value={u.value}>{u.label}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
 
                             <TextField
-                                label="Username / Email"
-                                value={username}
-                                onChange={e => setUsername(e.target.value)}
+                                label="Email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
                                 placeholder="e.g. jdoe@example.com"
+                                fullWidth
+                            />
+
+                            {!isStudent && (
+                                <TextField
+                                    label="Username"
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
+                                    placeholder="e.g. jdoe123"
+                                    fullWidth
+                                />
+                            )}
+
+                            <TextField
+                                label="Name"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                placeholder="e.g. John Doe"
                                 fullWidth
                             />
 
@@ -133,37 +159,28 @@ export default function RepresentativePage() {
                                 fullWidth
                             />
 
-                            <TextField
-                                label="Academic ID"
-                                value={academicId}
-                                onChange={e => setAcademicId(e.target.value)}
-                                placeholder="e.g. 03181110"
-                                fullWidth
-                            />
+                            {isStudent && (
+                                <TextField
+                                    label="Academic ID"
+                                    value={academicId}
+                                    onChange={e => setAcademicId(e.target.value)}
+                                    placeholder="e.g. 03181110"
+                                    fullWidth
+                                />
+                            )}
 
-                            <Box sx={{display: 'flex', gap: 2}}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleAddUser}
-                                >
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Button variant="contained" color="primary" onClick={handleAddUser}>
                                     Add User
                                 </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="secondary"
-                                    onClick={handleChangePassword}
-                                >
+                                <Button variant="outlined" color="secondary" onClick={handleChangePassword}>
                                     Change Password
                                 </Button>
                             </Box>
                         </Box>
 
                         {message && (
-                            <Alert
-                                severity={severity}
-                                onClose={() => setMessage(null)}
-                            >
+                            <Alert severity={severity} onClose={() => setMessage(null)}>
                                 {message}
                             </Alert>
                         )}
@@ -172,4 +189,4 @@ export default function RepresentativePage() {
             </Container>
         </div>
     );
-    }
+}
