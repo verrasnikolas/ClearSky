@@ -1,6 +1,8 @@
 import styles from './ReviewStatus.module.css';
 import { Alert } from '@mui/material';
 import React, { useState } from 'react';
+import { acknowledgeReview } from '../services/ReviewService';
+
 
 
 const ReviewStatus = ({ course }) => {
@@ -12,6 +14,15 @@ const ReviewStatus = ({ course }) => {
 
     const hasReview = reason || status;
 
+    const handleAcknowledge = async () => {
+        try {
+            await acknowledgeReview(course.student_id, course.courseId);
+            setAckMessage('Review acknowledged!');
+        } catch (err) {
+            console.error('Failed to acknowledge review:', err);
+            setAckMessage('Failed to acknowledge review.');
+        }
+    };
 
 
     return (
@@ -59,12 +70,16 @@ const ReviewStatus = ({ course }) => {
                     </button>
                 )}
 
-                <button
-                    className={styles.btn}
-                    onClick={() => setAckMessage('Review acknowledged!')}
-                >
-                    Ack
-                </button>
+                {course.status !== 'ACKNOWLEDGED' ? (
+                    <button className={styles.btn} onClick={handleAcknowledge}>
+                        Ack
+                    </button>
+                ) : (
+                    <button className={styles.btn} disabled>
+                        Already Acknowledged
+                    </button>
+                )}
+
 
             </div>
 

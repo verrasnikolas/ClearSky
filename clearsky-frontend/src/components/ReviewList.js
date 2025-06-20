@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { getAllReviews, replyToReview } from '../services/ReviewService';
 import ReviewReplyForm from './ReviewReplyForm';
 import styles from './ReviewList.module.css';
+import { getCoursesByInstructor } from '../services/GradeService';
+
+
+import { decodeToken } from '../auth/token';
+
+const decoded = decodeToken(localStorage.getItem('accessToken'));
+const INSTRUCTOR_ID = decoded?.userId;
+
+
 
 const ReviewList = () => {
     const [reviews, setReviews] = useState([]);
@@ -13,12 +22,25 @@ const ReviewList = () => {
 
     const fetchReviews = async () => {
         try {
-            const result = await getAllReviews();
-            setReviews(result.data);
+            // Get course IDs for this instructor
+            const coursesRes = await getCoursesByInstructor(INSTRUCTOR_ID);
+            const courseIds = coursesRes.data.map(course => course.id);
+
+            // Get all reviews
+            const reviewsRes = await getAllReviews();
+            const allReviews = reviewsRes.data;
+
+            // Filter reviews to only those for instructor's courses
+            const filteredReviews = allReviews.filter(review =>
+                courseIds.includes(review.course_id)
+            );
+
+            setReviews(filteredReviews);
         } catch (err) {
             console.error("Failed to fetch reviews:", err);
         }
     };
+
 
     // const handleReplySubmit = async (update) => {
     //     try {
