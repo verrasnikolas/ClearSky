@@ -1,5 +1,5 @@
 cd api-gateway
-docker build -t api-gateway-service:latest .
+docker build -t api-gateway:latest .
 cd ..
 
 cd grades-service
@@ -22,6 +22,6 @@ cd user-service
 docker build -t user-service:latest .
 cd ..
 
-#cd clearsky-frontend
-#docker build -t clearsky-frontend:latest .
-#cd ..
+cd clearsky-frontend
+docker build -t clearsky-frontend:latest .
+cd ..
