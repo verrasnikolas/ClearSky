@@ -22,6 +22,7 @@ import {
     Lock as LockIcon
 } from '@mui/icons-material';
 import {login} from "../services/AuthService"; // Import του userApi
+import { Tooltip } from '@mui/material'; // (Add this at the top)
 
 export default function LoginPage({ onLogin }) { // Λαμβάνουμε την onLogin prop
     const [identifier, setIdentifier] = useState('');
@@ -36,19 +37,27 @@ export default function LoginPage({ onLogin }) { // Λαμβάνουμε την 
         setError(null);
         try {
             const requestBody = {
-                identifier, // this can be email, academicId, or username
+                identifier,
                 password
             };
-            const response = await login(requestBody);
-            const { accessToken, refreshToken } = response.data;
-            onLogin(accessToken, refreshToken); // App.js will handle redirect
 
+            const response = await login(requestBody);
+            const { accessToken, refreshToken, user } = response.data;
+
+            if (user.role !== role) {
+                setError(`Selected role "${role}" does not match your account role "${user.role}".`);
+                setLoading(false);
+                return;
+            }
+
+            onLogin(accessToken, refreshToken); // Proceed if roles match
         } catch (err) {
             setError(err.response?.data?.error || 'Login failed');
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <Grid
@@ -177,9 +186,11 @@ export default function LoginPage({ onLogin }) { // Λαμβάνουμε την 
                         </Button>
 
                         <Box textAlign="center" sx={{ mt: 1 }}>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
+                            <Tooltip title="Please contact your institution representative to recover your password.">
+                                <Link href="#" variant="body2" underline="hover">
+                                    Forgot password?
+                                </Link>
+                            </Tooltip>
                         </Box>
                     </Box>
                 </Paper>
