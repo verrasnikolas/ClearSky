@@ -97,11 +97,26 @@ const getUserByEmail = async (req, res) => {
     }
 };
 
+const getAcademicIdByUserId = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        return res.json({ academicId: user.academicId });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
 module.exports = {
     addUser,
     getUserById,
     getUserByAcademicId,
     updateUser,
     changePassword,
-    getUserByEmail
+    getUserByEmail,
+    getAcademicIdByUserId
 };

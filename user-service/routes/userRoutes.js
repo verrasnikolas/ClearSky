@@ -12,6 +12,10 @@ router.get('/:id', authenticateToken ,getUserById);
 // Get User by Academic ID
 router.get('/academic/:academicId', authenticateToken, getUserByAcademicId);
 
+// Get academic ID by user ID
+router.get('/id/:id/academic', authenticateToken, getAcademicIdByUserId);
+
+
 // Update User
 router.put('/:id', authenticateToken, [...updateUserValidationRules, validateUser], updateUser);
 
