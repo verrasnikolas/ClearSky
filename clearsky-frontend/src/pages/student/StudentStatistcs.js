@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../student/StudentStatisticsPage.module.css';
+import StudentNavbar from './StudentNavbar';
 import {
     BarChart,
     Bar,
@@ -136,6 +137,7 @@ const InstructorStatisticsPage = () => {
 
     return (
         <>
+            <StudentNavbar />
             <div className={styles.container}>
                 <div className={styles.headerRow}>
                     <h2 className={styles.heading}>Available Course Statistics</h2>
