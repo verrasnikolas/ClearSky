@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
-import { userApi } from '../services/api'; // Import του userApi
+import {authApi, userApi} from '../services/api'; // Import του userApi
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
         const refreshToken = localStorage.getItem('refreshToken'); // 👈 Λαμβάνουμε το refreshToken
 
         try {
-            await userApi.post('/auth/logout', { refreshToken }); // 👈 Στέλνουμε το refreshToken στο body
+            await authApi.post('/logout', { refreshToken }); // 👈 Στέλνουμε το refreshToken στο body
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             onLogout();
