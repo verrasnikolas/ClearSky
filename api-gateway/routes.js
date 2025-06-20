@@ -55,6 +55,13 @@ router.use('/api/reviews', authenticateToken, createProxyMiddleware({
     onProxyReq: forwardAuthHeaders
 }));
 
+router.use('/api/review-attachments', createProxyMiddleware({
+    target: 'http://review-service:30003',
+    pathRewrite: { '^/api/review-attachments': '/uploads' },
+    changeOrigin: true,
+    logLevel: 'debug',
+}));
+
 router.use('/api/upload', authenticateToken, createProxyMiddleware({
     target: 'http://upload-service:3006',
     changeOrigin: true,

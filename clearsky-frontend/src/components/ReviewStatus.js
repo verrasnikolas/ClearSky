@@ -46,8 +46,7 @@ const ReviewStatus = ({ course }) => {
             <div className={styles.actions}>
                 {course.attachment ? (
                     <a
-                        href={`http://localhost:30003/uploads/${course.attachment}`}
-                        target="_blank"
+                        href={`http://localhost/api/review-attachments/${course.attachment}`}                        target="_blank"
                         rel="noopener noreferrer"
                         className={styles.btn}
                         download
