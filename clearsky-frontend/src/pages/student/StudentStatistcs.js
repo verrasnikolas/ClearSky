@@ -16,7 +16,6 @@ import {
 import { getCourseStats, getAllCourses } from '../../services/StatsService';
 
 const InstructorStatisticsPage = () => {
-    // const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [selectedStats, setSelectedStats] = useState(null);
     const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
@@ -32,16 +31,10 @@ const InstructorStatisticsPage = () => {
             });
     }, []);
 
-    // const handleGoToCourses = () => {
-    //     navigate('/student/studentpage');
-    // };
-
-    // Helper function to format dates
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         try {
             const date = new Date(dateString);
-            // Options for formatting date and time
             const options = {
                 year: 'numeric',
                 month: 'long',
@@ -49,9 +42,9 @@ const InstructorStatisticsPage = () => {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
-                hour12: false // Use 24-hour format
+                hour12: false
             };
-            return date.toLocaleDateString(undefined, options); // 'undefined' uses default locale
+            return date.toLocaleDateString(undefined, options);
         } catch (e) {
             console.error("Error formatting date:", dateString, e);
             return 'Invalid Date';
@@ -68,7 +61,6 @@ const InstructorStatisticsPage = () => {
                 const fetchedStats = res.data;
                 setSelectedStats(fetchedStats);
                 setSelectedCourseInfo({ courseCode, examPeriod });
-                // Update the specific course in the `courses` state with fetched timestamps
                 setCourses(prevCourses =>
                     prevCourses.map(course =>
                         course.courseCode === courseCode && course.examPeriod === examPeriod
@@ -92,7 +84,7 @@ const InstructorStatisticsPage = () => {
     const getGradeDistributionData = () => {
         if (!selectedStats?.gradeDistribution) return [];
         return Object.entries(selectedStats.gradeDistribution).map(([grade, count]) => ({
-            grade,
+            grade: parseInt(grade, 10),
             count
         }));
     };
@@ -116,6 +108,32 @@ const InstructorStatisticsPage = () => {
         ];
     };
 
+    // Custom Label Renderer for Pie Chart
+    const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, value }) => {
+        const RADIAN = Math.PI / 180;
+        const radius = outerRadius * 1.5; // You might even increase this a bit if labels are still too close
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        const textAnchor = x > cx ? 'start' : 'end';
+
+        return (
+            <text
+                x={x}
+                y={y}
+                fill="black"
+                textAnchor={textAnchor}
+                dominantBaseline="central"
+                style={{
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }}
+            >
+                {`${(percent * 100).toFixed(1)}%`}
+            </text>
+        );
+    };
+
     return (
         <>
             <div className={styles.container}>
@@ -129,6 +147,7 @@ const InstructorStatisticsPage = () => {
                     <thead>
                     <tr>
                         <th>Course Code</th>
+                        <th>Course Name</th>
                         <th>Exam Period</th>
                         <th>Initial Grades Upload</th>
                         <th>Final Grades Last Updated</th>
@@ -139,9 +158,16 @@ const InstructorStatisticsPage = () => {
                     {courses.map((course, index) => (
                         <tr key={index}>
                             <td>{course.courseCode}</td>
+                            <td>{course.courseName || 'N/A'}</td>
                             <td>{course.examPeriod}</td>
                             <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
-                            <td>{course.updatedAt ? formatDate(course.updatedAt) : 'N/A'}</td>
+                            <td>
+                                {course.createdAt && course.updatedAt &&
+                                new Date(course.createdAt).getTime() === new Date(course.updatedAt).getTime()
+                                    ? 'N/A'
+                                    : (course.updatedAt ? formatDate(course.updatedAt) : 'N/A')
+                                }
+                            </td>
                             <td>
                                 <button
                                     className={styles.button}
@@ -165,7 +191,7 @@ const InstructorStatisticsPage = () => {
 
                         {/* Combined: Grade Distribution and Pie Chart */}
                         <div className={styles.chartGrid}>
-                            <div className={styles.chartBox} style={{ height: '300px' }}>
+                            <div className={styles.chartBox} style={{ height: '450px' }}>
                                 <h4>📊 Grade Distribution</h4>
                                 <ResponsiveContainer width="100%" height="90%">
                                     <BarChart data={getGradeDistributionData()}>
@@ -183,7 +209,8 @@ const InstructorStatisticsPage = () => {
                                 </ResponsiveContainer>
                             </div>
 
-                            <div className={styles.chartBox} style={{ height: '300px' }}>
+                            {/* This is the Pie Chart's container */}
+                            <div className={styles.chartBox} style={{ height: '450px', width: '500px' }}> {/* Increased width here */}
                                 <h4>✅ Pass vs ❌ Fail (Avg ≥ 5)</h4>
                                 <ResponsiveContainer width="100%" height="90%">
                                     <PieChart>
@@ -193,13 +220,20 @@ const InstructorStatisticsPage = () => {
                                             nameKey="name"
                                             cx="50%"
                                             cy="50%"
-                                            outerRadius={90}
-                                            label={({ name, percentage }) => `${name}: ${percentage}%`}
+                                            outerRadius={70}
+                                            labelLine={false}
+                                            label={renderCustomizedLabel}
+                                            paddingAngle={3}
                                         >
                                             <Cell fill="#82ca9d" />
                                             <Cell fill="#ff6961" />
                                         </Pie>
-                                        <Legend />
+                                        <Legend
+                                            verticalAlign="top"
+                                            align="center"
+                                            height={36}
+                                            wrapperStyle={{ paddingTop: '20px', paddingBottom: '10px' }}
+                                        />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
