@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../student/StudentStatisticsPage.module.css';
 import StudentNavbar from './StudentNavbar';
 import {
@@ -18,6 +19,7 @@ import { getCourseStats, getAllCourses } from '../../services/StatsService';
 
 const InstructorStatisticsPage = () => {
     const [courses, setCourses] = useState([]);
+    const navigate = useNavigate();
     const [selectedStats, setSelectedStats] = useState(null);
     const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -31,6 +33,13 @@ const InstructorStatisticsPage = () => {
                 setError('Failed to load course list');
             });
     }, []);
+
+
+    const handleGoToCourses = () => {
+
+        navigate('/student/studentpage');
+
+    };
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -141,6 +150,11 @@ const InstructorStatisticsPage = () => {
             <div className={styles.container}>
                 <div className={styles.headerRow}>
                     <h2 className={styles.heading}>Available Course Statistics</h2>
+                    <button className={styles.button} onClick={handleGoToCourses}>
+
+                        Go to My Courses
+
+                    </button>
                 </div>
 
                 {error && <p className={styles.error}>{error}</p>}
