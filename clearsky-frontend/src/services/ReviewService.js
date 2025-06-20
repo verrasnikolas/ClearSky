@@ -19,3 +19,9 @@ export const replyToReview = (formData) => {
 export const getReviewStatus = (studentId, courseId) =>
     reviewApi.get(`/status?student_id=${studentId}&course_id=${courseId}`);
 
+
+export const acknowledgeReview = (studentId, courseId) =>
+    reviewApi.patch('/status/acknowledge', {
+        student_id: studentId,
+        course_id: courseId
+    });

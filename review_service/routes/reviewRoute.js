@@ -18,5 +18,6 @@ router.post('/', validate, controller.submitReviewRequest);
 router.get('/', controller.getAllReviews);
 router.patch('/status', upload.single('attachment'), controller.replyToReviewRequest);
 router.get('/status', controller.getReviewStatus); // ← add this
+router.patch('/status/acknowledge', controller.acknowledgeReviewStatus);
 
 module.exports = router;

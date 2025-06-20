@@ -79,7 +79,8 @@ const StudentPage = () => {
                 courseId: course.courseId,
                 name: course.name,
                 term: course.term,
-                ...res.data
+                ...res.data,
+                student_id: USER_ID // ✅ needed for acknowledge
             });
         } catch (err) {
             console.error('No review found:', err);

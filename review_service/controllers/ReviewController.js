@@ -104,3 +104,29 @@ exports.getReviewStatus = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+exports.acknowledgeReviewStatus = async (req, res) => {
+    const { student_id, course_id } = req.body;
+
+    if (!student_id || !course_id) {
+        return res.status(400).json({ error: 'Missing student_id or course_id' });
+    }
+
+    try {
+        const review = await ReviewRequest.findOne({
+            where: { student_id, course_id }
+        });
+
+        if (!review) {
+            return res.status(404).json({ error: 'Review not found for the specified student and course.' });
+        }
+
+        review.status = 'ACKNOWLEDGED';
+        await review.save();
+
+        res.json({ message: 'Review status updated to ACKNOWLEDGED' });
+    } catch (err) {
+        console.error('Error acknowledging review:', err);
+        res.status(500).json({ error: 'Failed to acknowledge review.' });
+    }
+};

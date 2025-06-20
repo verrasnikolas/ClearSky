@@ -88,9 +88,29 @@ const getStudentGradeForCourse = async (req, res) => {
     }
 };
 
+// GET /api/grades/instructor/:instructorId/courses
+const getCoursesByInstructor = async (req, res) => {
+    const { instructorId } = req.params;
+
+    try {
+        const courses = await Course.findAll({
+            where: { instructor_id: instructorId },
+            attributes: ['id', 'title', 'code', 'semester'], // or ['id'] if you only want IDs
+            raw: true
+        });
+
+        res.status(200).json(courses);
+    } catch (err) {
+        console.error('❌ Failed to fetch instructor courses:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 
 module.exports = {
     getStudentGradedCourses,
     getGrades,
-    getStudentGradeForCourse
+    getStudentGradeForCourse,
+    getCoursesByInstructor
 };
