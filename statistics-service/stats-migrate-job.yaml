@@ -9,7 +9,7 @@ spec:
         - name: migrate
           # Use the same image as your grades-service, as it should contain your code,
           # dependencies (including sequelize-cli), and migration files.
-          image: stats-service:latest
+          image: jimkam5/saas:latest
           imagePullPolicy: Never # Or 'IfNotPresent' if you prefer
           command: ["npx"]
           args: ["sequelize-cli", "db:migrate"] # The command to run your migrations

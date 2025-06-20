@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: stats-service
-          image: stats-service:latest
-          imagePullPolicy: Never
+          image: jimkam5/saas:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3002
           env:
