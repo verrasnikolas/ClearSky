@@ -21,8 +21,7 @@ import {
     Person as PersonIcon,
     Lock as LockIcon
 } from '@mui/icons-material';
-import { userApi } from '../services/api';
-import {decodeToken} from "../auth/token"; // Import του userApi
+import {login} from "../services/AuthService"; // Import του userApi
 
 export default function LoginPage({ onLogin }) { // Λαμβάνουμε την onLogin prop
     const [identifier, setIdentifier] = useState('');
@@ -40,9 +39,8 @@ export default function LoginPage({ onLogin }) { // Λαμβάνουμε την 
                 identifier, // this can be email, academicId, or username
                 password
             };
-            const response = await userApi.post('/auth/login', requestBody);
-            const { accessToken, refreshToken, user } = response.data;
-            const decoded = decodeToken(accessToken);
+            const response = await login(requestBody);
+            const { accessToken, refreshToken } = response.data;
             onLogin(accessToken, refreshToken); // App.js will handle redirect
 
         } catch (err) {
@@ -51,45 +49,6 @@ export default function LoginPage({ onLogin }) { // Λαμβάνουμε την 
             setLoading(false);
         }
     };
-
-
-    //Use for mock login
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setError(null);
-    //
-    //     try {
-    //         console.log("Logging in as:", role); // Debugging line
-    //
-    //         const mockToken = 'mock-access-token';
-    //         localStorage.setItem('accessToken', mockToken);
-    //         localStorage.setItem('refreshToken', 'mock-refresh-token');
-    //         localStorage.setItem('userRole', role);
-    //         onLogin(mockToken);
-    //
-    //         // Redirect based on role
-    //         switch (role) {
-    //             case 'student':
-    //                 navigate('/student/statistics');
-    //                 break;
-    //             case 'instructor':
-    //                 navigate('/instructor/upload');
-    //                 break;
-    //             case 'institution_representative':
-    //                 navigate('/representative');
-    //                 break;
-    //             default:
-    //                 setError('Unknown role selected');
-    //         }
-    //
-    //     } catch (err) {
-    //         setError('Temporary login failure.');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
 
     return (
         <Grid

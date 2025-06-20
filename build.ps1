@@ -1,3 +1,7 @@
+cd api-gateway
+docker build -t api-gateway-service:latest .
+cd ..
+
 cd grades-service
 docker build -t grades-service:latest .
 cd ..

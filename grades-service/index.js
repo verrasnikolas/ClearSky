@@ -8,7 +8,7 @@ const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors());
-app.use('/api/grades', gradesRoutes);
+app.use('/', gradesRoutes);
 
 app.get('/', (req, res) => {
     res.send('Grades Service is running');
@@ -16,8 +16,9 @@ app.get('/', (req, res) => {
 
 (async () => {
         await db.sequelize.authenticate();
-
-        console.log('✅ Connected to the database');
+        console.log('✅ Connected to DB');
+        await db.sequelize.sync();
+        console.log('✅ Tables synced');
 
         await connectRabbitMQ();
         //await startConsumer((event) => handleEvent(event));  αν θέλουμε να προσθέσουμε

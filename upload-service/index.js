@@ -8,7 +8,7 @@ const cors = require('cors');
 app.use(cors());
 
 app.use(express.json());
-app.use('/api/upload', uploadRoutes);
+app.use('/', uploadRoutes);
 
 (async () => {
     await connectRabbitMQ();

@@ -12,10 +12,11 @@ import {
     getGradeForStudentCourse
 } from '../../services/GradeService';
 import { getReviewStatus } from '../../services/ReviewService';
+import {decodeToken} from "../../auth/token";
 
-const STUDENT_ID = '03181110';
 
-
+const decoded = decodeToken(localStorage.getItem('accessToken'));
+const STUDENT_ID = decoded?.userId;
 
 const StudentPage = () => {
     const [courses, setCourses] = useState([]);
@@ -61,7 +62,7 @@ const StudentPage = () => {
     const handleViewGrades = async (course) => {
         clearAll();
         try {
-            const res = await getGradeForStudentCourse(STUDENT_ID, course.courseId);
+            const res = await getGradeForStudentCourse(course.courseId);
             const gradeData = res.data;
 
             setSelectedCourseForGrades({
@@ -96,7 +97,7 @@ const StudentPage = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await getGradesByUser(STUDENT_ID);
+                const res = await getGradesByUser();
                 const extracted = res.data.map((entry, index) => ({
                     id: index + 1,
                     courseId: entry.course_id,

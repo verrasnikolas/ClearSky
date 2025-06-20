@@ -9,10 +9,9 @@ const uploadInitialGrades = async (req, res) => {
     console.log('[BACKEND] req.body:', req.body);
 
     try {
+        const instructorId = req.headers['x-user-id'];
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'No file uploaded' });
-
-        const instructorId = req.body.instructor_id;
         const { courseMeta, gradeEntries, extractedUsers, skippedRows } = parseExcel(file, instructorId);
 
         // Publish event to broker (RabbitMQ/NATS etc)
@@ -36,10 +35,9 @@ const uploadInitialGrades = async (req, res) => {
 
 const uploadFinalGrades = async (req, res) => {
     try {
+        const instructorId = req.headers['x-user-id'];
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'No file uploaded' });
-
-        const instructorId = req.body.instructor_id;
         const { courseMeta, gradeEntries } = parseExcel(file, instructorId);
 
         publish(FINAL_GRADES_PARSED, {

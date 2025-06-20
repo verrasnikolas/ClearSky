@@ -7,7 +7,7 @@ const reviewRoutes = require('./routes/reviewRoute');
 const errorHandler = require('./middlewares/ErrorHandler');
 
 app.use(express.json());
-app.use('/api/reviews', reviewRoutes);
+app.use('/', reviewRoutes);
 app.use(errorHandler); // Must be last
 app.use('/uploads', express.static('uploads'));
 

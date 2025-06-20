@@ -1,17 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
-const { uploadInitialGrades, getStudentGradedCourses, getStudentGradeForCourse } = require('../controllers/gradesController');
-const { authenticateToken } = require('../middlewares/authToken');
+const { getStudentGradedCourses, getStudentGradeForCourse } = require('../controllers/gradesController');
 
-router.post(
-    '/upload',
-    // upload.single('file'),
-    uploadInitialGrades
-);
-
-router.get('/student/:studentId', authenticateToken, getStudentGradedCourses);
-router.get('/student/:studentId/course/:courseId', authenticateToken, getStudentGradeForCourse);
+router.get('/student/', getStudentGradedCourses);
+router.get('/student/:courseId', getStudentGradeForCourse);
 
 module.exports = router;

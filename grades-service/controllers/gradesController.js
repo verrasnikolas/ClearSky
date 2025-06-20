@@ -1,9 +1,6 @@
 // controllers/gradesController.js
 const { Course, InitialGrade, FinalGrade } = require('../models');
 
-// POST /api/grades/upload
-const uploadInitialGrades = async (req, res) => {};
-
 // GET /api/grades/
 const getGrades = async (req, res) => {
     try {
@@ -16,7 +13,7 @@ const getGrades = async (req, res) => {
 
 // GET /api/grades/student/:studentId
 const getStudentGradedCourses = async (req, res) => {
-    const studentId = req.params.studentId;
+    const studentId = req.headers['x-user-id'];
     try {
         const initialGrades = await InitialGrade.findAll({
             where: { student_id: studentId },
@@ -62,7 +59,8 @@ const getStudentGradedCourses = async (req, res) => {
 };
 
 const getStudentGradeForCourse = async (req, res) => {
-    const { studentId, courseId } = req.params;
+    const studentId = req.headers['x-user-id'];
+    const courseId = req.params.courseId;
 
     try {
         const initialGrade = await InitialGrade.findOne({
@@ -93,7 +91,6 @@ const getStudentGradeForCourse = async (req, res) => {
 
 module.exports = {
     getStudentGradedCourses,
-    uploadInitialGrades,
     getGrades,
     getStudentGradeForCourse
 };

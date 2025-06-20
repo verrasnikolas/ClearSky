@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: grades-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: grades-service
   ports:
     - protocol: TCP
       port: 3001
       targetPort: 3001
-      nodePort: 30031

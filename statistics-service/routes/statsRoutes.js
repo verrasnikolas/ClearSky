@@ -2,15 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const statsController = require('../controllers/statsController');
-const { authenticateToken } = require('../middlewares/authToken');
 
 // GET /api/stats/courses/:courseCode/:semester
-router.get('/courses/:courseCode/:semester', authenticateToken, statsController.getCourseStats);
+router.get('/courses/:courseCode/:semester', statsController.getCourseStats);
 
 // GET /api/stats/courses/:courseCode
-router.get('/courses/:courseCode', authenticateToken, statsController.getAllCourseStats);
+router.get('/courses/:courseCode', statsController.getAllCourseStats);
 
 // GET /api/stats/all-courses
-router.get('/all-courses', authenticateToken, statsController.getAllCoursesWithExamPeriods); // New route
+router.get('/all-courses', statsController.getAllCoursesWithExamPeriods); // New route
 
 module.exports = router;

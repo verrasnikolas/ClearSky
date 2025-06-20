@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: stats-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: stats-service
   ports:
     - protocol: TCP
       port: 3002
       targetPort: 3002
-      nodePort: 30032

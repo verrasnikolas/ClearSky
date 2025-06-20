@@ -2,6 +2,7 @@
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const { sendWelcomeEmail } = require('./sendWelcomeEmail');
+const sequelize = require('../config/database.js');
 
 async function addUsersFromExcel(extractedUsers = []) {
     if (!Array.isArray(extractedUsers) || extractedUsers.length === 0) return;

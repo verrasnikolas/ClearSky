@@ -49,15 +49,55 @@ function App() {
     }, [authToken]);
 
     const handleLogin = (accessToken, refreshToken) => {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        setAuthToken(accessToken);
-        const decoded = decodeToken(accessToken);
-        if (decoded?.role) {
-            setUserRole(decoded.role);
-        } else {
-            handleLogout();
+        console.log("App.js: handleLogin called.");
+        console.log("App.js: Received accessToken:", accessToken);
+        console.log("App.js: Received refreshToken:", refreshToken);
+
+        // Check if tokens are actually valid before attempting to store
+        if (!accessToken || typeof accessToken !== 'string' || accessToken.length === 0) {
+            console.error("App.js: accessToken is invalid or empty. Cannot store.");
+            handleLogout(); // Or display an error message to the user
+            return;
         }
+        if (!refreshToken || typeof refreshToken !== 'string' || refreshToken.length === 0) {
+            console.error("App.js: refreshToken is invalid or empty. Cannot store.");
+            // Decide if you want to logout or proceed without refresh token
+            // For now, let's just log and continue if accessToken is there
+        }
+
+        try {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            console.log("App.js: Tokens attempted to be stored in localStorage.");
+
+            // Immediately check if they are there *after* attempting to store
+            console.log("App.js: localStorage.getItem('accessToken') after set:", localStorage.getItem('accessToken'));
+            console.log("App.js: localStorage.getItem('refreshToken') after set:", localStorage.getItem('refreshToken'));
+
+        } catch (e) {
+            console.error("App.js: Error storing tokens in localStorage:", e);
+            // This could happen if localStorage is full or disabled
+            alert("Could not store login information. Please check browser settings or clear site data.");
+            handleLogout();
+            return;
+        }
+
+        setAuthToken(accessToken); // Update state with the token
+
+        const decoded = decodeToken(accessToken);
+        let roleToRedirect = null;
+
+        if (decoded?.role) {
+            roleToRedirect = decoded.role;
+            setUserRole(roleToRedirect); // Update state with the role
+        } else {
+            console.error("App.js: Decoded token has no role or is invalid.");
+            handleLogout();
+            return;
+        }
+
+        console.log("App.js: Login successful! User role:", roleToRedirect);
+        console.log("App.js: Attempting to navigate to:", getRedirectPathForRole(roleToRedirect));
     };
 
     const handleLogout = () => {
@@ -76,8 +116,8 @@ function App() {
     //     localStorage.setItem('refreshToken', 'fake-refresh-token');
     // }
 
-    const getRedirectPathForRole = () => {
-        switch (userRole) {
+    const getRedirectPathForRole = (roleToRedirect) => {
+        switch (roleToRedirect) {
             case 'student':
                 return '/student/statistics';
             case 'instructor':
@@ -94,7 +134,7 @@ function App() {
             <Navbar isLoggedIn={!!authToken} onLogout={handleLogout} />
             <Routes>
                 {/* Public Routes */}
-                <Route path="/login" element={!authToken ? <LoginPage onLogin={handleLogin} /> : <Navigate to={getRedirectPathForRole()} />} />
+                <Route path="/login" element={!authToken ? <LoginPage onLogin={handleLogin} /> : <Navigate to={getRedirectPathForRole(userRole)} />} />
                 <Route path="/" element={<Navigate to={authToken ? getRedirectPathForRole() : '/login'} />} />
 
                 {/* Student Routes */}

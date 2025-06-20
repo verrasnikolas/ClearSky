@@ -58,12 +58,11 @@ const getApiInstance = (baseURL) => {
     return instance;
 };
 
-// ... (οι ορισμοί των userApi, gradeApi, κ.λπ.) ...
+const GATEWAY_URL = 'http://localhost:80/api'; // your API Gateway
 
-// Instances για κάθε microservice
-export const userApi = getApiInstance('http://localhost:30035');       // User Service
-export const gradeApi = getApiInstance('http://localhost:30031/api/grades'); // Grade Service
-export const uploadApi = getApiInstance('http://localhost:30036/api/upload'); // Upload Service
-export const reviewApi = getApiInstance('http://localhost:30003/api/reviews'); // Review Service
-export const statsApi = getApiInstance('http://localhost:30032/api/stats');
-// Προσθέστε και άλλα APIs για κάθε microservice σας
+export const gradeApi = getApiInstance(`${GATEWAY_URL}/grades`);
+export const userApi = getApiInstance(`${GATEWAY_URL}/users`);
+export const authApi = getApiInstance(`${GATEWAY_URL}/auth`);
+export const uploadApi = getApiInstance(`${GATEWAY_URL}/upload`);
+export const reviewApi = getApiInstance(`${GATEWAY_URL}/reviews`);
+export const statsApi = getApiInstance(`${GATEWAY_URL}/stats`);

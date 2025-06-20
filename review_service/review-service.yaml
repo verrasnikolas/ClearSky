@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: review-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: review-service  # Ensure the label selector matches the pod's label
   ports:
     - protocol: TCP
       port: 3003  # Exposed port on the service
       targetPort: 3003  # Port in the container that is exposed to the service
-      nodePort: 30003  # Exposes it on localhost:30003

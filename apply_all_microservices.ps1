@@ -4,6 +4,10 @@ Write-Host "Applied rabbitmq-deployment.yaml"
 kubectl apply -f rabbitmq-service.yaml
 Write-Host "Applied rabbitmq-service.yaml"
 
+cd api-gateway
+./apply
+cd ..
+
 cd grades-service
 ./apply
 cd ..

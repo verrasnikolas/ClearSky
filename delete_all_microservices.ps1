@@ -1,3 +1,7 @@
+cd api-gateway
+./delete
+cd ..
+
 cd grades-service
 ./delete
 cd ..

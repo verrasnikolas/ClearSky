@@ -1,7 +1,8 @@
 const ReviewRequest = require('../models/ReviewRequest');
 
 exports.submitReviewRequest = async (req, res) => {
-    const { student_id, course_id, reason } = req.body;
+    const student_id = req.headers['x-user-id'];
+    const { course_id, reason } = req.body;
 
     if (!student_id || !course_id || !reason) {
         return res.status(400).json({ error: 'student_id, course_id, and reason are required.' });

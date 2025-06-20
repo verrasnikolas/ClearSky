@@ -37,11 +37,12 @@ export default function UploadFinalGrades() {
             setMessage({ text: 'Please select a file first.', severity: 'error' });
             return;
         }
-
         setLoading(true);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('instructor_id', '7a3b6d8e-1c94-4a6f-9a4d-2d3d5f219e55'); // Replace with actual instructor ID if dynamic
+        for (let [key, value] of formData.entries()) {
+            console.log(`[FRONTEND] FormData field: ${key}`, value);
+        }
 
         try {
             const res = await uploadFinalGrades(formData);

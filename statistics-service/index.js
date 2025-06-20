@@ -11,9 +11,8 @@ const { startConsumer } = require('./messaging/startConsumer');
 const { connectRabbitMQ } = require('./messaging/connectRabbitMQ');
 const { sequelize, CourseStats } = require('./config/db'); // Import sequelize as well
 const statsRoutes = require('./routes/statsRoutes');
-
 app.use(express.json());
-app.use('/api/stats', statsRoutes);
+app.use('/', statsRoutes);
 
 app.get('/', (req, res) => {
     res.send('Statistics Service is running');
@@ -78,8 +77,10 @@ async function calculateAndStoreStats(courseMeta, gradeEntries) {
 
 (async () => {
     try {
+        await sequelize.authenticate();
+        console.log('✅ Connected to DB');
         await sequelize.sync();
-        console.log('Database synchronized successfully.');
+        console.log('✅ Tables synced');
 
         await connectRabbitMQ();
         await startConsumer(async (event) => {
