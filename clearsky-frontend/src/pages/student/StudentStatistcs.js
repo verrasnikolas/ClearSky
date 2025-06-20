@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './StudentStatisticsPage.module.css';
-import StudentNavbar from './StudentNavbar';
-import {getAllCourses, getCourseStats} from "../../services/StatsService";
+import styles from '../student/StudentStatisticsPage.module.css';
 import {
     BarChart,
     Bar,
@@ -16,9 +13,10 @@ import {
     Cell,
     Legend
 } from 'recharts';
+import { getCourseStats, getAllCourses } from '../../services/StatsService';
 
-const StudentStatisticsPage = () => {
-    const navigate = useNavigate();
+const InstructorStatisticsPage = () => {
+    // const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [selectedStats, setSelectedStats] = useState(null);
     const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
@@ -34,39 +32,9 @@ const StudentStatisticsPage = () => {
             });
     }, []);
 
-    const handleGoToCourses = () => {
-        navigate('/student/studentpage');
-    };
-
-    const handleViewStats = (courseCode, examPeriod) => {
-        setLoading(true);
-        setSelectedStats(null);
-        setError(null);
-
-        getCourseStats(courseCode, examPeriod)
-            .then((res) => {
-                const fetchedStats = res.data;
-                setSelectedStats(fetchedStats);
-                setSelectedCourseInfo({ courseCode, examPeriod });
-                setCourses(prevCourses =>
-                    prevCourses.map(course =>
-                        course.courseCode === courseCode && course.examPeriod === examPeriod
-                            ? {
-                                ...course,
-                                createdAt: fetchedStats.createdAt, // Add createdAt from fetched stats
-                                updatedAt: fetchedStats.updatedAt   // Add updatedAt from fetched stats
-                            }
-                            : course
-                    )
-                );
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError('Failed to load course statistics');
-            })
-            .finally(() => setLoading(false));
-    };
+    // const handleGoToCourses = () => {
+    //     navigate('/student/studentpage');
+    // };
 
     // Helper function to format dates
     const formatDate = (dateString) => {
@@ -90,17 +58,43 @@ const StudentStatisticsPage = () => {
         }
     };
 
+    const handleViewStats = (courseCode, examPeriod) => {
+        setLoading(true);
+        setSelectedStats(null);
+        setError(null);
+
+        getCourseStats(courseCode, examPeriod)
+            .then((res) => {
+                const fetchedStats = res.data;
+                setSelectedStats(fetchedStats);
+                setSelectedCourseInfo({ courseCode, examPeriod });
+                // Update the specific course in the `courses` state with fetched timestamps
+                setCourses(prevCourses =>
+                    prevCourses.map(course =>
+                        course.courseCode === courseCode && course.examPeriod === examPeriod
+                            ? {
+                                ...course,
+                                createdAt: fetchedStats.createdAt,
+                                updatedAt: fetchedStats.updatedAt
+                            }
+                            : course
+                    )
+                );
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError('Failed to load course statistics');
+            })
+            .finally(() => setLoading(false));
+    };
+
     const getGradeDistributionData = () => {
         if (!selectedStats?.gradeDistribution) return [];
-        const distributionMap = new Map(Object.entries(selectedStats.gradeDistribution));
-        const fullDistribution = [];
-        for (let i = 0; i <= 10; i++) {
-            fullDistribution.push({
-                grade: String(i),
-                count: distributionMap.get(String(i)) || 0
-            });
-        }
-        return fullDistribution;
+        return Object.entries(selectedStats.gradeDistribution).map(([grade, count]) => ({
+            grade,
+            count
+        }));
     };
 
     const getPassFailPieData = () => {
@@ -108,33 +102,25 @@ const StudentStatisticsPage = () => {
         const failed = selectedStats.notPassCount ?? 0;
         const total = passed + failed;
 
-        const COLORS = ['#82ca9d', '#ff6961'];
-
         return [
             {
                 name: 'Passed',
                 value: passed,
-                percentage: total ? ((passed / total) * 100).toFixed(1) : 0,
-                color: COLORS[0]
+                percentage: total ? ((passed / total) * 100).toFixed(1) : 0
             },
             {
                 name: 'Failed',
                 value: failed,
-                percentage: total ? ((failed / total) * 100).toFixed(1) : 0,
-                color: COLORS[1]
+                percentage: total ? ((failed / total) * 100).toFixed(1) : 0
             }
         ];
     };
 
     return (
         <>
-            <StudentNavbar />
             <div className={styles.container}>
                 <div className={styles.headerRow}>
                     <h2 className={styles.heading}>Available Course Statistics</h2>
-                    <button className={styles.button} onClick={handleGoToCourses}>
-                        Go to My Courses
-                    </button>
                 </div>
 
                 {error && <p className={styles.error}>{error}</p>}
@@ -144,17 +130,16 @@ const StudentStatisticsPage = () => {
                     <tr>
                         <th>Course Code</th>
                         <th>Exam Period</th>
-                        <th>Initial Grades Upload</th> {/* New Column */}
-                        <th>Final Grades Last Updated</th> {/* New Column */}
+                        <th>Initial Grades Upload</th>
+                        <th>Final Grades Last Updated</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {courses.map((course, index) => ( // Use 'course' object directly
+                    {courses.map((course, index) => (
                         <tr key={index}>
                             <td>{course.courseCode}</td>
                             <td>{course.examPeriod}</td>
-                            {/* Conditionally display dates only if they exist on the course object */}
                             <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
                             <td>{course.updatedAt ? formatDate(course.updatedAt) : 'N/A'}</td>
                             <td>
@@ -172,7 +157,7 @@ const StudentStatisticsPage = () => {
 
                 {loading && <p>Loading statistics...</p>}
 
-                {selectedStats && selectedCourseInfo && (
+                {selectedStats && (
                     <>
                         <h3 className={styles.subheading}>
                             Stats for {selectedCourseInfo.courseCode} – {selectedCourseInfo.examPeriod}
@@ -181,11 +166,16 @@ const StudentStatisticsPage = () => {
                         {/* Combined: Grade Distribution and Pie Chart */}
                         <div className={styles.chartGrid}>
                             <div className={styles.chartBox} style={{ height: '300px' }}>
-                                <h4>📊 Grade Distribution (0-10)</h4>
+                                <h4>📊 Grade Distribution</h4>
                                 <ResponsiveContainer width="100%" height="90%">
                                     <BarChart data={getGradeDistributionData()}>
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="grade" type="category" />
+                                        <XAxis
+                                            dataKey="grade"
+                                            type="number"
+                                            domain={[0, 10]}
+                                            ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                        />
                                         <YAxis allowDecimals={false} />
                                         <Tooltip />
                                         <Bar dataKey="count" fill="#8884d8" />
@@ -206,9 +196,8 @@ const StudentStatisticsPage = () => {
                                             outerRadius={90}
                                             label={({ name, percentage }) => `${name}: ${percentage}%`}
                                         >
-                                            {getPassFailPieData().map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
+                                            <Cell fill="#82ca9d" />
+                                            <Cell fill="#ff6961" />
                                         </Pie>
                                         <Legend />
                                     </PieChart>
@@ -219,31 +208,34 @@ const StudentStatisticsPage = () => {
                         {/* Question-Level Charts */}
                         {selectedStats.questionDistributions && selectedStats.questionAverages && (
                             <>
-                                <h3 className={styles.subheading}>📊 Question Performance (0-10)</h3>
+                                <h3 className={styles.subheading}>📊 Question Performance</h3>
                                 <div className={styles.chartGrid}>
                                     {Object.entries(selectedStats.questionDistributions).map(([question, dist]) => {
-                                        const questionDataMap = new Map(Object.entries(dist));
                                         const data = Array.from({ length: 11 }, (_, i) => ({
-                                            score: String(i),
-                                            count: questionDataMap.get(String(i)) || 0
+                                            score: i,
+                                            count: dist[i] ?? 0
                                         }));
 
                                         const average = selectedStats.questionAverages[question];
 
                                         return (
                                             <div key={question} className={styles.chartBox} style={{ height: '250px' }}>
-                                                <h4>{question} Score Distribution</h4>
-                                                <ResponsiveContainer width="100%" height="calc(100% - 30px)">
+                                                <ResponsiveContainer width="100%" height="100%">
                                                     <BarChart data={data}>
                                                         <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="score" type="category" />
-                                                        <YAxis allowDecimals={false} />
+                                                        <XAxis
+                                                            dataKey="score"
+                                                            type="number"
+                                                            domain={[0, 10]}
+                                                            ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                                                        />
+                                                        <YAxis domain={[0, 'dataMax + 1']} />
                                                         <Tooltip />
                                                         <Bar dataKey="count" fill="#82ca9d" />
                                                     </BarChart>
                                                 </ResponsiveContainer>
-                                                <div style={{ textAlign: 'center', marginTop: '5px', fontWeight: 'bold' }}>
-                                                    Average: {average.toFixed(2)}
+                                                <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                                    {question} – Avg: {average.toFixed(2)}
                                                 </div>
                                             </div>
                                         );
@@ -258,4 +250,4 @@ const StudentStatisticsPage = () => {
     );
 };
 
-export default StudentStatisticsPage;
+export default InstructorStatisticsPage;
