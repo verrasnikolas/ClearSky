@@ -6,8 +6,9 @@ const API_ENDPOINT = ''; // or just remove it
 // Get all grades
 export const getAllGrades = () => gradeApi.get(API_ENDPOINT);
 
-// Get grades by user ID
-export const getGradesByUser = (studentId) => gradeApi.get(`/student/${studentId}`);
+export const getGradesByUser = (studentId) =>
+    gradeApi.get(`/student/${studentId}`);
+
 
 // src/services/GradeService.js
 export const getGradeForStudentCourse = (studentId, courseId) =>

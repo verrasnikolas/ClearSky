@@ -13,7 +13,7 @@ const getGrades = async (req, res) => {
 
 // GET /api/grades/student/:studentId
 const getStudentGradedCourses = async (req, res) => {
-    const studentId = req.studentId
+    const {studentId} = req.params
     try {
         const initialGrades = await InitialGrade.findAll({
             where: { student_id: studentId },
@@ -59,7 +59,7 @@ const getStudentGradedCourses = async (req, res) => {
 };
 
 const getStudentGradeForCourse = async (req, res) => {
-    const studentId = req.studentId
+    const studentId = req.params.studentId
     const courseId = req.params.courseId;
 
     try {

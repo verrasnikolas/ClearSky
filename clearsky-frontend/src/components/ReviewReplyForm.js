@@ -53,7 +53,7 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
                 >
                     <option value="APPROVED">Total accept</option>
                     <option value="REJECTED">Reject</option>
-                    <option value="PARTIAL">Partial accept</option>
+                    {/*<option value="PARTIAL">Partial accept</option>*/}
                 </select>
 
                 <label className={styles.label}>Instructor's message</label>

@@ -4,65 +4,58 @@ import GradeDetails from '../../components/GradeDetails';
 import ReviewStatus from '../../components/ReviewStatus';
 import styles from './StudentPage.module.css';
 import StudentNavbar from './StudentNavbar';
-import { Alert } from '@mui/material'; // ⬅ Make sure this is imported
-
+import { Alert } from '@mui/material';
 
 import {
     getGradesByUser,
     getGradeForStudentCourse
 } from '../../services/GradeService';
 import { getReviewStatus } from '../../services/ReviewService';
-import {decodeToken} from "../../auth/token";
-
+import { getUserById } from '../../services/UserService';
+import { decodeToken } from "../../auth/token";
 
 const decoded = decodeToken(localStorage.getItem('accessToken'));
-const STUDENT_ID = decoded?.userId;
+const USER_ID = decoded?.userId;
 
 const StudentPage = () => {
+    const [academicId, setAcademicId] = useState(null);
     const [courses, setCourses] = useState([]);
     const [selectedCourseForReview, setSelectedCourseForReview] = useState(null);
     const [selectedCourseForGrades, setSelectedCourseForGrades] = useState(null);
     const [selectedReviewStatus, setSelectedReviewStatus] = useState(null);
-
     const [errorMessage, setErrorMessage] = useState(null);
 
     const clearAll = () => {
         setSelectedCourseForReview(null);
         setSelectedCourseForGrades(null);
         setSelectedReviewStatus(null);
-        setErrorMessage(null); // 👈 Clear any previous errors
+        setErrorMessage(null);
     };
-
 
     const handleAskReview = async (course) => {
         clearAll();
 
         try {
-            const res = await getReviewStatus(STUDENT_ID, course.courseId);
-
+            const res = await getReviewStatus(USER_ID, course.courseId);
             if (res?.data?.status) {
                 setErrorMessage('You have already submitted a review request for this course.');
                 return;
             }
-
-            // No existing review found, allow form
             setSelectedCourseForReview(course);
         } catch (err) {
-            // If the backend returns 404 for no review — allow it
             if (err.response && err.response.status === 404) {
                 setSelectedCourseForReview(course);
             } else {
-            console.error('Error checking review status:', err);
-            alert('Could not check review status. Please try again.');
+                console.error('Error checking review status:', err);
+                alert('Could not check review status. Please try again.');
+            }
         }
-
-    }
     };
 
     const handleViewGrades = async (course) => {
         clearAll();
         try {
-            const res = await getGradeForStudentCourse(STUDENT_ID, course.courseId);
+            const res = await getGradeForStudentCourse(academicId, course.courseId);
             const gradeData = res.data;
 
             setSelectedCourseForGrades({
@@ -81,12 +74,12 @@ const StudentPage = () => {
     const handleViewStatus = async (course) => {
         clearAll();
         try {
-            const res = await getReviewStatus(STUDENT_ID, course.courseId);
+            const res = await getReviewStatus(USER_ID, course.courseId);
             setSelectedReviewStatus({
                 courseId: course.courseId,
                 name: course.name,
                 term: course.term,
-                ...res.data // includes reason, status, response, timestamps
+                ...res.data
             });
         } catch (err) {
             console.error('No review found:', err);
@@ -95,10 +88,14 @@ const StudentPage = () => {
     };
 
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchUserAndCourses = async () => {
             try {
-                const res = await getGradesByUser(STUDENT_ID);
-                const extracted = res.data.map((entry, index) => ({
+                const userRes = await getUserById(USER_ID);
+                const academicId = userRes.data.academicId;
+                setAcademicId(academicId);
+
+                const gradeRes = await getGradesByUser(academicId);
+                const extracted = gradeRes.data.map((entry, index) => ({
                     id: index + 1,
                     courseId: entry.course_id,
                     name: entry.course_name,
@@ -107,11 +104,12 @@ const StudentPage = () => {
                 }));
                 setCourses(extracted);
             } catch (err) {
-                console.error('Failed to fetch courses for student:', err);
-                alert('Failed to load courses.');
+                console.error('Failed to load user or grades:', err);
+                alert('Failed to load your course data.');
             }
         };
-        fetchCourses();
+
+        fetchUserAndCourses();
     }, []);
 
     return (
@@ -169,7 +167,7 @@ const StudentPage = () => {
 
                 {selectedCourseForReview && (
                     <div className={styles.detailsSection}>
-                        <ReviewForm course={selectedCourseForReview} studentId={STUDENT_ID} />
+                        <ReviewForm course={selectedCourseForReview} studentId={academicId} />
                     </div>
                 )}
 
