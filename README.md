@@ -81,4 +81,12 @@ git clone https://github.com/ntua/saas25-25.git
 ./apply_all_microservices.sh
 ```
 
+#### Open Frontend
+
+Frontend is available on
+
+```sh
+http://localhost:30000
+```
+
 
