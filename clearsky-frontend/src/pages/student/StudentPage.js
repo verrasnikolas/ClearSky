@@ -12,18 +12,24 @@ import {
 } from '../../services/GradeService';
 import { getReviewStatus } from '../../services/ReviewService';
 import { getUserById } from '../../services/UserService';
-import { decodeToken } from "../../auth/token";
-
-const decoded = decodeToken(localStorage.getItem('accessToken'));
-const USER_ID = decoded?.userId;
+import { decodeToken } from '../../auth/token';
 
 const StudentPage = () => {
+    const [userId, setUserId] = useState(null);
     const [academicId, setAcademicId] = useState(null);
     const [courses, setCourses] = useState([]);
     const [selectedCourseForReview, setSelectedCourseForReview] = useState(null);
     const [selectedCourseForGrades, setSelectedCourseForGrades] = useState(null);
     const [selectedReviewStatus, setSelectedReviewStatus] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // Decode token and set userId
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        const decoded = decodeToken(token);
+        setUserId(decoded?.userId);
+    }, []);
 
     const clearAll = () => {
         setSelectedCourseForReview(null);
@@ -35,8 +41,13 @@ const StudentPage = () => {
     const handleAskReview = async (course) => {
         clearAll();
 
+        if (!userId || !academicId) {
+            alert('Student profile not loaded yet. Please wait.');
+            return;
+        }
+
         try {
-            const res = await getReviewStatus(USER_ID, course.courseId);
+            const res = await getReviewStatus(userId, course.courseId);
             if (res?.data?.status) {
                 setErrorMessage('You have already submitted a review request for this course.');
                 return;
@@ -54,6 +65,12 @@ const StudentPage = () => {
 
     const handleViewGrades = async (course) => {
         clearAll();
+
+        if (!academicId) {
+            alert('Student profile not loaded yet. Please wait.');
+            return;
+        }
+
         try {
             const res = await getGradeForStudentCourse(academicId, course.courseId);
             const gradeData = res.data;
@@ -73,14 +90,20 @@ const StudentPage = () => {
 
     const handleViewStatus = async (course) => {
         clearAll();
+
+        if (!userId) {
+            alert('Student profile not loaded yet. Please wait.');
+            return;
+        }
+
         try {
-            const res = await getReviewStatus(USER_ID, course.courseId);
+            const res = await getReviewStatus(userId, course.courseId);
             setSelectedReviewStatus({
                 courseId: course.courseId,
                 name: course.name,
                 term: course.term,
                 ...res.data,
-                student_id: USER_ID // ✅ needed for acknowledge
+                student_id: userId
             });
         } catch (err) {
             console.error('No review found:', err);
@@ -88,10 +111,13 @@ const StudentPage = () => {
         }
     };
 
+    // Fetch user + academicId + courses when userId is available
     useEffect(() => {
         const fetchUserAndCourses = async () => {
+            if (!userId) return;
+
             try {
-                const userRes = await getUserById(USER_ID);
+                const userRes = await getUserById(userId);
                 const academicId = userRes.data.academicId;
                 setAcademicId(academicId);
 
@@ -107,75 +133,93 @@ const StudentPage = () => {
             } catch (err) {
                 console.error('Failed to load user or grades:', err);
                 alert('Failed to load your course data.');
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchUserAndCourses();
-    }, []);
+    }, [userId]);
 
     return (
         <>
             <StudentNavbar />
             <div className={styles.container}>
                 <h2 className={styles.heading}>My Courses</h2>
-                {errorMessage && (
-                    <div style={{ marginBottom: '1rem' }}>
-                        <Alert severity="error" onClose={() => setErrorMessage(null)}>
-                            {errorMessage}
-                        </Alert>
-                    </div>
-                )}
-                <table className={styles.table}>
-                    <thead>
-                    <tr>
-                        <th>Course Name</th>
-                        <th>Exam Period</th>
-                        <th>Grading Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {courses.map((course) => (
-                        <tr key={course.id}>
-                            <td>{course.name}</td>
-                            <td>{course.term}</td>
-                            <td>{course.status}</td>
-                            <td className={styles.actionsCell}>
-                                <button className={styles.btn} onClick={() => handleViewGrades(course)}>
-                                    View My Grades
-                                </button>
-                                <button
-                                    className={styles.btn}
-                                    disabled={course.status !== 'open'}
-                                    onClick={() => handleAskReview(course)}
-                                >
-                                    Ask for Review
-                                </button>
-                                <button className={styles.btn} onClick={() => handleViewStatus(course)}>
-                                    View Review Status
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
 
-                {selectedCourseForGrades && (
-                    <div className={styles.detailsSection}>
-                        <GradeDetails course={selectedCourseForGrades} />
-                    </div>
-                )}
+                {loading ? (
+                    <p>Loading student data...</p>
+                ) : (
+                    <>
+                        {errorMessage && (
+                            <div style={{ marginBottom: '1rem' }}>
+                                <Alert severity="error" onClose={() => setErrorMessage(null)}>
+                                    {errorMessage}
+                                </Alert>
+                            </div>
+                        )}
 
-                {selectedCourseForReview && (
-                    <div className={styles.detailsSection}>
-                        <ReviewForm course={selectedCourseForReview} studentId={academicId} />
-                    </div>
-                )}
+                        <table className={styles.table}>
+                            <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Exam Period</th>
+                                <th>Grading Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {courses.map((course) => (
+                                <tr key={course.id}>
+                                    <td>{course.name}</td>
+                                    <td>{course.term}</td>
+                                    <td>{course.status}</td>
+                                    <td className={styles.actionsCell}>
+                                        <button
+                                            className={styles.btn}
+                                            disabled={!academicId}
+                                            onClick={() => handleViewGrades(course)}
+                                        >
+                                            View My Grades
+                                        </button>
+                                        <button
+                                            className={styles.btn}
+                                            disabled={course.status !== 'open' || !academicId}
+                                            onClick={() => handleAskReview(course)}
+                                        >
+                                            Ask for Review
+                                        </button>
+                                        <button
+                                            className={styles.btn}
+                                            disabled={!academicId}
+                                            onClick={() => handleViewStatus(course)}
+                                        >
+                                            View Review Status
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
 
-                {selectedReviewStatus && (
-                    <div className={styles.detailsSection}>
-                        <ReviewStatus course={selectedReviewStatus} />
-                    </div>
+                        {selectedCourseForGrades && (
+                            <div className={styles.detailsSection}>
+                                <GradeDetails course={selectedCourseForGrades} />
+                            </div>
+                        )}
+
+                        {selectedCourseForReview && (
+                            <div className={styles.detailsSection}>
+                                <ReviewForm course={selectedCourseForReview} studentId={academicId} />
+                            </div>
+                        )}
+
+                        {selectedReviewStatus && (
+                            <div className={styles.detailsSection}>
+                                <ReviewStatus course={selectedReviewStatus} />
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </>
