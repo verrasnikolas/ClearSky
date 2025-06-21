@@ -30,10 +30,14 @@ Before running the application, ensure you have the met the following software r
 
 | **Tool**            | **Version** |    **Installation Link** | **Purpose**|
 |------------------------|-------------------|-----------------|------------|
-| Docker | 28.0.4 or higher | [Download Docker](https://www.docker.com/products/docker-desktop/) | Required to run the containers for the microservices |
+| Docker | 28.0.4 or higher | [Download Docker](https://docs.docker.com/engine/install/) | Required to run the containers for the microservices |
+| Docker Desktop | 28.0.4 or higher | [Download Docker Desktop](https://www.docker.com/products/docker-desktop/)| Optional but very helpful|
+|Kubernetes | 1.32.2 or higher | [Download kubectl](https://kubernetes.io/docs/tasks/tools/)| Required to run the cluster |
 | Node.js | 20.9 or higher | [Download Node.js](https://nodejs.org/) | Required to run the app |
 | npm (included with Node.js) | Latest | Included with [Node.js](https://nodejs.org/) | Manages frontend dependencies |
 | Git| Latest | [Download Git](https://git-scm.com/downloads) | Required for cloning and managing the repository |
+
+maybe: https://kind.sigs.k8s.io/docs/user/quick-start/#installation
 
 It is advised that all software requirements are downloaded and installed by the latest version.
 
