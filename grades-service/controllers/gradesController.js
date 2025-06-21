@@ -112,11 +112,15 @@ const getCoursesByInstructor = async (req, res) => {
 const getCourseById = async (req, res) => {
     const {courseId} = req.params
     try {
-        const course = await Course.findOne({
-            where: { id: courseId },
+        const course = await Course.findByPk(courseId,{
             attributes: ['id', 'title', 'code', 'semester'], // or ['id'] if you only want IDs
             raw: true
         });
+
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+
         res.status(200).json(course);
     } catch (err) {
         console.error('❌ Failed to fetch course:', err);

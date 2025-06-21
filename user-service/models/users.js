@@ -33,7 +33,7 @@ const User = sequelize.define('User', {
         allowNull: true,
     },
     role: {
-        type: DataTypes.ENUM('student', 'instructor', 'institution_representative'),
+        type: DataTypes.ENUM('student', 'instructor', 'institution_representative', 'admin'),
         allowNull: false,
     },
     forcePasswordReset: {

@@ -118,6 +118,8 @@ function App() {
                 return '/instructor/upload';
             case 'institution_representative':
                 return '/representative';
+            case 'admin':
+                return '/representative';
             default:
                 return '/login';
         }
