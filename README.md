@@ -30,8 +30,7 @@ Before running the application, ensure you have the met the following software r
 
 | **Tool**            | **Version** |    **Installation Link** | **Purpose**|
 |------------------------|-------------------|-----------------|------------|
-
-
+| Docker | 28.0.4 or higher | [Download Docker](https://www.docker.com/products/docker-desktop/) | Required to run the containers for the microservices |
 | Node.js | 20.9 or higher | [Download Node.js](https://nodejs.org/) | Required to run the app |
 | npm (included with Node.js) | Latest | Included with [Node.js](https://nodejs.org/) | Manages frontend dependencies |
 | Git| Latest | [Download Git](https://git-scm.com/downloads) | Required for cloning and managing the repository |
