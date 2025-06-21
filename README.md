@@ -20,7 +20,7 @@ ClearSky App ...
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-  - [Database](#database)
+  - [Cloning the Repository](#cloningtherepo)
   - [Back-End](#back-end)
   - [Front-End](#front-end)
  
@@ -50,3 +50,7 @@ It is advised that all software requirements are downloaded and installed by the
 ```sh
 git clone https://github.com/ntua/saas25-25.git
 ```
+
+### RUn the App
+
+
