@@ -1,7 +1,25 @@
 # NTUA ECE SAAS 2025 PROJECT
 
-## TEAM (XX)
+## TEAM 25
 
-Περιγραφή - οδηγίες
+Repository, used for team saas25-25
 
-Περιέχονται φάκελοι για 15 microservices. Ο αριθμός είναι εντελώς ενδεικτικός. Δημιουργήστε ακριβώς όσα απαιτούνται από τη λύση σας.
+## Contributors
+
+- Anastasia Askouni el20046@mail.ntua.gr
+- Nikolaos Verras el21440@mail.ntua.gr
+- Angeliki Zerva el21101@mail.ntua.gr
+- Dimitrios Kampanakis el21012@mail.ntua.gr
+
+## Description
+
+ClearSky App ...
+
+## Table of contents
+
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+- [Usage](#usage)
+  - [Database](#database)
+  - [Back-End](#back-end)
+  - [Front-End](#front-end)
