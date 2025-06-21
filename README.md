@@ -23,6 +23,7 @@ ClearSky App ...
 - [Usage](#usage)
   - [Cloning the Repository](#cloning-the-repository)
   - [Running the App](#running-the-app)
+  - [Open frontend](#open-frontend)
  
 ## Installation
 ### Prerequisites
