@@ -2,21 +2,12 @@ const xlsx = require('xlsx');
 const path = require('path');
 
 function parseExcel(file, instructorId) {
-    const ext = path.extname(file.originalname);
-    if (ext !== '.xlsx') {
-        throw new Error('Invalid file type');
-    }
-
     const workbook = xlsx.read(file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
     const rows = xlsx.utils.sheet_to_json(sheet, { header: 1 }).filter(
         (row) => Array.isArray(row) && row.some(cell => cell !== undefined && cell !== null && cell.toString().trim() !== '')
     );
-
-    if (rows.length < 4) {
-        throw new Error('Excel must have at least 4 rows');
-    }
 
     // === Extract metadata and grade entries ===
     const courseLine = rows[0][0]?.toString().trim();

@@ -1,6 +1,31 @@
 const parseExcel = require('../services/excelParser');
+const excelValidator = require('../services/excelValidator');
 const {publish} = require('../messaging/eventPublisher');
 const { INITIAL_GRADES_PARSED, FINAL_GRADES_PARSED } = require('../events/eventTypes');
+
+const confirmCourse = async (req, res) => {
+    console.log('[DEBUG] req.user:', req.user);
+    console.log('[BACKEND] Content-Type:', req.headers['content-type']);
+    console.log('[BACKEND] req.file:', req.file);
+    console.log('[BACKEND] req.body:', req.body)
+
+    try {
+        const file = req.file;
+        if (!file) return res.status(400).json({ error: 'No file uploaded' });
+
+        const courseMeta = excelValidator(file);
+
+        res.status(200).json({
+            message: 'Preview successful',
+            courseMeta
+        });
+
+    } catch (err) {
+        console.error('[PREVIEW ERROR]', err);
+        res.status(400).json({ error: err.message });
+    }
+};
+
 
 const uploadInitialGrades = async (req, res) => {
     console.log('[DEBUG] req.user:', req.user);
@@ -11,7 +36,6 @@ const uploadInitialGrades = async (req, res) => {
     try {
         const instructorId = req.headers['x-user-id'];
         const file = req.file;
-        if (!file) return res.status(400).json({ error: 'No file uploaded' });
         const { courseMeta, gradeEntries, extractedUsers, skippedRows } = parseExcel(file, instructorId);
 
         // Publish event to broker (RabbitMQ/NATS etc)
@@ -37,7 +61,6 @@ const uploadFinalGrades = async (req, res) => {
     try {
         const instructorId = req.headers['x-user-id'];
         const file = req.file;
-        if (!file) return res.status(400).json({ error: 'No file uploaded' });
         const { courseMeta, gradeEntries } = parseExcel(file, instructorId);
 
         publish(FINAL_GRADES_PARSED, {
@@ -58,5 +81,6 @@ const uploadFinalGrades = async (req, res) => {
 
 module.exports = {
     uploadInitialGrades,
-    uploadFinalGrades
+    uploadFinalGrades,
+    confirmCourse
 };

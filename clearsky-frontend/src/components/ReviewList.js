@@ -7,11 +7,6 @@ import { getCoursesByInstructor } from '../services/GradeService';
 
 import { decodeToken } from '../auth/token';
 
-const decoded = decodeToken(localStorage.getItem('accessToken'));
-const INSTRUCTOR_ID = decoded?.userId;
-
-
-
 const ReviewList = () => {
     const [reviews, setReviews] = useState([]);
     const [selectedReview, setSelectedReview] = useState(null);
@@ -23,7 +18,7 @@ const ReviewList = () => {
     const fetchReviews = async () => {
         try {
             // Get course IDs for this instructor
-            const coursesRes = await getCoursesByInstructor(INSTRUCTOR_ID);
+            const coursesRes = await getCoursesByInstructor();
             const courseIds = coursesRes.data.map(course => course.id);
 
             // Get all reviews
