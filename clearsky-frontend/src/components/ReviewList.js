@@ -127,6 +127,8 @@ const ReviewList = () => {
             {selectedReview && (
                 <ReviewReplyForm
                     selectedReview={selectedReview}
+                    studentInfo={displayData[`${selectedReview.student_id}_${selectedReview.course_id}`]?.student}
+                    courseInfo={displayData[`${selectedReview.student_id}_${selectedReview.course_id}`]?.course}
                     onSubmit={handleReplySubmit}
                 />
             )}

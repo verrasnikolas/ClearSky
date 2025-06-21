@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styles from './ReviewReplyForm.module.css';
 
-const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
-    const [status, setStatus] = useState('APPROVED');
+const ReviewReplyForm = ({ selectedReview, studentInfo, courseInfo, onSubmit }) => {    const [status, setStatus] = useState('APPROVED');
     const [response, setResponse] = useState('');
     const [file, setFile] = useState(null); // optional future feature
 
@@ -40,7 +39,8 @@ const ReviewReplyForm = ({ selectedReview, onSubmit }) => {
             <div className={styles.header}>
                 REPLY TO GRADE REVIEW REQUEST
                 <span className={styles.context}>
-                    Student: {selectedReview.student_id} | Course: {selectedReview.course_id}
+                    Student: {studentInfo?.academicId || selectedReview.student_id} |
+                    Course: {courseInfo ? `${courseInfo.title} (${courseInfo.code})` : selectedReview.course_id}
                 </span>
             </div>
 
