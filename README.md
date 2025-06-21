@@ -1,5 +1,5 @@
 # NTUA ECE SAAS 2025 PROJECT
-# ClearSKY APP
+## ClearSKY APP
 
 ## TEAM 25
 
