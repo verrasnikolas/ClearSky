@@ -1,11 +1,10 @@
-# NTUA ECE SAAS 2025 PROJECT
-## ClearSKY APP
+# NTUA ECE SAAS 2025 PROJECT - ClearSKY APP
 
 ## TEAM 25
 
 Repository, used for team saas25-25
 
-## Contributors
+### Contributors
 
 - Anastasia Askouni el20046@mail.ntua.gr
 - Nikolaos Verras el21440@mail.ntua.gr
