@@ -21,7 +21,7 @@ ClearSky App ...
   - [Prerequisites](#prerequisites)
 - [Usage](#usage)
   - [Cloning the Repository](#cloning-the-repository)
-  - [Back-End](#back-end)
+  - [Running the App](#running-the-app)
   - [Front-End](#front-end)
  
 ## Installation
@@ -51,6 +51,34 @@ It is advised that all software requirements are downloaded and installed by the
 git clone https://github.com/ntua/saas25-25.git
 ```
 
-### RUn the App
+### Running the App
+
+#### Build the images from the source code
+
+* For Windows
+
+```sh
+./build.ps1
+```
+
+* For Linux/MacOS
+
+```sh
+./build.sh
+```
+
+#### Run the containers and the microservices inside them
+
+* For Windows
+
+```sh
+./apply_all_microservices.ps1
+```
+
+* For Linux/MacOS
+
+```sh
+./apply_all_microservices.sh
+```
 
 
