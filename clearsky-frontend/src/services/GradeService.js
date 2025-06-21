@@ -17,6 +17,9 @@ export const getGradeForStudentCourse = (studentId, courseId) =>
 export const getCoursesByInstructor = (instructorId) =>
     gradeApi.get(`/instructor/${instructorId}/courses`);
 
+export const getCourseDetailsById = (courseId) =>
+    gradeApi.get(`/courses/${courseId}`);
+
 
 
 // Add other grade-related functions as needed...

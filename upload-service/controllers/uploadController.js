@@ -23,8 +23,9 @@ const uploadInitialGrades = async (req, res) => {
 
         res.status(200).json({
             message: 'Excel uploaded and event emitted',
-            uploaded: gradeEntries.length,
-            skipped: skippedRows.length
+            course: courseMeta?.title || 'Unknown Course',
+            period: courseMeta?.semester || 'Unknown Period',
+            count: gradeEntries.length
         });
 
     } catch (err) {
@@ -46,9 +47,12 @@ const uploadFinalGrades = async (req, res) => {
         });
 
         res.status(200).json({
-            message: 'Excel uploaded and event emitted',
-            uploaded: gradeEntries.length
+                message: 'Excel uploaded and event emitted',
+                course: courseMeta?.title || 'Unknown Course',
+                period: courseMeta?.semester || 'Unknown Period',
+                count: gradeEntries.length
         });
+
 
     } catch (err) {
         console.error(err);

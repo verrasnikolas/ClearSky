@@ -1,5 +1,6 @@
 'use strict';
 
+const {hash} = require("bcrypt");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -35,7 +36,7 @@ module.exports = {
         unique: true
       },
       role: {
-        type: Sequelize.ENUM('student', 'instructor', 'institution_representative'),
+        type: Sequelize.ENUM('student', 'instructor', 'institution_representative, admin'),
         allowNull: false,
         defaultValue: 'student'
       },
@@ -54,9 +55,21 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
+    const hashedPassword = await hash('123', 10);
+    await queryInterface.bulkInsert('users', [{
+      id: '95316cc3-85c8-4ac5-9541-0a242d43b749',
+      username: 'admin',
+      password: hashedPassword,
+      email: 'admin@example.com',
+      name: 'Administrator',
+      academicId: null,
+      role: 'admin',
+      forcePasswordReset: false
+    }], {});
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('users', { username: 'admin' }, {});
     await queryInterface.dropTable('users');
     await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_users_role";');
   }

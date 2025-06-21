@@ -18,10 +18,12 @@ export default function UploadFinalGrades() {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState({ text: '', severity: 'info' });
     const [loading, setLoading] = useState(false);
+    const [preview, setPreview] = useState(null);
 
     const onDrop = useCallback(acceptedFiles => {
         if (acceptedFiles.length) {
             setFile(acceptedFiles[0]);
+            setPreview(null);
             setMessage({ text: '', severity: 'info' });
         }
     }, []);
@@ -37,17 +39,20 @@ export default function UploadFinalGrades() {
             setMessage({ text: 'Please select a file first.', severity: 'error' });
             return;
         }
+
         setLoading(true);
         const formData = new FormData();
         formData.append('file', file);
-        for (let [key, value] of formData.entries()) {
-            console.log(`[FRONTEND] FormData field: ${key}`, value);
-        }
 
         try {
             const res = await uploadFinalGrades(formData);
+            setPreview({
+                course: res.data.course,
+                period: res.data.period,
+                count: res.data.count
+            });
             setMessage({
-                text: `Final grades uploaded successfully. Total: ${res.data.uploaded}`,
+                text: 'Final grades uploaded successfully.',
                 severity: 'success'
             });
         } catch (err) {
@@ -66,6 +71,7 @@ export default function UploadFinalGrades() {
                         Final Grades Posting
                     </Typography>
 
+                    {/* Dropzone Area */}
                     <Box
                         {...getRootProps()}
                         sx={{
@@ -90,6 +96,7 @@ export default function UploadFinalGrades() {
                         </Typography>
                     </Box>
 
+                    {/* Upload Button */}
                     <Button
                         variant="contained"
                         startIcon={<UploadIcon />}
@@ -101,6 +108,47 @@ export default function UploadFinalGrades() {
                         {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit Final Grades'}
                     </Button>
 
+                    {/* Preview */}
+                    {preview && (
+                        <Card variant="outlined" sx={{ bgcolor: 'grey.100', mb: 2 }}>
+                            <CardContent>
+                                <Typography variant="subtitle1" gutterBottom>
+                                    Final Grades Preview
+                                </Typography>
+                                <Typography>Course: {preview.course}</Typography>
+                                <Typography>Period: {preview.period}</Typography>
+                                <Typography>Number of grades: {preview.count}</Typography>
+                                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="success"
+                                        startIcon={<CheckIcon />}
+                                        onClick={() =>
+                                            setMessage({
+                                                text: 'Final grades confirmed.',
+                                                severity: 'success'
+                                            })
+                                        }
+                                    >
+                                        Confirm
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        startIcon={<ErrorIcon />}
+                                        onClick={() => {
+                                            setPreview(null);
+                                            setFile(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Status Message */}
                     {message.text && (
                         <Alert
                             severity={message.severity}

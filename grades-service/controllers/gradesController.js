@@ -106,11 +106,33 @@ const getCoursesByInstructor = async (req, res) => {
     }
 };
 
+// GET /api/courses/:courseId
+const getCourseDetailsById = async (req, res) => {
+    const { courseId } = req.params;
+
+    try {
+        const course = await Course.findByPk(courseId, {
+            attributes: ['id', 'title', 'code']  // title = name, code = course code
+        });
+
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+
+        res.status(200).json(course);
+    } catch (error) {
+        console.error('❌ Failed to fetch course details:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 
 
 module.exports = {
     getStudentGradedCourses,
     getGrades,
     getStudentGradeForCourse,
-    getCoursesByInstructor
+    getCoursesByInstructor,
+    getCourseDetailsById
 };

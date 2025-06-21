@@ -23,21 +23,21 @@ const StudentNavbar = () => {
                         <FaChartBar /> Statistics
                     </NavLink>
                 </li>
-                <li>
-                    <NavLink to="/student/grades" className={({ isActive }) => isActive ? 'active' : ''}>
-                        <FaGraduationCap /> My Grades
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/student/review-request" className={({ isActive }) => isActive ? 'active' : ''}>
-                        <FaClipboardCheck /> Request Review
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/student/review-status" className={({ isActive }) => isActive ? 'active' : ''}>
-                        <FaRegCheckCircle /> Review Status
-                    </NavLink>
-                </li>
+                {/*<li>*/}
+                {/*    <NavLink to="/student/grades" className={({ isActive }) => isActive ? 'active' : ''}>*/}
+                {/*        <FaGraduationCap /> My Grades*/}
+                {/*    </NavLink>*/}
+                {/*</li>*/}
+                {/*<li>*/}
+                {/*    <NavLink to="/student/review-request" className={({ isActive }) => isActive ? 'active' : ''}>*/}
+                {/*        <FaClipboardCheck /> Request Review*/}
+                {/*    </NavLink>*/}
+                {/*</li>*/}
+                {/*<li>*/}
+                {/*    <NavLink to="/student/review-status" className={({ isActive }) => isActive ? 'active' : ''}>*/}
+                {/*        <FaRegCheckCircle /> Review Status*/}
+                {/*    </NavLink>*/}
+                {/*</li>*/}
             </ul>
         </nav>
     );
