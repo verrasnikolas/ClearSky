@@ -20,7 +20,7 @@ ClearSky App ...
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-  - [Cloning the Repository](#cloningtherepo)
+  - [Cloning the Repository](#cloning_the_repository)
   - [Back-End](#back-end)
   - [Front-End](#front-end)
  
