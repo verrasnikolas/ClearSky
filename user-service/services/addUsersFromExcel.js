@@ -8,6 +8,8 @@ async function addUsersFromExcel(extractedUsers = []) {
     if (!Array.isArray(extractedUsers) || extractedUsers.length === 0) return;
 
     const transaction = await sequelize.transaction();
+    const welcomeEmailQueue = [];
+
     try {
         for (const u of extractedUsers) {
             const { id: academicId, name, email } = u;
@@ -31,7 +33,7 @@ async function addUsersFromExcel(extractedUsers = []) {
                 forcePasswordReset: true,
             }, { transaction });
 
-            await sendWelcomeEmail({ name, email, password: tempPassword }); // optionally move out of transaction
+            welcomeEmailQueue.push({ name, email, password: tempPassword });
         }
 
         await transaction.commit();
@@ -41,6 +43,21 @@ async function addUsersFromExcel(extractedUsers = []) {
         console.error('❌ Failed to add users from Excel:', err.message);
         throw err;
     }
+
+    // Batch send emails concurrently
+    const emailResults = await Promise.allSettled(
+        welcomeEmailQueue.map(user => sendWelcomeEmail(user))
+    );
+
+    emailResults.forEach((result, index) => {
+        const user = welcomeEmailQueue[index];
+        if (result.status === 'fulfilled') {
+            console.log(`✅ Email sent to ${user.email}`);
+        } else {
+            console.error(`❌ Failed to send email to ${user.email}:`, result.reason);
+        }
+    });
 }
+
 
 module.exports = { addUsersFromExcel };
