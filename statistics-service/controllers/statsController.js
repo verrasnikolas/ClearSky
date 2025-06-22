@@ -1,7 +1,5 @@
 // controllers/statsController.js
 const { CourseStats } = require('../config/db');
-// const { Grade } = require('../models/Grade');
-const { Sequelize, Op } = require('sequelize');
 
 const getCourseStats = async (req, res) => {
     const { courseCode, semester } = req.params;
@@ -56,18 +54,17 @@ const getAllCourseStats = async (req, res) => {
 const getAllCoursesWithExamPeriods = async (req, res) => {
     try {
         const coursesWithExamPeriods = await CourseStats.findAll({
-            attributes: ['courseCode', 'courseName', 'semester'],
-            group: ['courseCode', 'courseName', 'semester'],
+            attributes: ['courseCode', 'courseName', 'semester', 'createdAt', 'updatedAt'],
+            group: ['courseCode', 'courseName', 'semester','createdAt', 'updatedAt'],
         });
-
-        if (!coursesWithExamPeriods || coursesWithExamPeriods.length === 0) {
-            return res.status(404).json({ message: 'No course statistics found.' });
-        }
 
         const courseExamPeriods = coursesWithExamPeriods.map(item => ({
             courseCode: item.courseCode,
             courseName: item.courseName,
             examPeriod: item.semester,
+            initialDate: item.createdAt,
+            finalDate: item.updatedAt
+
         }));
 
         res.status(200).json(courseExamPeriods);

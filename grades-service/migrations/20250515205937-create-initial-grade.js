@@ -29,6 +29,10 @@ module.exports = {
         type: Sequelize.JSONB,
         allowNull: false
       },
+      batch_id: {
+        type: Sequelize.STRING, // Use STRING to accommodate your current batchId format (e.g., 'initial-12345-abcde')
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

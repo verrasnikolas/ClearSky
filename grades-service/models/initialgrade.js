@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     question_grades: {
       type: DataTypes.JSONB,
       allowNull: false
-    }
+    },
+    batch_id: {
+      type: DataTypes.STRING, // Use STRING to accommodate your current batchId format (e.g., 'initial-12345-abcde')
+      allowNull: false
+    },
   }, {
     tableName: 'initial_grades',
     timestamps: false,

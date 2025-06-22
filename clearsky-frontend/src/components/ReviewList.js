@@ -77,8 +77,7 @@ const ReviewList = () => {
 
     return (
         <div className={styles.container}>
-            <h3>Review Requests</h3>
-
+            <h2 className={styles.heading}>Review Requests</h2>
             {loading ? (
                 <p>Loading...</p>
             ) : reviews.length === 0 ? (
