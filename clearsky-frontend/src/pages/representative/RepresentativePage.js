@@ -18,7 +18,7 @@ import {
     createUser,
     changePassword,
     getUserByAcademicId,
-    getUserByUsername
+    getUserByEmail
 } from '../../services/UserService';
 
 const userTypes = [
@@ -82,12 +82,12 @@ export default function RepresentativePage() {
                 const res = await getUserByAcademicId(academicId);
                 userId = res.data.id;
             } else {
-                if (!username) {
+                if (!email) {
                     setSeverity('warning');
-                    setMessage('Please enter the Username.');
+                    setMessage('Please enter the Email.');
                     return;
                 }
-                const res = await getUserByUsername(username);
+                const res = await getUserByEmail(email);
                 userId = res.data.id;
             }
 
