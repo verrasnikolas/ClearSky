@@ -121,7 +121,6 @@ const InstructorStatisticsPage = () => {
     };
 
     return (
-        <>
             <div className={styles.container}>
                 <h2 className={styles.heading}>Available Course Statistics</h2>
 
@@ -173,100 +172,100 @@ const InstructorStatisticsPage = () => {
                     )
                 )}
 
-            {loading && <p>Loading statistics...</p>}
+                {loading && <p>Loading statistics...</p>}
 
-            {selectedStats && (
-                <>
-                    <h3 className={styles.subheading}>
-                        Stats for {selectedCourseInfo.courseCode} – {selectedCourseInfo.examPeriod}
-                    </h3>
+                {selectedStats && (
+                    <>
+                        <h3 className={styles.subheading}>
+                            Stats for {selectedCourseInfo.courseCode} – {selectedCourseInfo.examPeriod}
+                        </h3>
 
-                    <div className={styles.chartGrid}>
-                        <div className={styles.chartBox}>
-                            <h4>📊 Grade Distribution</h4>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart data={getGradeDistributionData()}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="grade" domain={[0, 10]} />
-                                    <YAxis allowDecimals={false} />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="#8884d8" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-
-                        <div className={styles.chartBox}>
-                            <h4>✅ Pass vs ❌ Fail</h4>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <PieChart>
-                                    <Pie
-                                        data={getPassFailPieData()}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius={70}
-                                        labelLine={false}
-                                        label={renderCustomizedLabel}
-                                        paddingAngle={3}
-                                    >
-                                        <Cell fill="#82ca9d" />
-                                        <Cell fill="#ff6961" />
-                                    </Pie>
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* Question-Level Charts */}
-                    {selectedStats.questionDistributions && selectedStats.questionAverages && (
-                        <>
-                            <h3 className={styles.subheading}>📊 Question Performance</h3>
-                            <div className={styles.questionChartsGrid}>
-                                {Object.entries(selectedStats.questionDistributions).map(([question, dist]) => {
-                                    const data = Array.from({ length: 11 }, (_, i) => ({
-                                        score: i,
-                                        count: dist[i] ?? 0
-                                    }));
-
-                                    const average = selectedStats.questionAverages[question];
-
-                                    return (
-                                        <div key={question} className={styles.questionChartBox}>
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <BarChart
-                                                    data={data}
-                                                    margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-                                                >
-                                                    <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis
-                                                        dataKey="score"
-                                                        type="number"
-                                                        domain={[0, 10]}
-                                                        ticks={[0,1,2,3,4,5,6,7,8,9,10]}
-                                                        interval={0}
-                                                        padding={{ left: 20, right: 20 }}
-                                                        tickMargin={5}
-                                                    />
-                                                    <YAxis domain={[0, 'dataMax + 1']} allowDecimals={false} />
-                                                    <Tooltip />
-                                                    <Bar dataKey="count" fill="#82ca9d" />
-                                                </BarChart>
-                                            </ResponsiveContainer>
-                                            <div style={{ textAlign: 'center', marginTop: '5px' }}>
-                                                {question} – Avg: {average.toFixed(2)}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                        <div className={styles.chartGrid}>
+                            <div className={styles.chartBox}>
+                                <h4>📊 Grade Distribution</h4>
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={getGradeDistributionData()}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="grade" domain={[0, 10]} />
+                                        <YAxis allowDecimals={false} />
+                                        <Tooltip />
+                                        <Bar dataKey="count" fill="#8884d8" />
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
-                        </>
-                    )}
-                </>
-            )}
-        </div>
-    );
-};
+
+                            <div className={styles.chartBox}>
+                                <h4>✅ Pass vs ❌ Fail</h4>
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <PieChart>
+                                        <Pie
+                                            data={getPassFailPieData()}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={70}
+                                            labelLine={false}
+                                            label={renderCustomizedLabel}
+                                            paddingAngle={3}
+                                        >
+                                            <Cell fill="#82ca9d" />
+                                            <Cell fill="#ff6961" />
+                                        </Pie>
+                                        <Legend />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Question-Level Charts */}
+                        {selectedStats.questionDistributions && selectedStats.questionAverages && (
+                            <>
+                                <h3 className={styles.subheading}>📊 Question Performance</h3>
+                                <div className={styles.questionChartsGrid}>
+                                    {Object.entries(selectedStats.questionDistributions).map(([question, dist]) => {
+                                        const data = Array.from({ length: 11 }, (_, i) => ({
+                                            score: i,
+                                            count: dist[i] ?? 0
+                                        }));
+
+                                        const average = selectedStats.questionAverages[question];
+
+                                        return (
+                                            <div key={question} className={styles.questionChartBox}>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart
+                                                        data={data}
+                                                        margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis
+                                                            dataKey="score"
+                                                            type="number"
+                                                            domain={[0, 10]}
+                                                            ticks={[0,1,2,3,4,5,6,7,8,9,10]}
+                                                            interval={0}
+                                                            padding={{ left: 20, right: 20 }}
+                                                            tickMargin={5}
+                                                        />
+                                                        <YAxis domain={[0, 'dataMax + 1']} allowDecimals={false} />
+                                                        <Tooltip />
+                                                        <Bar dataKey="count" fill="#82ca9d" />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                                <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                                    {question} – Avg: {average.toFixed(2)}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+        )
+    };
 
 export default InstructorStatisticsPage;
