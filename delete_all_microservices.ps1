@@ -29,5 +29,6 @@ cd ..
 #docker stop rabbitmq
 #docker rm rabbitmq
 kubectl delete deployment rabbitmq
+kubectl delete service rabbitmq
 
 Write-Host "All resources deleted successfully!"

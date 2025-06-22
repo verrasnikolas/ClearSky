@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: stats-service
-          image: jimkam5/saas:latest
+          image: stats-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3002
@@ -34,11 +34,9 @@ spec:
             - name: DB_PASSWORD
               value: "1234"
             - name: RABBITMQ_HOST
-              value: "rabbitmq-service"
+              value: "rabbitmq"
             - name: RABBITMQ_PORT
               value: "5672"
-            - name: RABBITMQ_QUEUE
-              value: "grades_queue"
             - name: JWT_SECRET
               value: "super_secret"
             - name: TOKEN_EXPIRY
