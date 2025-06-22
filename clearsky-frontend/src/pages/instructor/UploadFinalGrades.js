@@ -60,7 +60,7 @@ export default function UploadFinalGrades() {
         try {
             const res = await uploadFinalGrades(formData); // ← include courseId
             setMessage({
-                text: `Final grades uploaded successfully. Total: ${res.data.uploaded}`,
+                text: `Final grades uploaded successfully.}`,
                 severity: 'success'
             });
         } catch (err) {

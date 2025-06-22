@@ -23,6 +23,8 @@ const StudentPage = () => {
     const [selectedReviewStatus, setSelectedReviewStatus] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [reviewStatuses, setReviewStatuses] = useState({});
+
 
     // Decode token and set userId
     useEffect(() => {
@@ -111,6 +113,23 @@ const StudentPage = () => {
         }
     };
 
+    const handleReviewSubmitted = async () => {
+        try {
+            const res = await getReviewStatus(userId, selectedCourseForReview.courseId);
+            setReviewStatuses(prev => ({
+                ...prev,
+                [selectedCourseForReview.courseId]: res.data?.status ? 'exists' : 'none'
+            }));
+
+            setSelectedCourseForReview(null);
+            setSelectedReviewStatus(null);
+        } catch (err) {
+            console.error('Error updating review status:', err);
+        }
+    };
+
+
+
     // Fetch user + academicId + courses when userId is available
     useEffect(() => {
         const fetchUserAndCourses = async () => {
@@ -130,6 +149,23 @@ const StudentPage = () => {
                     status: entry.grading_status
                 }));
                 setCourses(extracted);
+                const statusMap = {};
+                await Promise.all(
+                    extracted.map(async (course) => {
+                        try {
+                            const res = await getReviewStatus(userId, course.courseId);
+                            statusMap[course.courseId] = res.data?.status ? 'exists' : 'none';
+                        } catch (err) {
+                            if (err.response?.status === 404) {
+                                statusMap[course.courseId] = 'none';
+                            } else {
+                                statusMap[course.courseId] = 'error';
+                            }
+                        }
+                    })
+                );
+
+                setReviewStatuses(statusMap);
             } catch (err) {
                 console.error('Failed to load user or grades:', err);
                 alert('Failed to load your course data.');
@@ -147,18 +183,21 @@ const StudentPage = () => {
             <div className={styles.container}>
                 <h2 className={styles.heading}>My Courses</h2>
 
+                {errorMessage && (
+                    <div style={{ marginBottom: '1rem' }}>
+                        <Alert severity="error" onClose={() => setErrorMessage(null)}>
+                            {errorMessage}
+                        </Alert>
+                    </div>
+                )}
+
                 {loading ? (
                     <p>Loading student data...</p>
                 ) : (
-                    <>
-                        {errorMessage && (
-                            <div style={{ marginBottom: '1rem' }}>
-                                <Alert severity="error" onClose={() => setErrorMessage(null)}>
-                                    {errorMessage}
-                                </Alert>
-                            </div>
-                        )}
-
+                    courses.length === 0 ? (
+                        <p>No graded courses available.</p>
+                    ) : (
+                        <>
                         <table className={styles.table}>
                             <thead>
                             <tr>
@@ -177,22 +216,28 @@ const StudentPage = () => {
                                     <td className={styles.actionsCell}>
                                         <button
                                             className={styles.btn}
-                                            disabled={!academicId}
-                                            onClick={() => handleViewGrades(course)}
+                                            onClick={() => {handleViewGrades(course);
+                                            }}
                                         >
                                             View My Grades
                                         </button>
+
                                         <button
                                             className={styles.btn}
-                                            disabled={course.status !== 'open' || !academicId}
-                                            onClick={() => handleAskReview(course)}
+                                            disabled={reviewStatuses[course.courseId] !== 'none'}
+                                            onClick={() => {
+                                                handleAskReview(course);
+                                            }}
                                         >
                                             Ask for Review
                                         </button>
+
                                         <button
                                             className={styles.btn}
-                                            disabled={!academicId}
-                                            onClick={() => handleViewStatus(course)}
+                                            disabled={reviewStatuses[course.courseId] !== 'exists'}
+                                            onClick={() => {
+                                                handleViewStatus(course);
+                                            }}
                                         >
                                             View Review Status
                                         </button>
@@ -210,7 +255,11 @@ const StudentPage = () => {
 
                         {selectedCourseForReview && (
                             <div className={styles.detailsSection}>
-                                <ReviewForm course={selectedCourseForReview} studentId={academicId} />
+                                <ReviewForm
+                                    course={selectedCourseForReview}
+                                    studentId={academicId}
+                                    onReviewSubmitted={handleReviewSubmitted}
+                                />
                             </div>
                         )}
 
@@ -220,7 +269,7 @@ const StudentPage = () => {
                             </div>
                         )}
                     </>
-                )}
+                    ))}
             </div>
         </>
     );

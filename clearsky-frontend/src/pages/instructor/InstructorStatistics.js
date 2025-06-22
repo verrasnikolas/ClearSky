@@ -19,6 +19,7 @@ const InstructorStatisticsPage = () => {
     const [courses, setCourses] = useState([]);
     const [selectedStats, setSelectedStats] = useState(null);
     const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
+    const [loadingCourses, setLoadingCourses] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -28,7 +29,11 @@ const InstructorStatisticsPage = () => {
             .catch((err) => {
                 console.error(err);
                 setError('Failed to load course list');
+            })
+            .finally(() => {
+                setLoadingCourses(false); // Always set loading to false when fetch is complete
             });
+
     }, []);
 
     const formatDate = (dateString) => {
@@ -137,49 +142,55 @@ const InstructorStatisticsPage = () => {
     return (
         <>
             <div className={styles.container}>
-                <div className={styles.headerRow}>
-                    <h2 className={styles.heading}>Available Course Statistics</h2>
-                </div>
+                <h2 className={styles.heading}>Available Course Statistics</h2>
 
                 {error && <p className={styles.error}>{error}</p>}
 
-                <table className={styles.table}>
-                    <thead>
-                    <tr>
-                        <th>Course Code</th>
-                        <th>Course Name</th>
-                        <th>Exam Period</th>
-                        <th>Initial Grades Upload</th>
-                        <th>Final Grades Last Updated</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {courses.map((course, index) => (
-                        <tr key={index}>
-                            <td>{course.courseCode}</td>
-                            <td>{course.courseName || 'N/A'}</td>
-                            <td>{course.examPeriod}</td>
-                            <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
-                            <td>
-                                {course.createdAt && course.updatedAt &&
-                                new Date(course.createdAt).getTime() === new Date(course.updatedAt).getTime()
-                                    ? 'N/A'
-                                    : (course.updatedAt ? formatDate(course.updatedAt) : 'N/A')
-                                }
-                            </td>
-                            <td>
-                                <button
-                                    className={styles.button}
-                                    onClick={() => handleViewStats(course.courseCode, course.examPeriod)}
-                                >
-                                    View Stats
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                {loadingCourses ? (
+                    <p>Loading course list...</p>
+                ) : (
+                    courses.length === 0 ? (
+                        <p>No courses available to display statistics for.</p>
+                    ) : (
+                        <table className={styles.table}>
+                            <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Exam Period</th>
+                                <th>Initial Grades Upload</th>
+                                <th>Final Grades Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {courses.map((course, index) => (
+                                <tr key={index}>
+                                    <td>{course.courseCode}</td>
+                                    <td>{course.courseName || 'N/A'}</td>
+                                    <td>{course.examPeriod}</td>
+                                    <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
+                                    <td>
+                                        {course.createdAt && course.updatedAt &&
+                                        new Date(course.createdAt).getTime() === new Date(course.updatedAt).getTime()
+                                            ? 'N/A'
+                                            : (course.updatedAt ? formatDate(course.updatedAt) : 'N/A')
+                                        }
+                                    </td>
+                                    <td>
+                                        <button
+                                            className={styles.button}
+                                            onClick={() => handleViewStats(course.courseCode, course.examPeriod)}
+                                        >
+                                            View Stats
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    )
+                )}
 
                 {loading && <p>Loading statistics...</p>}
 

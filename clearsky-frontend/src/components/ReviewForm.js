@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { submitReview } from '../services/ReviewService';
 import styles from './ReviewForm.module.css';
 
-const ReviewForm = ({ course, studentId }) => {
+const ReviewForm = ({ course, studentId, onReviewSubmitted }) => {
     const [reason, setReason] = useState('');
     const [submitted, setSubmitted] = useState(false);
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             await submitReview({
                 student_id: studentId,
@@ -17,6 +17,9 @@ const ReviewForm = ({ course, studentId }) => {
             });
             setSubmitted(true);
             setReason('');
+            if (onReviewSubmitted) {
+                onReviewSubmitted(); // ✅ Notify parent
+            }
         } catch (err) {
             console.error('Failed to submit review:', err);
             alert('Something went wrong.');

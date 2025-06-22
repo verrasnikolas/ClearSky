@@ -6,6 +6,7 @@ import { getCoursesByInstructor } from '../../services/GradeService';
 
 const InstructorFinalizationPage = () => {
     const [courses, setCourses] = useState([]);
+    const [loadingCourses, setLoadingCourses] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
@@ -27,7 +28,10 @@ const InstructorFinalizationPage = () => {
                 setErrorMessage('Failed to load your course list.');
             }
         };
-        fetchInstructorCourses();
+        fetchInstructorCourses()
+            .finally(() => {
+                setLoadingCourses(false); // Always set loading to false when fetch is complete
+            });
     }, []);
 
 
@@ -46,36 +50,44 @@ const InstructorFinalizationPage = () => {
                     </Alert>
                 )}
 
-                <table className={styles.table}>
-                    <thead>
-                    <tr>
-                        <th>Course Code</th>
-                        <th>Course Title</th>
-                        <th>Exam Period</th>
-                        <th>Grading Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {courses.map((course) => (
-                        <tr key={course.id}>
-                            <td>{course.code}</td>
-                            <td>{course.name}</td>
-                            <td>{course.semester}</td>
-                            <td>{course.status}</td>
-                            <td className={styles.actionsCell}>
-                                <button
-                                    className={styles.btn}
-                                    disabled={course.status !== 'open'}
-                                    onClick={() => handleUploadFinalGrades(course)}
-                                >
-                                    Finalize
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                {loadingCourses ? (
+                    <p>Loading course list...</p>
+                ) : (
+                    courses.length === 0 ? (
+                        <p>No graded courses available.</p>
+                    ) : (
+                        <table className={styles.table}>
+                            <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Title</th>
+                                <th>Exam Period</th>
+                                <th>Grading Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {courses.map((course) => (
+                                <tr key={course.id}>
+                                    <td>{course.code}</td>
+                                    <td>{course.name}</td>
+                                    <td>{course.semester}</td>
+                                    <td>{course.status}</td>
+                                    <td className={styles.actionsCell}>
+                                        <button
+                                            className={styles.btn}
+                                            disabled={course.status !== 'open'}
+                                            onClick={() => handleUploadFinalGrades(course)}
+                                        >
+                                            Finalize
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    )
+                )}
             </div>
         </>
     );
