@@ -35,19 +35,20 @@ async function sendWelcomeEmail({ name, email, password }) {
         from: '"ClearSky" <clearskydemo@gmail.com>',
         to: email,
         subject: 'Ενεργοποίηση Λογαριασμού | ClearSky',
-        text: `Γεια σου ${name}, ο κωδικός σου είναι: ${password}`, // fallback για απλό text clients
+        text: `Γεια σου ${name}, ο κωδικός σου είναι: ${password}`, // Fallback για plain clients
         html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px; color: #333;">
-            <h2 style="color: #1976d2;">Καλωσήρθες στο <strong>ClearSky</strong>!</h2>
+        <div style="font-family: Arial, sans-serif; background-color: #eaf6ff; padding: 20px; color: #333;">
+            <h2 style="text-align: center; color: #1976d2;">Καλωσήρθες στο <strong>ClearSky</strong>!</h2>
             <p>Γεια σου <strong>${name}</strong>,</p>
             <p>Ο κωδικός σου είναι:</p>
-            <p style="font-size: 18px; font-weight: bold; color: #d32f2f;">${password}</p>
-            <p>Εαν επιθυμείς να τον αλλάξεις επικοινώνησε με τη γραμματεία της σχολής σου.</p>
+            <p style="font-weight: bold;">${password}</p>
+            <p>Εάν επιθυμείς να τον αλλάξεις, επικοινώνησε με τη γραμματεία της σχολής σου.</p>
             <hr style="margin: 20px 0;" />
             <p style="font-size: 12px; color: #888;">Αυτό το email στάλθηκε αυτόματα. Παρακαλούμε μην απαντήσεις σε αυτό.</p>
         </div>
     `
     });
+
 
     console.log(`📤 Email sent to ${email}`);
 }

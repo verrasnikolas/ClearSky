@@ -49,7 +49,7 @@ const ReviewList = () => {
             const key = `${review.student_id}_${review.course_id}`;
             try {
                 const [courseRes, studentRes] = await Promise.all([
-                    getCourseDetailsById(review.course_id),
+                    getCourseById(review.course_id),
                     getUserById(review.student_id)
                 ]);
 
