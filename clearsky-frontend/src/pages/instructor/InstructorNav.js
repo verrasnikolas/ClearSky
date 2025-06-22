@@ -23,8 +23,8 @@ const InstructorNav = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/instructor/upload-final" className={({ isActive }) => isActive ? styles.active : ''}>
-                        <FaCheckCircle /> Upload Final Grades
+                    <NavLink to="/instructor/courses" className={({ isActive }) => isActive ? styles.active : ''}>
+                        <FaChartBar /> My Graded Courses
                     </NavLink>
                 </li>
             </ul>

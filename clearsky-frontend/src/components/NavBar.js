@@ -27,7 +27,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             case 'instructor':
                 return '/instructor/upload';
             case 'student':
-                return '/student/statistics';
+                return '/student/studentpage';
             default:
                 return '/';
         }

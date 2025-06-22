@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { decodeToken } from '../../auth/token';
 import { useDropzone } from 'react-dropzone';
 import {
     Container,
@@ -18,7 +17,7 @@ import {
     Error as ErrorIcon,
     Info as InfoIcon
 } from '@mui/icons-material';
-import { uploadInitialGrades } from '../../services/UploadService';
+import { uploadInitialGrades, confirmCourse } from '../../services/UploadService';
 
 export default function UploadGrades() {
     const [file, setFile] = useState(null);
@@ -38,7 +37,8 @@ export default function UploadGrades() {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [] },
-        multiple: false
+        multiple: false,
+        disabled: !!preview // Disable dropzone when preview is active
     });
 
     const handleUpload = async () => {
@@ -54,20 +54,40 @@ export default function UploadGrades() {
         }
 
         try {
-            const res = await uploadInitialGrades(formData);
+            const res = await confirmCourse(formData);
+            const { courseMeta } = res.data;
             setPreview({
-                course: res.data.course,
-                period: res.data.period,
-                count: res.data.count
+                course: courseMeta.title,
+                period: courseMeta.semester,
+                count: courseMeta.gradesCount
             });
-            setMessage({ text: 'File uploaded and parsed successfully.', severity: 'success' });
         } catch (err) {
+            const backendMessage =
+                err.response?.data?.error || 'Failed to parse file.';
             console.error(err);
-            setMessage({ text: 'Upload failed. Please try again.', severity: 'error' });
+
+            setMessage({ text: backendMessage, severity: 'error' });
         } finally {
             setLoading(false);
         }
     };
+
+    const handleConfirm = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            await uploadInitialGrades(formData);
+            setMessage({ text: 'Grades confirmed successfully.', severity: 'success' });
+            setPreview(null);
+            setFile(null);
+        } catch (err) {
+            const backendMessage =
+                err.response?.data?.error || 'Failed to upload grades.';
+            console.error(err);
+            setMessage({ text: backendMessage, severity: 'error' });
+        }
+    };
+
 
     return (
         <Container maxWidth="sm" sx={{ py: 4 }}>
@@ -129,7 +149,8 @@ export default function UploadGrades() {
                                         variant="contained"
                                         color="success"
                                         startIcon={<CheckIcon />}
-                                        onClick={() => setMessage({ text: 'Grades confirmed.', severity: 'success' })}
+
+                                        onClick={handleConfirm}
                                     >
                                         Confirm
                                     </Button>
@@ -137,7 +158,12 @@ export default function UploadGrades() {
                                         variant="outlined"
                                         color="error"
                                         startIcon={<ErrorIcon />}
-                                        onClick={() => { setPreview(null); setFile(null); }}
+                                        onClick={() => {
+                                            setPreview(null);
+                                            setFile(null);
+                                            setMessage({ text: '', severity: 'info' }); // ← clear the message
+                                        }}
+
                                     >
                                         Cancel
                                     </Button>

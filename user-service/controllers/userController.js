@@ -1,17 +1,36 @@
 const User = require('../models/users.js');
 const bcrypt = require('bcrypt');
+const { sendWelcomeEmail } = require('../services/sendWelcomeEmail'); // ή το path όπου το έχεις
+
 
 const addUser = async (req, res) => {
     try {
-        const {email, username, name, academicId, password, role} = req.body;
-        // Derive username for students (already validated in middlewares)
+        const { email, username, name, academicId, password, role } = req.body;
         const resolvedUsername = role === 'student' ? email.split('@')[0] : username;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({email, username: resolvedUsername, name, academicId, role, password: hashedPassword});
+
+        const newUser = await User.create({
+            email,
+            username: resolvedUsername,
+            name,
+            academicId,
+            role,
+            password: hashedPassword
+        });
+
+        // ✅ Αν είναι φοιτητής, στείλε email με credentials
+        if (role === 'student') {
+            await sendWelcomeEmail({
+                name,
+                email,
+                password // μη hashed
+            });
+        }
+
         return res.status(201).json(newUser);
     } catch (err) {
         console.error(err);
-        return res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 

@@ -1,10 +1,9 @@
-// src/components/UploadFinalGrades.js
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import {
     Container, Card, CardContent, Typography, Box, Button,
-    Alert, Stack, CircularProgress
+    Alert, CircularProgress
 } from '@mui/material';
 import {
     CloudUpload as UploadIcon,
@@ -12,9 +11,13 @@ import {
     Error as ErrorIcon,
     Info as InfoIcon
 } from '@mui/icons-material';
+
 import { uploadFinalGrades } from '../../services/UploadService';
+import { getCourseById } from '../../services/GradeService';
 
 export default function UploadFinalGrades() {
+    const { courseId } = useParams();
+    const [courseInfo, setCourseInfo] = useState(null);
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState({ text: '', severity: 'info' });
     const [loading, setLoading] = useState(false);
@@ -32,6 +35,19 @@ export default function UploadFinalGrades() {
         multiple: false
     });
 
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const res = await getCourseById(courseId);
+                setCourseInfo(res.data);
+            } catch (err) {
+                console.error('Failed to load course info:', err);
+                setMessage({ text: 'Failed to load course data.', severity: 'error' });
+            }
+        };
+        fetchCourse();
+    }, [courseId]);
+
     const handleUpload = async () => {
         if (!file) {
             setMessage({ text: 'Please select a file first.', severity: 'error' });
@@ -40,19 +56,17 @@ export default function UploadFinalGrades() {
         setLoading(true);
         const formData = new FormData();
         formData.append('file', file);
-        for (let [key, value] of formData.entries()) {
-            console.log(`[FRONTEND] FormData field: ${key}`, value);
-        }
 
         try {
-            const res = await uploadFinalGrades(formData);
+            const res = await uploadFinalGrades(formData); // ← include courseId
             setMessage({
                 text: `Final grades uploaded successfully. Total: ${res.data.uploaded}`,
                 severity: 'success'
             });
         } catch (err) {
             console.error(err);
-            setMessage({ text: 'Upload failed. Please try again.', severity: 'error' });
+            const backendError = err.response?.data?.error || 'Upload failed. Please try again.';
+            setMessage({ text: backendError, severity: 'error' });
         } finally {
             setLoading(false);
         }
@@ -65,6 +79,12 @@ export default function UploadFinalGrades() {
                     <Typography variant="h5" gutterBottom>
                         Final Grades Posting
                     </Typography>
+
+                    {courseInfo && (
+                        <Typography variant="subtitle1" gutterBottom>
+                            Course: <strong>{courseInfo.title}</strong> | Semester: <strong>{courseInfo.semester}</strong>
+                        </Typography>
+                    )}
 
                     <Box
                         {...getRootProps()}

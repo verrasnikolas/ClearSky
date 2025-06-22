@@ -171,6 +171,7 @@ export default function LoginPage({ onLogin }) { // Λαμβάνουμε την 
                             <FormControlLabel value="student" control={<Radio />} label="Student" />
                             <FormControlLabel value="instructor" control={<Radio />} label="Instructor" />
                             <FormControlLabel value="institution_representative" control={<Radio />} label="Institution Representative" />
+                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
 
                         </RadioGroup>
 

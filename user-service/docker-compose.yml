@@ -23,7 +23,7 @@ services:
       - user-db
       - rabbitmq
     env_file:
-      - .env
+      - DEMO.env
     environment:
       NODE_ENV: development
     networks:

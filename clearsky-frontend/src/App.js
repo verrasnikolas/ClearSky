@@ -15,7 +15,8 @@ import InstructorStatisticsPage from "./pages/instructor/InstructorStatistics";
 import LoginPage from './pages/LoginPage';
 import RepresentativePage from './pages/representative/RepresentativePage';
 import UploadFinalGrades from './pages/instructor/UploadFinalGrades';
-import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics'; // add this at the top
+import RepresentativeStatisticsPage from './pages/representative/RepresentativeStatistics';
+import InstructorCourses from "./pages/instructor/InstructorCourses"; // add this at the top
 // Protected Route wrapper
 const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem('accessToken');
@@ -108,22 +109,16 @@ function App() {
         localStorage.removeItem('refreshToken');
     };
 
-    // REMOVE THIS FOR REAL LOGIN
-    // if (!localStorage.getItem('accessToken')) {
-    //     const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-    //         'eyJzdWIiOiJkZXYtdXNlciIsInJvbGUiOiJpbnN0cnVjdG9yIn0.' +
-    //         'devsignature';
-    //     localStorage.setItem('accessToken', fakeToken);
-    //     localStorage.setItem('refreshToken', 'fake-refresh-token');
-    // }
 
     const getRedirectPathForRole = (roleToRedirect) => {
         switch (roleToRedirect) {
             case 'student':
-                return '/student/statistics';
+                return '/student/studentpage';
             case 'instructor':
                 return '/instructor/upload';
             case 'institution_representative':
+                return '/representative';
+            case 'admin':
                 return '/representative';
             default:
                 return '/login';
@@ -152,7 +147,8 @@ function App() {
                     <Route path="upload" element={<UploadGrades />} />
                     <Route path="reviews" element={<InstructorPage />} />
                     <Route path="statistics" element={<InstructorStatisticsPage />} />
-                    <Route path="upload-final" element={<UploadFinalGrades />} />
+                    <Route path="courses" element={<InstructorCourses />} />
+                    <Route path="upload-final/:courseId" element={<UploadFinalGrades />} />
                 </Route>
 
                 {/* Representative Routes */}

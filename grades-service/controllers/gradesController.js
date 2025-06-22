@@ -90,27 +90,48 @@ const getStudentGradeForCourse = async (req, res) => {
 
 // GET /api/grades/instructor/:instructorId/courses
 const getCoursesByInstructor = async (req, res) => {
-    const { instructorId } = req.params;
-
+    const instructorId = req.headers['x-user-id'];
     try {
         const courses = await Course.findAll({
             where: { instructor_id: instructorId },
-            attributes: ['id', 'title', 'code', 'semester'], // or ['id'] if you only want IDs
+            attributes: ['id', 'title', 'code', 'semester', 'final_grades_submission_at'], // or ['id'] if you only want IDs
             raw: true
         });
+        const enrichedCourses = courses.map(course => ({
+            ...course,
+            status: course.final_grades_submission_at ? 'finalized' : 'open'
+        }));
 
-        res.status(200).json(courses);
+        res.status(200).json(enrichedCourses);
     } catch (err) {
         console.error('❌ Failed to fetch instructor courses:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
+const getCourseById = async (req, res) => {
+    const {courseId} = req.params
+    try {
+        const course = await Course.findByPk(courseId,{
+            attributes: ['id', 'title', 'code', 'semester'], // or ['id'] if you only want IDs
+            raw: true
+        });
 
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+
+        res.status(200).json(course);
+    } catch (err) {
+        console.error('❌ Failed to fetch course:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 module.exports = {
     getStudentGradedCourses,
     getGrades,
     getStudentGradeForCourse,
-    getCoursesByInstructor
+    getCoursesByInstructor,
+    getCourseById
 };

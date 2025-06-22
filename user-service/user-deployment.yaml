@@ -42,7 +42,7 @@ spec:
             - name: EMAIL_USER
               value: "clearskydemo@gmail.com"
             - name: EMAIL_PASSWORD
-              value: "eeisynbnnxlgmkch"
+              value: "REDACTED_PASSWORD"
             - name: RABBITMQ_HOST
               value: "rabbitmq-service" # Kubernetes Service name for RabbitMQ
             - name: RABBITMQ_PORT
