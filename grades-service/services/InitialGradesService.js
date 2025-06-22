@@ -15,17 +15,21 @@ async function findOrCreateCourse(courseMeta) {
     return course;
 }
 
-async function saveInitialGrades(courseId, gradeEntries) {
+async function saveInitialGrades(courseId, gradeEntries, batchId) {
     const transaction = await sequelize.transaction();
     try {
         const toInsert = gradeEntries.map(entry => ({
             course_id: courseId,
             student_id: entry.studentId,
             grade: entry.grade,
-            question_grades: entry.questionGrades
+            question_grades: entry.questionGrades,
+            batch_id: batchId
         }));
 
-        await InitialGrade.bulkCreate(toInsert, { transaction });
+        await InitialGrade.bulkCreate(toInsert, {
+            transaction,
+            ignoreDuplicates: true // This will prevent errors on duplicates and simply skip them
+        });
 
         await Course.update(
             { initial_grades_submission_at: new Date() },
@@ -41,7 +45,54 @@ async function saveInitialGrades(courseId, gradeEntries) {
     }
 }
 
+async function getCourseIdByBatchId(batchId) {
+    const grade = await InitialGrade.findOne({ where: { batch_id: batchId } });
+    if (!grade) {
+        return null;
+    }
+    return grade.course_id;
+}
+
+
+async function deleteInitialGradesByBatchId(batchId) {
+    try {
+        const numDeletedRows = await InitialGrade.destroy({
+            where: {
+                batch_id: batchId
+            }
+        });
+
+        if (numDeletedRows > 0) {
+            console.log(`[Grades Service] Successfully deleted ${numDeletedRows} initial grades for batch ID: ${batchId}`);
+        } else {
+            console.log(`[Grades Service] No initial grades found for batch ID: ${batchId} to delete (or already deleted).`);
+        }
+
+    } catch (error) {
+        console.error(`[Grades Service] Error deleting initial grades for batch ID ${batchId}:`, error);
+        throw error;
+    }
+}
+
+async function ConditionallyDeleteCourse(courseId) {
+    try {
+        const count = await InitialGrade.count({ where: { course_id: courseId } });
+        if (count === 0) {
+            await Course.destroy({where: {id: courseId}});
+        }
+        console.log(`[Grades Service] No remaining grades for course ${courseId}. Course deleted.`);
+    }
+    catch (error)
+    {
+        console.log(`[Grades Service] ${remainingCount} grades remain for course ${courseId}. Course kept.`);
+        throw error;
+    }
+}
+
 module.exports = {
     findOrCreateCourse,
-    saveInitialGrades
+    saveInitialGrades,
+    deleteInitialGradesByBatchId,
+    getCourseIdByBatchId,
+    ConditionallyDeleteCourse
 };

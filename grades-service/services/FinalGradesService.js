@@ -30,13 +30,14 @@ async function saveFinalGrades(courseId, gradeEntries) {
             });
 
             // 2. Create final grade
-            await FinalGrade.create({
+            await FinalGrade.upsert({
                 course_id: courseId,
                 student_id: studentId,
                 grade,
                 question_grades: questionGrades,
                 reviewed: reviewed || false
             }, { transaction });
+
         }
 
         // 3. Update course final_grades_submission_at

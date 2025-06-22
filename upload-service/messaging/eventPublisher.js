@@ -1,19 +1,48 @@
-const { getChannel } = require('./connectRabbitMQ');
-const exchangeName = 'grades_exchange';
+// upload-service/messaging/startPublisher.js
 
-function publish(eventType, payload) {
-    const channel = getChannel(); // 🟢 Παίρνεις το shared channel
+const { getChannel, CLEAR_SKY_EVENTS_EXCHANGE } = require('./connectRabbitMQ');
+async function publishGradesUpload(
+    uploadType,
+    batchId,
+    courseMeta,
+    gradeEntries,
+    extractedUsers = [],
+    correlationId
+) {
+    const channel = getChannel();
 
-    const message = Buffer.from(JSON.stringify({
-        type: eventType,
-        data: payload,
+    // Construct the base event payload
+    const event = {
+        batchId: batchId,
+        courseMeta: courseMeta,
+        gradeEntries: gradeEntries,
+        correlationId: correlationId,
         timestamp: new Date().toISOString()
-    }));
+    };
 
-    channel.publish(exchangeName, '', message);
-    console.log(`[📤] Event "${eventType}" published`);
+    // Determine the routing key based on the uploadType
+    let routingKey;
+    if (uploadType === 'initial') {
+        routingKey = 'grades.initial.uploaded';
+        event.extractedUsersDetails = extractedUsers;
+    } else if (uploadType === 'final') {
+        routingKey = 'grades.final.uploaded';
+    } else {
+        console.error(`[❌ Upload Service] Invalid uploadType provided: "${uploadType}". Must be 'initial' or 'final'.`);
+        throw new Error(`Invalid uploadType: "${uploadType}".`);
+    }
+
+    // Publish the message to the central topic exchange
+    channel.publish(
+        CLEAR_SKY_EVENTS_EXCHANGE,
+        routingKey,
+        Buffer.from(JSON.stringify(event)),
+        { persistent: true }
+    );
+
+    console.log(`[📤 Upload Service] Published event "${routingKey}" for batch ${batchId}`);
 }
 
 module.exports = {
-    publish
+    publishGradesUpload,
 };
