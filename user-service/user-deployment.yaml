@@ -44,7 +44,7 @@ spec:
             - name: EMAIL_PASSWORD
               value: "REDACTED_PASSWORD"
             - name: RABBITMQ_HOST
-              value: "rabbitmq-service" # Kubernetes Service name for RabbitMQ
+              value: "rabbitmq" # Kubernetes Service name for RabbitMQ
             - name: RABBITMQ_PORT
               value: "5672"
             - name: NODE_ENV
