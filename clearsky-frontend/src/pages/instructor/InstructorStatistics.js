@@ -122,8 +122,9 @@ const InstructorStatisticsPage = () => {
 
     return (
             <div className={styles.container}>
-                <h2 className={styles.heading}>Available Course Statistics</h2>
-
+                <div className={styles.headerRow}>
+                    <h2 className={styles.heading}>Available Course Statistics</h2>
+                </div>
                 {error && <p className={styles.error}>{error}</p>}
 
                 {loadingCourses ? (
@@ -204,7 +205,7 @@ const InstructorStatisticsPage = () => {
                                             nameKey="name"
                                             cx="50%"
                                             cy="50%"
-                                            outerRadius={70}
+                                            outerRadius={100}
                                             labelLine={false}
                                             label={renderCustomizedLabel}
                                             paddingAngle={3}

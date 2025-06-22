@@ -21,8 +21,8 @@ export function getUserByAcademicId(academicId, payload) {
     return userApi.get(`/academic/${academicId}`, payload);
 }
 
-export function getUserByUsername(username, payload) {
-    return userApi.get(`/username/${username}`, payload);
+export function getUserByEmail(email, payload) {
+    return userApi.get(`/email/${email}`, payload);
 }
 
 export function getUserById(userId) {

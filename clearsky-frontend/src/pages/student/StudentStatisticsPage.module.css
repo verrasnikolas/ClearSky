@@ -1,30 +1,11 @@
 /* src/student/StudentStatisticsPage.module.css */
-
-.layout {
-    min-height: 100vh;
-    background-color: #f3faff;
-    margin: 0;
-    padding: 0;
-    display: flex; /* Χρησιμοποιούμε flexbox για το κεντράρισμα του περιεχομένου */
-    justify-content: center; /* Οριζόντιο κεντράρισμα */
-    /* align-items: flex-start;  Αν θες το περιεχόμενο να ξεκινάει από πάνω και όχι να είναι στο κέντρο κατακόρυφα */
-}
-
-.contentWrapper { /* Νέα κλάση για το κεντρικό wrapper */
-    max-width: 1200px; /* Μέγιστο πλάτος για το περιεχόμενο */
-    width: 100%; /* Να πιάνει όλο το διαθέσιμο πλάτος μέχρι το max-width */
-    margin: 0 auto; /* Αυτό κεντράρει το wrapper οριζόντια */
-    padding: 2rem; /* Εσωτερικό padding για οπτική βελτίωση */
-    box-sizing: border-box; /* Περιλαμβάνει padding και border στο συνολικό πλάτος */
-}
-
 .container {
-    padding: 0; /* Αφαιρούμε το padding από εδώ αφού το βάζουμε στο contentWrapper */
-    background-color: transparent; /* Αφαιρούμε το background εδώ αφού το layout έχει ήδη */
-    margin: 0;
-    width: 100%;
-    max-width: none;
-    box-sizing: border-box;
+    margin: 2rem auto;
+    max-width: 1000px;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .heading {

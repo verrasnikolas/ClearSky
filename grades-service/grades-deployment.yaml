@@ -32,7 +32,7 @@ spec:
             - name: NODE_ENV
               value: development
             - name: RABBITMQ_HOST
-              value: "rabbitmq-service"
+              value: "rabbitmq"
             - name: RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USER
