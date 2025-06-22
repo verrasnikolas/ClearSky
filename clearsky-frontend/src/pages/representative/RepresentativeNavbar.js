@@ -13,7 +13,7 @@ const RepresentativeNavbar = () => {
         <nav className="representative-navbar">
             <ul className="nav-links">
                 <li>
-                    <NavLink to="/representative" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <NavLink to="/representative" end className={({ isActive }) => isActive ? 'active' : ''}>
                         <FaUser /> User Management
                     </NavLink>
                 </li>

@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load .env file for local development
+require('dotenv').config(); // Load DEMO.env file for local development
 
 module.exports = {
   // development: {
