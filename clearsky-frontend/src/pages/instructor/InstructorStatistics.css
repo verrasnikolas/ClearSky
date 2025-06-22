@@ -44,3 +44,20 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+.passFailStats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.passStat {
+    color: #82ca9d;
+}
+
+.failStat {
+    color: #ff6961;
+}

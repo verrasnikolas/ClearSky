@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from '../student/StudentStatisticsPage.module.css';
 import StudentNavbar from './StudentNavbar';
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell,
-    Legend
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { getCourseStats, getAllCourses } from '../../services/StatsService';
 
@@ -33,16 +24,11 @@ const InstructorStatisticsPage = () => {
                 console.error(err);
                 setError('Failed to load course list');
             })
-            .finally(() => {
-                setLoadingCourses(false); // Always set loading to false when fetch is complete
-            });
+            .finally(() => setLoadingCourses(false));
     }, []);
 
-
     const handleGoToCourses = () => {
-
         navigate('/student/studentpage');
-
     };
 
     const formatDate = (dateString) => {
@@ -50,17 +36,12 @@ const InstructorStatisticsPage = () => {
         try {
             const date = new Date(dateString);
             const options = {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
                 hour12: false
             };
             return date.toLocaleDateString(undefined, options);
-        } catch (e) {
-            console.error("Error formatting date:", dateString, e);
+        } catch {
             return 'Invalid Date';
         }
     };
@@ -86,12 +67,8 @@ const InstructorStatisticsPage = () => {
                             : course
                     )
                 );
-                setLoading(false);
             })
-            .catch((err) => {
-                console.error(err);
-                setError('Failed to load course statistics');
-            })
+            .catch(() => setError('Failed to load course statistics'))
             .finally(() => setLoading(false));
     };
 
@@ -105,50 +82,14 @@ const InstructorStatisticsPage = () => {
         return Array.from(dataMap.entries()).map(([grade, count]) => ({ grade, count }));
     };
 
-
     const getPassFailPieData = () => {
-        const passed = selectedStats.passCount ?? 0;
-        const failed = selectedStats.notPassCount ?? 0;
+        const passed = selectedStats?.passCount ?? 0;
+        const failed = selectedStats?.notPassCount ?? 0;
         const total = passed + failed;
-
         return [
-            {
-                name: 'Passed',
-                value: passed,
-                percentage: total ? ((passed / total) * 100).toFixed(1) : 0
-            },
-            {
-                name: 'Failed',
-                value: failed,
-                percentage: total ? ((failed / total) * 100).toFixed(1) : 0
-            }
+            { name: 'Passed', value: passed, percentage: total ? ((passed / total) * 100).toFixed(1) : 0 },
+            { name: 'Failed', value: failed, percentage: total ? ((failed / total) * 100).toFixed(1) : 0 }
         ];
-    };
-
-    // Custom Label Renderer for Pie Chart
-    const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, value }) => {
-        const RADIAN = Math.PI / 180;
-        const radius = outerRadius * 1.5; // You might even increase this a bit if labels are still too close
-        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-        const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-        const textAnchor = x > cx ? 'start' : 'end';
-
-        return (
-            <text
-                x={x}
-                y={y}
-                fill="black"
-                textAnchor={textAnchor}
-                dominantBaseline="central"
-                style={{
-                    fontSize: '13px',
-                    fontWeight: 'bold'
-                }}
-            >
-                {`${(percent * 100).toFixed(1)}%`}
-            </text>
-        );
     };
 
     return (
@@ -159,9 +100,7 @@ const InstructorStatisticsPage = () => {
                     <div className={styles.headerRow}>
                         <h2 className={styles.heading}>Available Course Statistics</h2>
                         <button className={styles.button} onClick={handleGoToCourses}>
-
                             Go to My Courses
-
                         </button>
                     </div>
 
@@ -169,48 +108,45 @@ const InstructorStatisticsPage = () => {
 
                     {loadingCourses ? (
                         <p>Loading course list...</p>
+                    ) : courses.length === 0 ? (
+                        <p>No courses available to display statistics for.</p>
                     ) : (
-                        courses.length === 0 ? (
-                            <p>No courses available to display statistics for.</p>
-                        ) : (
-                            <table className={styles.table}>
-                                <thead>
-                                <tr>
-                                    <th>Course Code</th>
-                                    <th>Course Name</th>
-                                    <th>Exam Period</th>
-                                    <th>Initial Grades Upload</th>
-                                    <th>Final Grades Last Updated</th>
-                                    <th>Actions</th>
+                        <table className={styles.table}>
+                            <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Exam Period</th>
+                                <th>Initial Grades Upload</th>
+                                <th>Final Grades Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {courses.map((course, index) => (
+                                <tr key={index}>
+                                    <td>{course.courseCode}</td>
+                                    <td>{course.courseName || 'N/A'}</td>
+                                    <td>{course.examPeriod}</td>
+                                    <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
+                                    <td>
+                                        {course.createdAt && course.updatedAt &&
+                                        new Date(course.createdAt).getTime() === new Date(course.updatedAt).getTime()
+                                            ? 'N/A'
+                                            : (course.updatedAt ? formatDate(course.updatedAt) : 'N/A')}
+                                    </td>
+                                    <td>
+                                        <button
+                                            className={styles.button}
+                                            onClick={() => handleViewStats(course.courseCode, course.examPeriod)}
+                                        >
+                                            View Stats
+                                        </button>
+                                    </td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {courses.map((course, index) => (
-                                    <tr key={index}>
-                                        <td>{course.courseCode}</td>
-                                        <td>{course.courseName || 'N/A'}</td>
-                                        <td>{course.examPeriod}</td>
-                                        <td>{course.createdAt ? formatDate(course.createdAt) : 'N/A'}</td>
-                                        <td>
-                                            {course.createdAt && course.updatedAt &&
-                                            new Date(course.createdAt).getTime() === new Date(course.updatedAt).getTime()
-                                                ? 'N/A'
-                                                : (course.updatedAt ? formatDate(course.updatedAt) : 'N/A')
-                                            }
-                                        </td>
-                                        <td>
-                                            <button
-                                                className={styles.button}
-                                                onClick={() => handleViewStats(course.courseCode, course.examPeriod)}
-                                            >
-                                                View Stats
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        )
+                            ))}
+                            </tbody>
+                        </table>
                     )}
 
                     {loading && <p>Loading statistics...</p>}
@@ -235,6 +171,7 @@ const InstructorStatisticsPage = () => {
                                     </ResponsiveContainer>
                                 </div>
 
+                                {/* ✅ UPDATED PIE CHART SECTION */}
                                 <div className={styles.chartBox}>
                                     <h4>✅ Pass vs ❌ Fail</h4>
                                     <ResponsiveContainer width="100%" height={300}>
@@ -246,9 +183,8 @@ const InstructorStatisticsPage = () => {
                                                 cx="50%"
                                                 cy="50%"
                                                 outerRadius={100}
-                                                labelLine={false}
-                                                label={renderCustomizedLabel}
                                                 paddingAngle={3}
+                                                minAngle={10}
                                             >
                                                 <Cell fill="#82ca9d" />
                                                 <Cell fill="#ff6961" />
@@ -256,10 +192,18 @@ const InstructorStatisticsPage = () => {
                                             <Legend />
                                         </PieChart>
                                     </ResponsiveContainer>
+
+                                    <div className={styles.passFailStats}>
+                                        <div className={styles.passStat}>
+                                            ✅ Passed: {getPassFailPieData()[0].percentage}%
+                                        </div>
+                                        <div className={styles.failStat}>
+                                            ❌ Failed: {getPassFailPieData()[1].percentage}%
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Question-Level Charts */}
                             {selectedStats.questionDistributions && selectedStats.questionAverages && (
                                 <>
                                     <h3 className={styles.subheading}>📊 Question Performance</h3>
@@ -269,7 +213,6 @@ const InstructorStatisticsPage = () => {
                                                 score: i,
                                                 count: dist[i] ?? 0
                                             }));
-
                                             const average = selectedStats.questionAverages[question];
 
                                             return (
@@ -284,7 +227,7 @@ const InstructorStatisticsPage = () => {
                                                                 dataKey="score"
                                                                 type="number"
                                                                 domain={[0, 10]}
-                                                                ticks={[0,1,2,3,4,5,6,7,8,9,10]}
+                                                                ticks={[...Array(11).keys()]}
                                                                 interval={0}
                                                                 padding={{ left: 20, right: 20 }}
                                                                 tickMargin={5}

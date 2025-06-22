@@ -216,7 +216,8 @@ const StudentPage = () => {
                                     <td className={styles.actionsCell}>
                                         <button
                                             className={styles.btn}
-                                            onClick={() => {handleViewGrades(course);
+                                            onClick={() => {
+                                                handleViewGrades(course);
                                             }}
                                         >
                                             View My Grades
@@ -224,7 +225,10 @@ const StudentPage = () => {
 
                                         <button
                                             className={styles.btn}
-                                            disabled={reviewStatuses[course.courseId] !== 'none'}
+                                            disabled={
+                                                reviewStatuses[course.courseId] !== 'none' ||
+                                                course.status === 'closed' // disable if grading is finalized
+                                            }
                                             onClick={() => {
                                                 handleAskReview(course);
                                             }}
@@ -247,8 +251,8 @@ const StudentPage = () => {
                             </tbody>
                         </table>
 
-                        {selectedCourseForGrades && (
-                            <div className={styles.detailsSection}>
+                            {selectedCourseForGrades && (
+                                <div className={styles.detailsSection}>
                                 <GradeDetails course={selectedCourseForGrades} />
                             </div>
                         )}

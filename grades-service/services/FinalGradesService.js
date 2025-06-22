@@ -36,6 +36,8 @@ async function saveFinalGrades(courseId, gradeEntries) {
                 grade,
                 question_grades: questionGrades,
                 reviewed: reviewed || false
+            }, {
+                conflictFields: ['student_id', 'course_id']  // THIS IS IMPORTANT
             }, { transaction });
 
         }

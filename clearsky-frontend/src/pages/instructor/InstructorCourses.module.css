@@ -44,3 +44,24 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+.btn {
+    padding: 0.4rem 0.8rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover:enabled {
+    background-color: #0056b3;
+}
+
+.btn:disabled {
+    background-color: #d3d3d3;
+    color: #888;
+    cursor: not-allowed;
+}
+
