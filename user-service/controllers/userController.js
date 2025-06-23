@@ -18,13 +18,14 @@ const addUser = async (req, res) => {
             password: hashedPassword
         });
 
-        // ✅ Αν είναι φοιτητής, στείλε email με credentials
+        // Προσπάθησε να στείλεις email, αλλά χωρίς να επηρεάζει τη δημιουργία χρήστη
         if (role === 'student') {
-            await sendWelcomeEmail({
-                name,
-                email,
-                password // μη hashed
-            });
+            try {
+                await sendWelcomeEmail({ name, email, password }); // plaintext
+            } catch (emailErr) {
+                console.warn(`⚠️ Email failed for ${email}: ${emailErr.message}`);
+                // Continue without failing the request
+            }
         }
 
         return res.status(201).json(newUser);
