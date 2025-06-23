@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80        # Internal port for the service (can remain 80 or be changed)
-      targetPort: 3000   # Changed to match the containerPort
+      targetPort: 80   # Changed to match the containerPort
       nodePort: 30000  # Port exposed on the Node
