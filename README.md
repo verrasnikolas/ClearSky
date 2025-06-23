@@ -13,7 +13,25 @@ Repository, used for team saas25-25
 
 ## Description
 
-ClearSky App ...
+The clearSKY application is designed to assist instructors of all educational levels in publishing preliminary course grades and to facilitate student-initiated review request cycles prior to finalization.
+
+It addresses the traditionally time-consuming process of instructors managing this workflow individually by streamlining it through the use of clearSKY, assuming reasonable preprocessing adjustments — primarily related to the grade format. For the purposes of this project, the grade format will adhere to the Excel template used by the new student information system of NTUA.
+
+The application accepts grade data in the standardized formatand transforms it into structured data usable by instructors, students, and institutional representatives. Instructors can upload grade spreadsheets, which are then distributed asynchronously to relevant backend services (e.g., user management, grade storage, statistical analysis) using an event-driven, microservice-based architecture (RabbitMQ).
+
+Key features include:
+
+📤 Uploading of initial and final grades in Excel format
+
+🔁 Student review request cycle before grade finalization
+
+📊 Real-time statistics and grade distribution analysis
+
+👤 User data extraction and management from uploaded files
+
+☁️ Scalable, microservice-based design using Docker and RabbitMQ
+
+clearSKY runs on containerized infrastructure and is built for deployment in cloud environments. 
 
 ## Table of contents
 
