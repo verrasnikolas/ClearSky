@@ -6,10 +6,10 @@ Repository, used for team saas25-25
 
 ### Contributors
 
-- Anastasia Askouni el20046@mail.ntua.gr
-- Nikolaos Verras el21440@mail.ntua.gr
-- Angeliki Zerva el21101@mail.ntua.gr
-- Dimitrios Kampanakis el21012@mail.ntua.gr
+- Anastasia Askouni
+- Nikolaos Verras 
+- Angeliki Zerva
+- Dimitrios Kampanakis 
 
 ## Description
 
